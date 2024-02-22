@@ -1,0 +1,127 @@
+---
+title: "マルチレベルモデルは点推定値に影響を及ぼすか？"
+execute: 
+  cache: true
+---
+
+```{r}
+#| cache: false
+#| message: false
+
+library(tidyverse)
+library(lmerTest)
+library(broom)
+library(broom.mixed)
+```
+
+## マルチレベルモデルにおけるよくある誤解
+
+「マルチレベルモデルでやんなきゃ係数にバイアスが...」←ホント？
+
+## データ生成
+
+マルチレベルのデータを考える
+サンプルサイズ1000、グループ数50のデータ
+
+\begin{align}
+y_{ig} \sim 0.5x_{ig} + \mathrm{Normal}(\theta_g, 1) \\
+\theta_g \sim \mathrm{Normal}(0, 3) \\
+x_i \sim \mathrm{Normal}(0, 1)
+\end{align}
+
+```{r}
+
+dgp <- function(samplesize = 1000) {
+  tibble(
+    id = 1:samplesize,
+    group = rep(1:50, 20),
+    x = rnorm(samplesize, mean = 0, sd = 1),
+  ) |> 
+    group_by(group) |> 
+    mutate(group_mean = rnorm(1, mean = 0, sd = 3)) |> 
+    ungroup() |> 
+    mutate(y = 0.5*x + rnorm(samplesize, mean = group_mean, sd = 1))
+}
+
+data <- dgp()
+
+```
+
+
+```{r}
+
+lm(y ~ x, data = data) |> 
+  summary()
+
+lmer(y ~ x + (1|group), data = data) |> 
+  summary()
+
+```
+
+
+## シミュレーション
+
+データを1000個作成
+
+```{r}
+
+data_list <- 
+  map(1:1000, \(x) dgp(1000)) |> 
+  enframe()
+
+```
+
+OLSと変量効果モデルで推定
+
+```{r}
+
+result <- 
+  data_list |> 
+  mutate(
+    lm = map(value, \(data) lm(y ~ x, data = data)),
+    lmer = map(value, \(data) lmer(y ~ x + (1|group), data = data))
+  )
+
+```
+
+xの係数のみ取り出す
+
+```{r}
+
+res2 <- 
+  result |> 
+  mutate(
+    lm_res = map(lm, \(model) {
+      tidy(model) |> 
+        select(term, estimate)
+    }),
+    lmer_res = map(lmer, \(model) {
+      tidy(model) |> 
+        select(term, estimate)
+    })
+  ) |> 
+  select(name, lm_res, lmer_res) |> 
+  pivot_longer(!name, names_to = 'model', values_to = 'value') |> 
+  unnest(value) |> 
+  filter(term == 'x')
+
+```
+
+
+結果を図示
+
+- どちらの点推定値も真の値の0.5を中心に分布＝バイアスはない
+- OLSによる点推定値はバリアンスが大きい
+- 変量効果（マルチレベル）モデルによる点推定値はバリアンスが小さい
+
+```{r}
+
+res2 |> 
+  ggplot(aes(estimate, fill = model))+
+  geom_vline(xintercept = 0.5, linetype = 'dashed', alpha = 0.5)+
+  geom_histogram(alpha = 0.3, color = 'black', binwidth = 0.02, position = 'identity')+
+  scale_x_continuous(breaks = seq(0, 1, 0.2))
+
+```
+
+

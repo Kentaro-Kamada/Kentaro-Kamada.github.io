@@ -1,0 +1,36 @@
+project:
+  type: website
+  execute-dir: project
+
+website:
+  title: "Kentaro-Kamada"
+  navbar:
+    left:
+      - href: index.qmd
+        text: "Home"
+      - text: "Causal Inference"
+        menu:
+          - Causal_Inference/TMLE.qmd
+          - Causal_Inference/L-TMLE.qmd
+          - Causal_Inference/Causal_Decomposition.qmd
+          - Causal_Inference/Sudharsanan_Bijlsma_2021_読解.qmd
+      - text: "Others"
+        menu:
+          - Others/rlang学習.qmd
+          - Others/度数から対数尤度を計算.qmd
+          - Others/Multilevel.qmd
+          - Others/tensorflow_with_Rstudio.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+bibliography: reference.bib
+
+execute: 
+  warning: false
+  message: false
+  freeze: auto
+

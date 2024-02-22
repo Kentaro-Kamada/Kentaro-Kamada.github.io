@@ -245,9 +245,8 @@ dat_tmle2 |>
   - （ほんとは関数推定時にcross-fitをする）
 
 $$
-ATE_{aipw} = {\mathrm E[{\mathrm E}[Y | A := 1, W] - {\mathrm E}[Y | A := 0, W] + \frac{A}{{\mathrm Pr}(A = 1 | W)}(Y - {\mathrm E}[Y | A := 1, W]) - \frac{1 - A}{1 - {\mathrm Pr}(A = 1 | W)}(Y - {\mathrm E}[Y | A := 0, W])]}
+ATE_{aipw} = \mathrm E[\mathrm E[Y | A := 1, W] - \mathrm E[Y | A := 0, W] + \frac{A}{\mathrm Pr(A = 1 | W)}(Y - {\mathrm E}[Y | A := 1, W]) - \frac{1 - A}{1 - \mathrm Pr(A = 1 | W)}(Y - \mathrm E[Y | A := 0, W])]
 $$
-
 
 
 ```{r}

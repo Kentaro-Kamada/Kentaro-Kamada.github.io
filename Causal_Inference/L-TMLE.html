@@ -280,24 +280,30 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="下準備">下準備</h2>
 <section id="ライブラリなど" class="level3">
 <h3 class="anchored" data-anchor-id="ライブラリなど">ライブラリなど</h3>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-1_165a6d97e82bcfdc3b73704de4c5a46b">
+<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-1_fc111b58227fdc7cd460ae2719164f81">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SuperLearner)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ltmle)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> <span class="dv">8</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(<span class="at">strategy =</span> <span class="st">'multisession'</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SuperLearner)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ltmle)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>kable <span class="ot">&lt;-</span> <span class="fu">partial</span>(</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span>kable,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> <span class="dv">8</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(<span class="at">strategy =</span> <span class="st">'multisession'</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="データの作成" class="level3">
 <h3 class="anchored" data-anchor-id="データの作成">データの作成</h3>
 <p>以下のDAGを考える</p>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-2_1ae81b5b2a881df02cbfbd2eed4e5cb0">
+<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-2_7e11f7e91ad852841d3aa5d30bd5f0d9">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dagify</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  L1 <span class="sc">~</span> A0 <span class="sc">+</span> U1,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  A1 <span class="sc">~</span> A0 <span class="sc">+</span> L1,</span>
@@ -306,7 +312,7 @@ window.Quarto = {
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome =</span> <span class="st">'Y'</span>, </span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">A0 =</span> <span class="dv">0</span>, <span class="at">L1 =</span> <span class="dv">1</span>, <span class="at">A1 =</span> <span class="dv">2</span>, <span class="at">U1 =</span> <span class="dv">1</span>, <span class="at">Y =</span> <span class="dv">3</span>),</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> <span class="fu">c</span>(<span class="at">A0 =</span> <span class="dv">0</span>, <span class="at">L1 =</span> <span class="dv">0</span>, <span class="at">A1 =</span> <span class="dv">0</span>, <span class="at">U1 =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">Y =</span> <span class="dv">0</span>))</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggdag</span>()<span class="sc">+</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -319,14 +325,14 @@ window.Quarto = {
 </div>
 <p>TreatmentはA0とA1であるが、ここからYへのpathはないので、因果効果は全ての組み合わせについて0になる</p>
 <p>具体的には、potential outcomeのすべての組み合わせについて、差分を取った値が0になる</p>
-<p><span class="math display">\[\begin{eqnarray}
+<p><span class="math display">\[\begin{align}
 \mathrm{E}[Y^{0, 0} - Y^{1, 0}] &amp;= 0\\
 \mathrm{E}[Y^{0, 0} - Y^{0, 1}] &amp;= 0\\
 \mathrm{E}[Y^{0, 0} - Y^{1, 1}] &amp;= 0\\
 \mathrm{E}[Y^{1, 0} - Y^{0, 1}] &amp;= 0\\
 \mathrm{E}[Y^{1, 0} - Y^{1, 1}] &amp;= 0\\
 \mathrm{E}[Y^{0, 1} - Y^{1, 1}] &amp;= 0
-\end{eqnarray}\]</span></p>
+\end{align}\]</span></p>
 <div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-3_607046d5c8fe5016c5c84c3a11206643">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>generate_data <span class="ot">&lt;-</span> <span class="cf">function</span>(n){ </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    A0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size=</span><span class="dv">1</span>, <span class="at">prob=</span><span class="fl">0.3</span>) <span class="co"># binary treatment</span></span>
@@ -339,87 +345,182 @@ window.Quarto = {
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>data_obs <span class="ot">&lt;-</span> <span class="fu">generate_data</span>(<span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>A0の因果効果</p>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-4_15739f75a23ce246ed4ff97adcfbb76c">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0, <span class="at">data =</span> .) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = Y ~ A0, data = .)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--2.0295 -0.3631  0.0081  0.3323  1.8426 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) -0.20740    0.01898 -10.925   &lt;2e-16 ***
-A0           0.02873    0.03575   0.804    0.422    
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 0.5087 on 998 degrees of freedom
-Multiple R-squared:  0.0006469, Adjusted R-squared:  -0.0003545 
-F-statistic: 0.646 on 1 and 998 DF,  p-value: 0.4217</code></pre>
+<ul>
+<li>A0の因果効果</li>
+</ul>
+<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-4_dff7c7addbcabc1a432ddd3dd2a2b4a9">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">-0.207</td>
+<td style="text-align: right;">0.019</td>
+<td style="text-align: right;">-10.925</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A0</td>
+<td style="text-align: right;">0.029</td>
+<td style="text-align: right;">0.036</td>
+<td style="text-align: right;">0.804</td>
+<td style="text-align: right;">0.422</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<ul>
+<li>A1の因果効果</li>
+</ul>
+<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-5_00b912f8a2eb9367b8e783784cdc5bf2">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A1 <span class="sc">+</span> L1, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">-0.427</td>
+<td style="text-align: right;">0.012</td>
+<td style="text-align: right;">-34.532</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A1</td>
+<td style="text-align: right;">-0.017</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">-1.020</td>
+<td style="text-align: right;">0.308</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">L1</td>
+<td style="text-align: right;">1.275</td>
+<td style="text-align: right;">0.025</td>
+<td style="text-align: right;">51.719</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <ul>
 <li>collider bias</li>
 </ul>
 <p><span class="math inline">\(L_1\)</span>を条件づけると、<span class="math inline">\(A_0 \to L_1 \gets U_1 \to Y\)</span>というパスが開いて、バイアスをもたらす</p>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-5_893437105b26438e847c74c1bf6b67fa">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0 <span class="sc">+</span> L1, <span class="at">data =</span> .) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = Y ~ A0 + L1, data = .)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--0.55477 -0.13977 -0.00681  0.12914  0.54753 
-
-Coefficients:
-             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) -0.352169   0.007096  -49.63   &lt;2e-16 ***
-A0          -0.469341   0.014311  -32.80   &lt;2e-16 ***
-L1           1.539818   0.018919   81.39   &lt;2e-16 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 0.1841 on 997 degrees of freedom
-Multiple R-squared:  0.8693,    Adjusted R-squared:  0.869 
-F-statistic:  3315 on 2 and 997 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-6_0bb79cabbce7463590cde4d3db9de2a5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0 <span class="sc">+</span> L1, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">-0.352</td>
+<td style="text-align: right;">0.007</td>
+<td style="text-align: right;">-49.626</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A0</td>
+<td style="text-align: right;">-0.469</td>
+<td style="text-align: right;">0.014</td>
+<td style="text-align: right;">-32.796</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">L1</td>
+<td style="text-align: right;">1.540</td>
+<td style="text-align: right;">0.019</td>
+<td style="text-align: right;">81.391</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-6_be830ef76feb469fa78e0bdfe4f78ff8">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">%&gt;%</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0<span class="sc">*</span>A1, <span class="at">data =</span> .) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = Y ~ A0 * A1, data = .)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--2.01955 -0.36365  0.00781  0.33180  1.85253 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) -0.21730    0.02598  -8.364   &lt;2e-16 ***
-A0           0.04341    0.05053   0.859    0.390    
-A1           0.02128    0.03809   0.559    0.576    
-A0:A1       -0.03064    0.07162  -0.428    0.669    
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 0.5091 on 996 degrees of freedom
-Multiple R-squared:  0.0009839, Adjusted R-squared:  -0.002025 
-F-statistic: 0.327 on 3 and 996 DF,  p-value: 0.8059</code></pre>
+<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-7_fc337c2baad250285d0a8a594d8007d6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0<span class="sc">*</span>A1, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">-0.217</td>
+<td style="text-align: right;">0.026</td>
+<td style="text-align: right;">-8.364</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A0</td>
+<td style="text-align: right;">0.043</td>
+<td style="text-align: right;">0.051</td>
+<td style="text-align: right;">0.859</td>
+<td style="text-align: right;">0.390</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A1</td>
+<td style="text-align: right;">0.021</td>
+<td style="text-align: right;">0.038</td>
+<td style="text-align: right;">0.559</td>
+<td style="text-align: right;">0.576</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A0:A1</td>
+<td style="text-align: right;">-0.031</td>
+<td style="text-align: right;">0.072</td>
+<td style="text-align: right;">-0.428</td>
+<td style="text-align: right;">0.669</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
@@ -435,39 +536,43 @@ W^{A_0, A_1} = \frac{1}{f(A_0 | L_0)} \times \frac{1}{f(A_1 | A_0, L_0, L_1)}
 <p><span class="math display">\[
 W^{A_0, A_1} = \frac{1}{f(A_0)} \times \frac{1}{f(A_1 | A_0, L_1)}
 \]</span></p>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-7_09f7a707e0f19d059f6b1b105f23a5a4">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>res_ipw <span class="ot">&lt;-</span> </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">augment_columns</span>(</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">glm</span>(A0 <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> data_obs, <span class="at">family =</span> <span class="st">'binomial'</span>), </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data_obs, </span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">type.predict =</span> <span class="st">'response'</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># A0に対するウェイト</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">ipw_A0 =</span> <span class="fu">case_when</span>(A0 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> .fitted,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>                       A0 <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> .fitted))</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Y<span class="sc">:</span>U1, ipw_A0) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">augment_columns</span>(</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">glm</span>(A1 <span class="sc">~</span> A0 <span class="sc">+</span> L1 <span class="sc">+</span> <span class="fu">I</span>(L1<span class="sc">^</span><span class="dv">2</span>), <span class="at">data =</span> data_obs, <span class="at">family =</span> <span class="st">'binomial'</span>),</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> .,</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">type.predict =</span> <span class="st">'response'</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># A1に対するウェイト</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">ipw_A1 =</span> <span class="fu">case_when</span>(A1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> .fitted,</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>                       A1 <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> .fitted))</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Y<span class="sc">:</span>U1, ipw_A0, ipw_A1) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># A0に対するウェイトとA1に対するウェイトをかけ算</span></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ipw =</span> ipw_A0<span class="sc">*</span>ipw_A1) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 重み付け推定</span></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">CFmean =</span> <span class="fu">weighted.mean</span>(Y, ipw), <span class="at">.by =</span> <span class="fu">c</span>(A0, A1)) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(A0, A1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-8_c585999db1001ca8275c606bdc6dd4ac">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>res_ipw <span class="ot">&lt;-</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">augment_columns</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">glm</span>(A0 <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> data_obs, <span class="at">family =</span> <span class="st">'binomial'</span>), </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data_obs, </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">type.predict =</span> <span class="st">'response'</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># A0に対するウェイト</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">ipw_A0 =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      A0 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> .fitted,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      A0 <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> .fitted)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Y<span class="sc">:</span>U1, ipw_A0) <span class="sc">|&gt;</span> </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">augment_columns</span>(</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">glm</span>(A1 <span class="sc">~</span> A0 <span class="sc">+</span> L1 <span class="sc">+</span> <span class="fu">I</span>(L1<span class="sc">^</span><span class="dv">2</span>), <span class="at">data =</span> data_obs, <span class="at">family =</span> <span class="st">'binomial'</span>),</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> _,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">type.predict =</span> <span class="st">'response'</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># A1に対するウェイト</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">ipw_A1 =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>      A1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> .fitted,</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>      A1 <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> .fitted)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Y<span class="sc">:</span>U1, ipw_A0, ipw_A1) <span class="sc">|&gt;</span> </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># A0に対するウェイトとA1に対するウェイトをかけ算</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ipw =</span> ipw_A0<span class="sc">*</span>ipw_A1) <span class="sc">|&gt;</span> </span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 重み付け推定</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">CFmean =</span> <span class="fu">weighted.mean</span>(Y, ipw), <span class="at">.by =</span> <span class="fu">c</span>(A0, A1)) <span class="sc">|&gt;</span> </span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(A0, A1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>ipwによる各treatment strategyにおけるcounterfactual mean</p>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-8_0988268ef5d1dc667d3b9d622ce7155e">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>res_ipw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-9_e6cca1cefac259f873545db1f1bc2ba4">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>res_ipw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
      A0    A1 CFmean
@@ -479,17 +584,17 @@ W^{A_0, A_1} = \frac{1}{f(A_0)} \times \frac{1}{f(A_1 | A_0, L_1)}
 </div>
 </div>
 <p>counterfactual meanの差分</p>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-9_3e98dd2cdbeeeaccc27876906af631b2">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cross_join</span>(</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  res_ipw <span class="sc">%&gt;%</span> </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">A0_A1 =</span> <span class="fu">str_c</span>(A0, <span class="st">','</span>, A1)) <span class="sc">%&gt;%</span> </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(A0_A1, CFmean),</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  res_ipw <span class="sc">%&gt;%</span> </span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">A0_A1 =</span> <span class="fu">str_c</span>(A0, <span class="st">','</span>, A1)) <span class="sc">%&gt;%</span> </span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(A0_A1, CFmean)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(A0_A1.x <span class="sc">!=</span> A0_A1.y) <span class="sc">%&gt;%</span> </span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ATE =</span> CFmean.y <span class="sc">-</span> CFmean.x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-10_50fa85a09efa52c4fb94fe24e3909006">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cross_join</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  res_ipw <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">A0_A1 =</span> <span class="fu">str_c</span>(A0, <span class="st">','</span>, A1)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(A0_A1, CFmean),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  res_ipw <span class="sc">|&gt;</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">A0_A1 =</span> <span class="fu">str_c</span>(A0, <span class="st">','</span>, A1)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(A0_A1, CFmean)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(A0_A1.x <span class="sc">!=</span> A0_A1.y) <span class="sc">|&gt;</span> </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ATE =</span> CFmean.y <span class="sc">-</span> CFmean.x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 12 × 5
    A0_A1.x CFmean.x A0_A1.y CFmean.y       ATE
@@ -514,25 +619,24 @@ W^{A_0, A_1} = \frac{1}{f(A_0)} \times \frac{1}{f(A_1 | A_0, L_1)}
 <ul>
 <li><code>ltmle</code>による実装</li>
 </ul>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-10_fe5d48f9994ccc9bd2633e24566c2ef6">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>res_tmle <span class="ot">&lt;-</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  ltmle<span class="sc">::</span><span class="fu">ltmle</span>(</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># データセットの列の順番が大切</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data_obs <span class="sc">%&gt;%</span> <span class="fu">select</span>(A0, L1, A1, Y), </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Anodes =</span> <span class="fu">c</span>(<span class="st">'A0'</span>, <span class="st">'A1'</span>), </span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Lnodes =</span> <span class="st">'L1'</span>,</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Ynodes =</span> <span class="st">'Y'</span>,</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">abar =</span> <span class="fu">list</span>(<span class="at">treatment =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="at">control =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)), </span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Yrange = c(-100, 100), </span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">SL.library =</span> <span class="fu">c</span>(<span class="st">'SL.glm'</span>, <span class="st">'SL.gam'</span>, <span class="st">'SL.randomForest'</span>)</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res_tmle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-11_0995180f1a3887fd4b799c95f710f9f4">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>res_tmle <span class="ot">&lt;-</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  ltmle<span class="sc">::</span><span class="fu">ltmle</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># データセットの列の順番が大切</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data_obs <span class="sc">|&gt;</span> <span class="fu">select</span>(A0, L1, A1, Y), </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Anodes =</span> <span class="fu">c</span>(<span class="st">'A0'</span>, <span class="st">'A1'</span>), </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Lnodes =</span> <span class="st">'L1'</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Ynodes =</span> <span class="st">'Y'</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">abar =</span> <span class="fu">list</span>(<span class="at">treatment =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="at">control =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)), </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">SL.library =</span> <span class="fu">c</span>(<span class="st">'SL.glm'</span>, <span class="st">'SL.gam'</span>, <span class="st">'SL.randomForest'</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res_tmle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimator:  tmle 
 Call:
-ltmle::ltmle(data = data_obs %&gt;% select(A0, L1, A1, Y), Anodes = c("A0", 
+ltmle::ltmle(data = select(data_obs, A0, L1, A1, Y), Anodes = c("A0", 
     "A1"), Lnodes = "L1", Ynodes = "Y", abar = list(treatment = c(1, 
     1), control = c(0, 0)), SL.library = c("SL.glm", "SL.gam", 
     "SL.randomForest"))

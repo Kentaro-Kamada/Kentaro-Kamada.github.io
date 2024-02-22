@@ -17,11 +17,17 @@ execute:
 #| message: false
 
 library(tidyverse)
+library(broom)
 library(SuperLearner)
 library(ltmle)
 library(randomForest)
 library(ggdag)
 library(future)
+
+kable <- partial(
+  knitr::kable,
+  digits = 3
+)
 
 options(mc.cores = 8)
 plan(strategy = 'multisession')
@@ -44,7 +50,7 @@ dagify(
   outcome = 'Y', 
   coords = list(x = c(A0 = 0, L1 = 1, A1 = 2, U1 = 1, Y = 3),
                 y = c(A0 = 0, L1 = 0, A1 = 0, U1 = -1, Y = 0))
-) %>% 
+) |> 
   ggdag()+
   theme_dag()
 
@@ -54,14 +60,14 @@ TreatmentはA0とA1であるが、ここからYへのpathはないので、因�
 
 具体的には、potential outcomeのすべての組み合わせについて、差分を取った値が0になる
 
-\begin{eqnarray}
+\begin{align}
 \mathrm{E}[Y^{0, 0} - Y^{1, 0}] &= 0\\ 
 \mathrm{E}[Y^{0, 0} - Y^{0, 1}] &= 0\\
 \mathrm{E}[Y^{0, 0} - Y^{1, 1}] &= 0\\
 \mathrm{E}[Y^{1, 0} - Y^{0, 1}] &= 0\\
 \mathrm{E}[Y^{1, 0} - Y^{1, 1}] &= 0\\
 \mathrm{E}[Y^{0, 1} - Y^{1, 1}] &= 0
-\end{eqnarray}
+\end{align}
 
 
 ```{r}
@@ -77,15 +83,28 @@ generate_data <- function(n){
 data_obs <- generate_data(1000)
 ```
 
-A0の因果効果
+- A0の因果効果
 
 ```{r}
 
-data_obs %>% 
-  lm(Y ~ A0, data = .) %>% 
-  summary()
+data_obs |> 
+  lm(Y ~ A0, data = _) |> 
+  tidy() |> 
+  kable()
 
 ```
+
+- A1の因果効果
+
+```{r}
+
+data_obs |> 
+  lm(Y ~ A1 + L1, data = _) |> 
+  tidy() |> 
+  kable()
+
+```
+
 
 - collider bias
 
@@ -93,18 +112,20 @@ $L_1$を条件づけると、$A_0 \to L_1 \gets U_1 \to Y$というパスが開�
 
 ```{r}
 
-data_obs %>% 
-  lm(Y ~ A0 + L1, data = .) %>% 
-  summary()
+data_obs |> 
+  lm(Y ~ A0 + L1, data = _) |> 
+  tidy() |> 
+  kable()
 
 ```
 
 
 ```{r}
 
-data_obs %>% 
-  lm(Y ~ A0*A1, data = .) %>% 
-  summary()
+data_obs |> 
+  lm(Y ~ A0*A1, data = _) |> 
+  tidy() |> 
+  kable()
 
 ```
 
@@ -126,33 +147,37 @@ W^{A_0, A_1} = \frac{1}{f(A_0)} \times \frac{1}{f(A_1 | A_0, L_1)}
 $$
 
 ```{r}
-res_ipw <- 
+res_ipw <-
   broom::augment_columns(
     glm(A0 ~ 1, data = data_obs, family = 'binomial'), 
     data = data_obs, 
     type.predict = 'response'
-  ) %>% 
+  ) |> 
   # A0に対するウェイト
   mutate(
-    ipw_A0 = case_when(A0 == 1 ~ 1 / .fitted,
-                       A0 == 0 ~ 1 / (1 - .fitted))
-  ) %>% 
-  select(Y:U1, ipw_A0) %>% 
+    ipw_A0 = case_when(
+      A0 == 1 ~ 1 / .fitted,
+      A0 == 0 ~ 1 / (1 - .fitted)
+    )
+  ) |> 
+  select(Y:U1, ipw_A0) |> 
   broom::augment_columns(
     glm(A1 ~ A0 + L1 + I(L1^2), data = data_obs, family = 'binomial'),
-    data = .,
+    data = _,
     type.predict = 'response'
-  ) %>% 
+  ) |> 
   mutate(
     # A1に対するウェイト
-    ipw_A1 = case_when(A1 == 1 ~ 1 / .fitted,
-                       A1 == 0 ~ 1 / (1 - .fitted))
-  ) %>% 
-  select(Y:U1, ipw_A0, ipw_A1) %>% 
+    ipw_A1 = case_when(
+      A1 == 1 ~ 1 / .fitted,
+      A1 == 0 ~ 1 / (1 - .fitted)
+    )
+  ) |> 
+  select(Y:U1, ipw_A0, ipw_A1) |> 
   # A0に対するウェイトとA1に対するウェイトをかけ算
-  mutate(ipw = ipw_A0*ipw_A1) %>% 
+  mutate(ipw = ipw_A0*ipw_A1) |> 
   # 重み付け推定
-  summarise(CFmean = weighted.mean(Y, ipw), .by = c(A0, A1)) %>% 
+  summarise(CFmean = weighted.mean(Y, ipw), .by = c(A0, A1)) |> 
   arrange(A0, A1)
 
 ```
@@ -170,14 +195,14 @@ counterfactual meanの差分
 ```{r}
 
 cross_join(
-  res_ipw %>% 
-    mutate(A0_A1 = str_c(A0, ',', A1)) %>% 
+  res_ipw |> 
+    mutate(A0_A1 = str_c(A0, ',', A1)) |> 
     select(A0_A1, CFmean),
-  res_ipw %>% 
-    mutate(A0_A1 = str_c(A0, ',', A1)) %>% 
+  res_ipw |> 
+    mutate(A0_A1 = str_c(A0, ',', A1)) |> 
     select(A0_A1, CFmean)
-  ) %>% 
-  filter(A0_A1.x != A0_A1.y) %>% 
+  ) |> 
+  filter(A0_A1.x != A0_A1.y) |> 
   mutate(ATE = CFmean.y - CFmean.x)
   
 
@@ -193,12 +218,11 @@ cross_join(
 res_tmle <- 
   ltmle::ltmle(
     # データセットの列の順番が大切
-    data = data_obs %>% select(A0, L1, A1, Y), 
+    data = data_obs |> select(A0, L1, A1, Y), 
     Anodes = c('A0', 'A1'), 
     Lnodes = 'L1',
     Ynodes = 'Y',
     abar = list(treatment = c(1, 1), control = c(0, 0)), 
-    # Yrange = c(-100, 100), 
     SL.library = c('SL.glm', 'SL.gam', 'SL.randomForest')
   )
 

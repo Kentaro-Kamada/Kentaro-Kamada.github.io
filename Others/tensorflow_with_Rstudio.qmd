@@ -36,12 +36,13 @@ python3 -m venv .venv
 ## pythonライブラリをインストール
 
 - 以下のコマンドを実行し、仮想環境を起動
-  - pythonの場所が`.venv`内のフォルダになっているのを確認
+  - pythonの場所が`.venv`内のフォルダになる
 
 ```{bash}
 #| filename: "terminal"
+#| eval: false
+
 source .venv/bin/activate
-which python
 ```
 
 :::{.callout-note}
@@ -76,12 +77,21 @@ deactivate
 
 - RStudioでpythonを使うには、RStudioにpythonの場所を教えてやる必要がある
   - 今回は`.venv`内のpythonを使いたいので、作業ディレクトリに`.Rprofile`を作成し、以下のコードを書く
+  - `renv`を使っている場合は、`.Rprofile`が既に作成されていると思うので、その中に追記する
 
 ```{r}
 #| filename: ".Rprofile"
 #| eval: false
-Sys.setenv(RETICULATE_PYTHON = ".venv/bin/python")
+
+# renv起動
+source("renv/activate.R")
+# pythonの場所を指定
+Sys.setenv(RETICULATE_PYTHON = ".venv/bin/python3")
 ```
+
+:::{.callout-note}
+pythonの場所の指定は`renv`の起動より後に行う必要がある。もし先にpythonの場所を指定してしまうと、`renv`を起動したときにpythonの場所が上書きされてしまい、上手くいかなくなる。
+:::
 
 ### pythonを起動
 
@@ -175,7 +185,7 @@ df <-
 ```{r}
 #| filename: "R"
 
-split <- rsample::initial_split(df, prop = 0.8)
+split <- rsample::initial_split(df, prop = 0.9)
 train <- rsample::training(split)
 test <- rsample::testing(split)
 

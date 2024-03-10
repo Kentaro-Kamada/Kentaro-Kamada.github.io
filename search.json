@@ -1,80 +1,136 @@
 [
   {
-    "objectID": "Others/rlang学習.html",
-    "href": "Others/rlang学習.html",
-    "title": "rlang学習",
+    "objectID": "Others/tensorflow_with_Rstudio.html",
+    "href": "Others/tensorflow_with_Rstudio.html",
+    "title": "tensorflowをRstudioで",
     "section": "",
-    "text": "Advanced R"
+    "text": "pythonをRStudioで使うのはreticulateパッケージによりだいぶ楽になった。\nただpythonにおけるdeep learningの代表的パッケージであるtensorflowをRStudioで使う際に少しつまづいたのでメモです。"
   },
   {
-    "objectID": "Others/rlang学習.html#参考",
-    "href": "Others/rlang学習.html#参考",
-    "title": "rlang学習",
+    "objectID": "Others/tensorflow_with_Rstudio.html#pythonの環境をどうやって構築するか",
+    "href": "Others/tensorflow_with_Rstudio.html#pythonの環境をどうやって構築するか",
+    "title": "tensorflowをRstudioで",
+    "section": "pythonの環境をどうやって構築するか？",
+    "text": "pythonの環境をどうやって構築するか？\nRではrenvパッケージを使っている。ではpythonでは？\npythonはRよりも環境が複雑で変化も早そうなので、環境構築は重要。\n今回はpython公式が推奨しているっぽいvenvを使う。\n\n\n\n\n\n\nNote\n\n\n\n最初global環境でそのままやろうとしたが上手くいかず挫折。Dockerとかも有力だと思う。"
+  },
+  {
+    "objectID": "Others/tensorflow_with_Rstudio.html#venvを使って仮想環境を用意",
+    "href": "Others/tensorflow_with_Rstudio.html#venvを使って仮想環境を用意",
+    "title": "tensorflowをRstudioで",
+    "section": "venvを使って仮想環境を用意",
+    "text": "venvを使って仮想環境を用意\n\npythonがインストールされているか確認\n\nhomebrewなりでインストールしておく\nPATHを通しておく\n\n作業ディレクトリにて、terminalで以下のコマンドを実行し.venvフォルダを作成\n\n\n\n\nterminal\n\npython3 -m venv .venv"
+  },
+  {
+    "objectID": "Others/tensorflow_with_Rstudio.html#pythonライブラリをインストール",
+    "href": "Others/tensorflow_with_Rstudio.html#pythonライブラリをインストール",
+    "title": "tensorflowをRstudioで",
+    "section": "pythonライブラリをインストール",
+    "text": "pythonライブラリをインストール\n\n以下のコマンドを実行し、仮想環境を起動\n\npythonの場所が.venv内のフォルダになる\n\n\n\n\n\nterminal\n\nsource .venv/bin/activate\n\n\n\n\n\n\n\n\nNote\n\n\n\nsource .venv/bin/activateは、ライブラリをインストールするときは毎回実行する必要があります！\nまちがってglobal環境を汚さないように！\n\n\n\nライブラリをインストール\n\ntensorflowのほか、numpyも必須（tensorflowをインストールしたときに入る）\nM1 macでGPUを使いたい場合はtensorflow-metalもインストールする\n\n\n\n\n\nterminal\n\npip install tensorflow-macos\npip install tensorflow-metal\n\n\n\n仮想環境を抜けるときは以下のコマンドを実行\n\n\n\n\nterminal\n\ndeactivate"
+  },
+  {
+    "objectID": "Others/tensorflow_with_Rstudio.html#rstudioでpythonを使う",
+    "href": "Others/tensorflow_with_Rstudio.html#rstudioでpythonを使う",
+    "title": "tensorflowをRstudioで",
+    "section": "RStudioでpythonを使う",
+    "text": "RStudioでpythonを使う\n\npythonの場所を指定\n\nRStudioでpythonを使うには、RStudioにpythonの場所を教えてやる必要がある\n\n今回は.venv内のpythonを使いたいので、作業ディレクトリに.Rprofileを作成し、以下のコードを書く\nrenvを使っている場合は、.Rprofileが既に作成されていると思うので、その中に追記する\n\n\n\n\n\n.Rprofile\n\n# renv起動\nsource(\"renv/activate.R\")\n# pythonの場所を指定\nSys.setenv(RETICULATE_PYTHON = \".venv/bin/python3\")\n\n\n\n\n\n\n\n\nNote\n\n\n\npythonの場所の指定はrenvの起動より後に行う必要がある。もし先にpythonの場所を指定してしまうと、renvを起動したときにpythonの場所が上書きされてしまい、上手くいかなくなる。\n\n\n\n\npythonを起動\n\nRStudioでpythonのコードを実行すると、reticulate::repl_python()が走ってコンソールがpythonになる\n\n\n\n\npython\n\nimport sys\nprint(sys.version)\n\n\n3.11.7 (main, Dec  4 2023, 18:10:11) [Clang 15.0.0 (clang-1500.1.0.2.5)]\n\n\n\ntensorflowを起動して、GPUが使えるかを確認\nphysical_deviceでCPUとGPUの両方が表示されてればOK\n\n\n\n\npython\n\nimport tensorflow as tf\ntf.config.list_physical_devices()\n\n\n[PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU'), PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]"
+  },
+  {
+    "objectID": "Others/tensorflow_with_Rstudio.html#ニューラルネットをやってみる",
+    "href": "Others/tensorflow_with_Rstudio.html#ニューラルネットをやってみる",
+    "title": "tensorflowをRstudioで",
+    "section": "ニューラルネットをやってみる",
+    "text": "ニューラルネットをやってみる\n\nチュートリアルとして、手書きのアルファベットを分類するモデルを作成してみる\nRでデータを読み込んで、pythonに渡してtensorflowで分析\n参考\n\n\n\n\nR\n\nlibrary(tidyverse)\nlibrary(rsample)\nlibrary(reticulate)\n\n\n\nデータのダウンロード\n\n\n\nR\n\n# データのダウンロード\nif (!dir.exists('data')) dir.create('data')\ndownload.file('https://ai.stanford.edu/~btaskar/ocr/letter.data.gz', destfile = 'data/letter.data')\n\n\n\n\nデータの読み込み\n\n列名はhttps://ai.stanford.edu/~btaskar/ocr/letter.namesより取得できる\n詳細は以下の通り\n\nid: each letter is assigned a unique integer id\nletter: a-z\nnext_id: id for next letter in the word, -1 if last letter\nword_id: each word is assigned a unique integer id (not used)\nposition: position of letter in the word (not used)\nfold: 0-9 – cross-validation fold\np_i_j: 0/1 – value of pixel in row i, column j\n\nletterとp_i_j（pixel）のみ使うのでそれ以外は削除\n\n\n\n\nR\n\ncolname &lt;- read_lines('https://ai.stanford.edu/~btaskar/ocr/letter.names')\ndata &lt;- \n  read_tsv('data/letter.data', col_names = colname) |&gt; \n  # letterとpixelだけ残す\n  select(id, letter, matches('p_\\\\d+_\\\\d+'))\n\n\n\n\nデータの前処理\n\nletterを数値に変換\n\n\n\n\nR\n\ndf &lt;- \n  data |&gt; \n  mutate(\n    letter = factor(letter),\n    # pythonは0からはじまるので-1する（Rは1から）\n    letter_num = as.numeric(letter) - 1\n  )\n\n\n\n訓練データとテストデータに分割\n\n\n\n\nR\n\nsplit &lt;- rsample::initial_split(df, prop = 0.9)\ntrain &lt;- rsample::training(split)\ntest &lt;- rsample::testing(split)\n\n\n\npythonに渡せる形にデータを変換\n\nreticulate::np_array()であらかじめndarrayにしておくと便利\n\n\n\n\n\nR\n\ntrain_x &lt;- \n  train |&gt; \n  select(!c(id, letter, letter_num)) |&gt;\n  as.matrix() |&gt; \n  np_array()\n\ntrain_y &lt;-\n  train |&gt;\n  pull(letter_num) |&gt;\n  np_array()\n\ntest_x &lt;-\n  test |&gt; \n  select(!c(id, letter, letter_num)) |&gt;\n  as.matrix() |&gt; \n  np_array()\n\ntest_y &lt;-\n  test |&gt;\n  pull(letter_num) |&gt;\n  np_array()\n\n\n\n\nニューラルネットで学習\n\n中間層が1つのニューラルネットを作成\n\n入力層は16x8=128（ピクセル）\n中間層は64次元\n出力層はa-zの26分類\n\n\n\n\n\npython\n\nimport tensorflow as tf\nimport numpy as np\n\n# モデルの作成\nmodel = tf.keras.Sequential([\n  tf.keras.layers.Dense(64, activation='relu'),\n  tf.keras.layers.Dense(26, activation='softmax')\n])\n\nmodel.compile(\n  optimizer='adam',\n  loss='sparse_categorical_crossentropy',\n  metrics=['accuracy']\n)\n\n\n\nrで作成したデータをpythonに渡して学習\nr.train_xでRのtrain_xを参照できる\npythonのオブジェクトを渡すときはpy$train_x\n\n\n\n\npython\n\n# モデルの学習\nmodel.fit(r.train_x, r.train_y, epochs=10, verbose=2)\n\n\nEpoch 1/10\n1467/1467 - 7s - loss: 1.3412 - accuracy: 0.6353 - 7s/epoch - 5ms/step\nEpoch 2/10\n1467/1467 - 7s - loss: 0.9432 - accuracy: 0.7488 - 7s/epoch - 4ms/step\nEpoch 3/10\n1467/1467 - 6s - loss: 0.8793 - accuracy: 0.7660 - 6s/epoch - 4ms/step\nEpoch 4/10\n1467/1467 - 7s - loss: 0.8487 - accuracy: 0.7738 - 7s/epoch - 5ms/step\nEpoch 5/10\n1467/1467 - 7s - loss: 0.8330 - accuracy: 0.7756 - 7s/epoch - 4ms/step\nEpoch 6/10\n1467/1467 - 7s - loss: 0.8244 - accuracy: 0.7786 - 7s/epoch - 4ms/step\nEpoch 7/10\n1467/1467 - 7s - loss: 0.8220 - accuracy: 0.7777 - 7s/epoch - 4ms/step\nEpoch 8/10\n1467/1467 - 7s - loss: 0.8197 - accuracy: 0.7792 - 7s/epoch - 4ms/step\nEpoch 9/10\n1467/1467 - 7s - loss: 0.8201 - accuracy: 0.7786 - 7s/epoch - 4ms/step\nEpoch 10/10\n1467/1467 - 6s - loss: 0.8217 - accuracy: 0.7771 - 6s/epoch - 4ms/step\n&lt;keras.src.callbacks.History object at 0x2824ed250&gt;\n\n\n\n\nテストデータで評価\n\nテストデータでの正答率は77%くらい\n\n\n\n\npython\n\n# モデルの評価\nmodel.evaluate(r.test_x, r.test_y, verbose=2)\n\n\n163/163 - 1s - loss: 0.8303 - accuracy: 0.7699 - 549ms/epoch - 3ms/step\n[0.8303112387657166, 0.7699386477470398]"
+  },
+  {
+    "objectID": "Others/how_to_change_BLAS.html",
+    "href": "Others/how_to_change_BLAS.html",
+    "title": "BLASの変更によるRの高速化",
     "section": "",
-    "text": "Advanced R"
+    "text": "Do GPU-based Basic Linear Algebra Subprograms (BLAS) improve the performance of standard modeling techniques in R?\nEven faster matrix math in R on macOS with M1\nNVBLASを使って「R」の並列演算処理を高速化"
   },
   {
-    "objectID": "Others/rlang学習.html#下準備",
-    "href": "Others/rlang学習.html#下準備",
-    "title": "rlang学習",
-    "section": "下準備",
-    "text": "下準備\n\nlibrary(rlang)\nlibrary(lobstr)"
-  },
-  {
-    "objectID": "Others/rlang学習.html#expression",
-    "href": "Others/rlang学習.html#expression",
-    "title": "rlang学習",
-    "section": "expression",
-    "text": "expression\n\nexpr：コードをそのまま捕まえる\n\n作成されたオブジェクト：expression\ncall, symbol, constant, pairlistの4つからなる\n\n\n\nexpr(mean(x, na.rm = TRUE))\n\nmean(x, na.rm = TRUE)\n\nexpr(10 + 100 + 1000)\n\n10 + 100 + 1000\n\n\n\nexprは関数の引数なども書いてあるまま保持する\n\n\n# これはxになる\ncapture_it &lt;- function(x) {\n  expr(x)\n}\n\ncapture_it(a + b + c)\n\nx\n\n\n\n引数は評価した上でコードを保持したい場合はenexprを使う\n\n\ncapture_it &lt;- function(x) {\n  enexpr(x)\n}\ncapture_it(a + b + c)\n\na + b + c"
-  },
-  {
-    "objectID": "Others/rlang学習.html#abstract-syntax-tree-ast-による表現",
-    "href": "Others/rlang学習.html#abstract-syntax-tree-ast-による表現",
-    "title": "rlang学習",
-    "section": "abstract syntax tree (AST) による表現",
-    "text": "abstract syntax tree (AST) による表現\n\ncodeはtree形式で表現できる\nfがcall, aがsymbol, “b”がconstantらしい\n\n\nlobstr::ast(f(a, \"b\"))\n\n█─f \n├─a \n└─\"b\" \n\n\n\n+や*も関数であることがわかる\n\n\nlobstr::ast(1 + 2 * 3)\n\n█─`+` \n├─1 \n└─█─`*` \n  ├─2 \n  └─3"
-  },
-  {
-    "objectID": "Others/rlang学習.html#codeを生成するcode",
-    "href": "Others/rlang学習.html#codeを生成するcode",
-    "title": "rlang学習",
-    "section": "codeを生成するcode",
-    "text": "codeを生成するcode\n\ncall2\n\n\ncall2('f', 1, 2)\n\nf(1, 2)\n\ncall2('+', 1, call2('*', 2, 3))\n\n1 + 2 * 3\n\n\n\n!!を使ったcodeの生成\n\n捕まえておいたコードを評価したいところで評価する\n\n\n\nxx &lt;- expr(x + x)\nyy &lt;- expr(y + y)\n\nexpr(!!xx / !!yy)\n\n(x + x)/(y + y)"
-  },
-  {
-    "objectID": "Others/rlang学習.html#codeの評価",
-    "href": "Others/rlang学習.html#codeの評価",
-    "title": "rlang学習",
-    "section": "codeの評価",
-    "text": "codeの評価\n\neval(expr, env)：exprをenvで評価\n\n\neval(expr(x + y), env(x = 1, y = 10))\n\n[1] 11\n\neval(expr(x + y), env(x = 2, y = 100))\n\n[1] 102\n\n\n\nenvを指定しないときは現在のenvironmentで評価\n\n\nx &lt;- 10\ny &lt;- 100\n\neval(expr(x + y))\n\n[1] 110\n\n\n\nデータを環境として扱う\neval_tidy(expr, data)：exprをdata内部で評価\n\ndataでcurrent environmentを上書きするのでdata-mask呼ばれる\n\nevalでもできないことはないが、落とし穴があるらしい\n\n\ndf &lt;- data.frame(x = 1:5, y = sample(5))\neval_tidy(expr(x + y), df)\n\n[1]  2  5  5  8 10\n\n\n\ndplyrっぽい関数\n\n\nwith2 &lt;- function(df, expr) {\n  eval_tidy(enexpr(expr), df)\n}\n\nwith2(df, x + y)\n\n[1]  2  5  5  8 10"
-  },
-  {
-    "objectID": "Others/rlang学習.html#quosure",
-    "href": "Others/rlang学習.html#quosure",
-    "title": "rlang学習",
-    "section": "Quosure",
-    "text": "Quosure\n\nexprだけを使う方法は問題がでてくる\n関数の内部でaを定義してみる\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eval_tidy(enexpr(expr), df)\n}\n\n\nさらに関数の外部（global environment）でもaを定義する\n\n\ndf &lt;- data.frame(x = 1:3)\na &lt;- 10\n\n\nこの状態でwith2を使うと問題が発生\n\nglobal environmentのaではなく、関数内部で定義したaが優先的に使われる\n\n\n\nwith2(df, x + a)\n\n[1] 1001 1002 1003\n\n\n\nquosure：expressionとenvironmentをセットで保持する\n\ndata-maskでは、eval_tidyのdata -&gt; quosureのenv -&gt; global envの順で評価される\n\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eval_tidy(enquo(expr), df)\n}\n\nx &lt;- 10\n\nwith2(df, x + a)\n\n[1] 11 12 13"
-  },
-  {
-    "objectID": "Others/度数から対数尤度を計算.html",
-    "href": "Others/度数から対数尤度を計算.html",
-    "title": "観測度数・期待度数から対数尤度を計算する方法",
+    "objectID": "Others/how_to_change_BLAS.html#参考",
+    "href": "Others/how_to_change_BLAS.html#参考",
+    "title": "BLASの変更によるRの高速化",
     "section": "",
-    "text": "\\(f_{ij}\\)：観測度数\n\n\n\n\n\nB\nB’\n\n\n\n\nA\n\\(f_{11}\\)\n\\(f_{12}\\)\n\n\nA’\n\\(f_{21}\\)\n\\(f_{22}\\)\n\n\n\n\n\\(p_{ij}\\)：セル確率\n\nモデルから計算されたセルの確率\nAとBに関連がないモデルにおいては、期待度数をサンプルサイズで割ったもの\n\n\n\n\n\n\nB\nB’\n\n\n\n\nA\n\\(p_{11}\\)\n\\(p_{12}\\)\n\n\nA’\n\\(p_{21}\\)\n\\(p_{22}\\)\n\n\n\n尤度関数を\\(L\\)とすると\n\\[\nL = \\prod_i \\prod_j p_{ij}^{f_{ij}} =  p_{11}^{f_{11}} \\times p_{12}^{f_{12}} \\times p_{21}^{f_{21}} \\times p_{22}^{f_{22}}\n\\]\n各セルの確率を(観測度数)乗したものを全部掛け算\n対数尤度はこれの対数を取ったもの\n\\[\n\\log L = \\sum_i \\sum_j f_{ij} \\log p_{ij} = f_{11} \\log p_{11} + f_{12} \\log p_{12} + f_{21} \\log p_{21} + f_{22} \\log p_{22}\n\\]\n掛け算が足し算になるので計算しやすい"
+    "text": "Do GPU-based Basic Linear Algebra Subprograms (BLAS) improve the performance of standard modeling techniques in R?\nEven faster matrix math in R on macOS with M1\nNVBLASを使って「R」の並列演算処理を高速化"
   },
   {
-    "objectID": "Others/度数から対数尤度を計算.html#観測度数とセル確率から対数尤度を計算",
-    "href": "Others/度数から対数尤度を計算.html#観測度数とセル確率から対数尤度を計算",
-    "title": "観測度数・期待度数から対数尤度を計算する方法",
+    "objectID": "Others/how_to_change_BLAS.html#概要",
+    "href": "Others/how_to_change_BLAS.html#概要",
+    "title": "BLASの変更によるRの高速化",
+    "section": "概要",
+    "text": "概要\nR言語の計算速度はそれほど速くはないが、いくつか工夫することで高速化が可能。\n\nベクトル演算の駆使\n並列化（paralell, future, furrrなど）\nBLAS (Basic Linear Algebra Subprograms) の変更\n\n今回はBLASの変更による高速化について。"
+  },
+  {
+    "objectID": "Others/how_to_change_BLAS.html#blasとは",
+    "href": "Others/how_to_change_BLAS.html#blasとは",
+    "title": "BLASの変更によるRの高速化",
+    "section": "BLASとは",
+    "text": "BLASとは\nBLASは、行列演算を高速に行うためのライブラリ。たとえば分散や共分散を計算するときは、行列の掛け算をする必要がある。機械学習やニューラルネットワークでは行列の掛け算が多用されるため、BLASの高速化は全体としての計算速度の向上に大きく貢献する。\nBLASはオープンソースのものもあるが、各CPU、GPUメーカーがそれぞれのチップに適したライブラリを提供している。\n\nRについてるBLAS\n\nRにデフォルトでついてくるBLAS\n\nOpenBLAS\n\nオープンソースのBLASで、homebrewでインストール可能\npythonのnumpyで使われているらしい\n\nATLAS\n\nこちらもオープンソース\n\nMKL\n\nIntelが提供するBLAS\nMacだと使えない\n\nNVBLAS\n\nNVIDIAが提供するBLAS\nGPUを使用するのでめちゃくちゃ速いらしい\nNVIDIAのGPUじゃないと使えない…\n\nAccelerate\n\nAppleが提供\n今回使用するやつ"
+  },
+  {
+    "objectID": "Others/how_to_change_BLAS.html#blasの変更",
+    "href": "Others/how_to_change_BLAS.html#blasの変更",
+    "title": "BLASの変更によるRの高速化",
+    "section": "BLASの変更",
+    "text": "BLASの変更\n以下、homebrewでRをインストールしていることを前提とする。\nterminalで以下のコマンドを実行する。\n\ncd /Library/Frameworks/R.framework/Resources/lib\nln -sf libRblas.veclib.dylib libRblas.dylib\n\n意味としては、RはlibRblas.dylibをBLASとして認識するので、libRblas.veclib.dylibをlibRblas.dylibにリンクすることで、libRblas.veclib.dylibをBLASとして使うようにする。\nもどすときはlibRblas.veclib.dylibの代わりに、libRblas.0.dylib（デフォルトのBLAS）をリンクすればよい。\n\ncd /Library/Frameworks/R.framework/Resources/lib\nln -sf libRblas.0.dylib libRblas.dylib"
+  },
+  {
+    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html",
+    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html",
+    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
     "section": "",
-    "text": "\\(f_{ij}\\)：観測度数\n\n\n\n\n\nB\nB’\n\n\n\n\nA\n\\(f_{11}\\)\n\\(f_{12}\\)\n\n\nA’\n\\(f_{21}\\)\n\\(f_{22}\\)\n\n\n\n\n\\(p_{ij}\\)：セル確率\n\nモデルから計算されたセルの確率\nAとBに関連がないモデルにおいては、期待度数をサンプルサイズで割ったもの\n\n\n\n\n\n\nB\nB’\n\n\n\n\nA\n\\(p_{11}\\)\n\\(p_{12}\\)\n\n\nA’\n\\(p_{21}\\)\n\\(p_{22}\\)\n\n\n\n尤度関数を\\(L\\)とすると\n\\[\nL = \\prod_i \\prod_j p_{ij}^{f_{ij}} =  p_{11}^{f_{11}} \\times p_{12}^{f_{12}} \\times p_{21}^{f_{21}} \\times p_{22}^{f_{22}}\n\\]\n各セルの確率を(観測度数)乗したものを全部掛け算\n対数尤度はこれの対数を取ったもの\n\\[\n\\log L = \\sum_i \\sum_j f_{ij} \\log p_{ij} = f_{11} \\log p_{11} + f_{12} \\log p_{12} + f_{21} \\log p_{21} + f_{22} \\log p_{22}\n\\]\n掛け算が足し算になるので計算しやすい"
+    "text": "パッケージ\n\n\nlibrary(tidyverse)\nlibrary(cfdecomp)\n\nkable &lt;- partial(\n  knitr::kable,\n  digits = 3\n)\n\n\nデータ\n\n\n# the decomposition functions in our package are computationally intensive\n# to make the example run quick, I perform it on a subsample (n=125) of the data:\nset.seed(100)\ndata &lt;- \n  cfd.example.data[sample(1000),] |&gt; \n  select(SES, age, med.gauss, out.gauss, id) |&gt; \n  as_tibble()"
   },
   {
-    "objectID": "Others/度数から対数尤度を計算.html#尤度比カイ2乗値との関係",
-    "href": "Others/度数から対数尤度を計算.html#尤度比カイ2乗値との関係",
-    "title": "観測度数・期待度数から対数尤度を計算する方法",
-    "section": "尤度比カイ2乗値との関係",
-    "text": "尤度比カイ2乗値との関係\n尤度比カイ2乗値（\\(G^2\\)）と観測度数（\\(f\\)）・期待度数（\\(F\\)）の関係は以下の式で表される(Hout 1983; McCutcheon 1987)\n\\[\nG^2 = 2 \\sum_i \\sum_j f_{ij} \\log \\frac{f_{ij}}{F_{ij}}\n\\]\nなぜこうなるのか？対数尤度の比から考えてみる。\nまず、AとBに関連がないというモデル（独立モデル）のもとで対数尤度を計算する。この条件ではセル確率\\(p_{ij}\\)は期待度数\\(F_{ij}\\)をサンプルサイズ\\(N\\)で割ったものになる。\n\\[\n\\log L_1 = \\sum_i \\sum_j f_{ij} \\log p_{ij} = \\sum_i \\sum_j f_{ij} \\log \\frac{F_{ij}}{N} = \\sum_i \\sum_j f_{ij} \\log F_{ij} - \\sum_i \\sum_j f_{ij} \\log N\n\\]\n次に、AとBに関連があるというモデル（飽和モデル）のもとで対数尤度を計算する。この条件ではセル確率\\(p_{ij}\\)は観測度数\\(f_{ij}\\)をサンプルサイズ\\(N\\)で割ったものになる。\n\\[\n\\log L_2 = \\sum_i \\sum_j f_{ij} \\log p_{ij} = \\sum_i \\sum_j f_{ij} \\log \\frac{f_{ij}}{N} = \\sum_i \\sum_j f_{ij} \\log f_{ij} - \\sum_i \\sum_j f_{ij} \\log N\n\\]\n対数尤度の差（＝尤度の比）を計算すると\n\\[\\begin{align}\n\\log L_2 - \\log L_1 &= \\sum_i \\sum_j f_{ij} \\log f_{ij} - \\sum_i \\sum_j f_{ij} \\log F_{ij} \\\\\n\\log \\frac{L_2}{L_1} &= \\sum_i \\sum_j (f_{ij} \\log f_{ij} - f_{ij} \\log F_{ij}) \\\\\n\\log \\frac{L_2}{L_1} &= \\sum_i \\sum_j f_{ij} \\log \\frac{f_{ij}}{F_{ij}} \\\\\n\\end{align}\\]\nそれっぽい形になった。\nさらに両辺を2倍すると\n\\[\n2 \\log \\frac{L_2}{L_1} = \\log (\\frac{L_2}{L_1})^2 = 2 \\sum_i \\sum_j f_{ij} \\log \\frac{f_{ij}}{F_{ij}}\n\\]\nしたがって尤度比カイ二乗値は、尤度比の2乗の対数をとったものである。\nあるいは、以下のように変形すればdeviance（-2対数尤度）の差としても表現できる。\n\\[\n2 \\log \\frac{L_2}{L_1} = (-2 \\log L_1) - (- 2 \\log L_2)\n\\]"
+    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#下準備",
+    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#下準備",
+    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "section": "",
+    "text": "パッケージ\n\n\nlibrary(tidyverse)\nlibrary(cfdecomp)\n\nkable &lt;- partial(\n  knitr::kable,\n  digits = 3\n)\n\n\nデータ\n\n\n# the decomposition functions in our package are computationally intensive\n# to make the example run quick, I perform it on a subsample (n=125) of the data:\nset.seed(100)\ndata &lt;- \n  cfd.example.data[sample(1000),] |&gt; \n  select(SES, age, med.gauss, out.gauss, id) |&gt; \n  as_tibble()"
+  },
+  {
+    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#パッケージによる推定",
+    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#パッケージによる推定",
+    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "section": "パッケージによる推定",
+    "text": "パッケージによる推定\n\ncfdecompパッケージで推定\n\n\n# cfd.mean \nmean.results.1 &lt;- \n  cfd.mean(\n    formula.y = out.gauss ~ SES * med.gauss * age,\n    formula.m = med.gauss ~ SES * age,\n    mediator = 'med.gauss',\n    group = 'SES',\n    data = as.data.frame(data),\n    family.y = 'gaussian',\n    family.m = 'gaussian',\n    bs.size=250,\n    mc.size=10,\n    alpha=0.05,\n    # cluster.sample=FALSE,\n    # cluster.name='id'\n  )\n\n\nSES2とSES3のmediatorの分布をSES1のmediatorの分布に揃える\n\n\ntibble(\n  category = c(\"SES1\", \"SES2\", \"SES3\"),\n  factual_mean = c(\n    mean(mean.results.1$out_nc_y[, 1]),\n    mean(mean.results.1$out_nc_y[, 2]),\n    mean(mean.results.1$out_nc_y[, 3])\n  ),\n  # and after giving the gaussian mediator of SES group 2 the distribution of the one in group 1\n  # the difference becomes:\n  counterfactual_mean = c(\n    mean(mean.results.1$out_cf_y[, 1]),\n    mean(mean.results.1$out_cf_y[, 2]),\n    mean(mean.results.1$out_cf_y[, 3])\n  )) |&gt; \n  kable()\n\n\n\n\ncategory\nfactual_mean\ncounterfactual_mean\n\n\n\n\nSES1\n4.306\n4.306\n\n\nSES2\n3.239\n3.511\n\n\nSES3\n2.212\n2.946"
+  },
+  {
+    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#自分でコードを書いてみる",
+    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#自分でコードを書いてみる",
+    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "section": "自分でコードを書いてみる",
+    "text": "自分でコードを書いてみる"
+  },
+  {
+    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-1-regression-estimates",
+    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-1-regression-estimates",
+    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "section": "step 1: regression estimates",
+    "text": "step 1: regression estimates\n\nmediatorとoutcomeのモデルをデータから推定\n\n\nmediator_model &lt;- lm(med.gauss ~ SES * age, data = data)\noutcome_model &lt;- lm(out.gauss ~ SES * age * med.gauss, data = data)"
+  },
+  {
+    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-2-simulate-the-natural-course-pseudo-population",
+    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-2-simulate-the-natural-course-pseudo-population",
+    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "section": "step 2: simulate the natural-course pseudo-population",
+    "text": "step 2: simulate the natural-course pseudo-population\n\n推定したmediatorのモデルから、mediatorの「分布」を再現\n\n\\[\\begin{align*}\nMed_i = \\mathrm{E}[Med | X] + e_i \\\\\ne_i \\sim \\mathrm{N}(0, \\sigma)\n\\end{align*}\\]\n\nmediatorの分布のパラメータを取得\n\n\n# predict mediator\n# mediatorの「分布」のパラメータを取得\npred_mean_m &lt;- predict(mediator_model, newdata = data, type = \"response\")\nresidual_ref_m &lt;- mediator_model$residuals\nsd_ref_m &lt;- sd(residual_ref_m)\n\n\n推定したパラメータをもとに、mediatorの値をシミュレート\n\n\ndf_nc_med &lt;- \n  data |&gt; \n  mutate(\n    # ランダム性なし\n    pred_med = pred_mean_m,\n    # ランダム性をもたせる1（推定した標準偏差のパラメータを使用）\n    pred_med_draw_1 = rnorm(n(), mean = pred_mean_m, sd = sd_ref_m),\n    # ランダム性をもたせる2（残差からランダムにサンプリング）\n    pred_med_draw_2 = pred_mean_m + sample(residual_ref_m, n(), replace = TRUE)\n  )\n\ndf_nc_med |&gt; \n  summarise(\n    across(c(med.gauss, pred_med:pred_med_draw_2), mean),\n    .by = SES\n  ) |&gt; \n  arrange(SES) |&gt; \n  kable()\n\n\n\n\nSES\nmed.gauss\npred_med\npred_med_draw_1\npred_med_draw_2\n\n\n\n\n1\n8.428\n8.428\n8.418\n8.286\n\n\n2\n7.223\n7.223\n7.276\n7.454\n\n\n3\n5.410\n5.410\n5.579\n5.374\n\n\n\n\n\n\nシミュレートした値をoutcomeモデルに代入して予測値を計算・集計\n\n\ndf_nc_med |&gt; \n  mutate(\n    # ランダム性なし\n    pred_out = predict(\n      outcome_model, newdata = df_nc_med |&gt; mutate(med.gauss = pred_med)\n    ),\n    # ランダム性をもたせる1（推定した標準偏差のパラメータを使用）\n    pred_out_draw_1 = predict(\n      outcome_model, newdata = df_nc_med |&gt; mutate(med.gauss = pred_med_draw_1)\n    ),\n    # ランダム性をもたせる2（残差からランダムにサンプリング）\n    pred_out_draw_2 = predict(\n      outcome_model, newdata = df_nc_med |&gt; mutate(med.gauss = pred_med_draw_2)\n    )\n  ) |&gt; \n  summarise(\n    across(c(out.gauss, pred_out:pred_out_draw_2), mean),\n    .by = SES\n  ) |&gt; \n  arrange(SES) |&gt; \n  kable()\n\n\n\n\nSES\nout.gauss\npred_out\npred_out_draw_1\npred_out_draw_2\n\n\n\n\n1\n4.309\n4.309\n4.312\n4.286\n\n\n2\n3.237\n3.237\n3.249\n3.292\n\n\n3\n2.217\n2.217\n2.254\n2.214"
+  },
+  {
+    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-3-simulate-the-counterfactual-pseudo-population",
+    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-3-simulate-the-counterfactual-pseudo-population",
+    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "section": "step 3: simulate the counterfactual pseudo-population",
+    "text": "step 3: simulate the counterfactual pseudo-population\n\n推定したmediatorのモデルにおいて、全員のSESが1だった場合のmediatorの分布を再現\n全員のSESを1にしてmediatorのパラメータを取得\n回帰モデルでは残差の部分は共変量に依存しない（SES間で分布が同じ、平均0・共通の標準偏差の正規分布）\n\nならばSESが1のグループの標準偏差を使わなくても良いのでは？（全体の標準偏差でもよい）\n標準偏差もグループによって異なる、といったモデルの場合にはどうなるか？\n\n\n\n# 平均\npred_mean_m_SES1 &lt;- predict(mediator_model, newdata = data |&gt; mutate(SES = '1'))\n# SES = 1のグループの残差\nresidual_ref_m_SES1 &lt;-\n  broom::augment(mediator_model)  |&gt;\n  filter(SES == '1') |&gt; \n  pull(.resid)\n# 標準偏差\nsd_ref_m_SES1 &lt;- sd(residual_ref_m_SES1)\n\n\n推定したパラメータをもとに、mediatorの値をシミュレート\n\n\ndf_cf_med &lt;- \n  data |&gt; \n  mutate(\n    # ランダム性なし\n    pred_med_SES1 = pred_mean_m_SES1,\n    # ランダム性をもたせる1（推定した標準偏差のパラメータを使用）\n    pred_med_draw_1_SES1 = rnorm(n(), mean = pred_mean_m_SES1, sd = sd_ref_m_SES1),\n    # ランダム性をもたせる2（残差からランダムにサンプリング）\n    pred_med_draw_2_SES1 = pred_mean_m_SES1 + sample(residual_ref_m_SES1, n(), replace = TRUE)\n  )\n\ndf_cf_med |&gt; \n  summarise(\n    across(c(med.gauss, pred_med_SES1:pred_med_draw_2_SES1), mean),\n    .by = SES\n  ) |&gt; \n  arrange(SES) |&gt; \n  kable()\n\n\n\n\n\n\n\n\n\n\n\nSES\nmed.gauss\npred_med_SES1\npred_med_draw_1_SES1\npred_med_draw_2_SES1\n\n\n\n\n1\n8.428\n8.428\n8.386\n8.632\n\n\n2\n7.223\n8.337\n8.258\n8.292\n\n\n3\n5.410\n8.442\n8.292\n8.593\n\n\n\n\n\n\nシミュレートした値をoutcomeモデルに代入して予測値を計算・集計\n\n\ndf_cf_med |&gt; \n  mutate(\n    # ランダム性なし\n    pred_out_SES1 = predict(\n      outcome_model, newdata = df_cf_med |&gt; mutate(med.gauss = pred_med_SES1)\n    ),\n    # ランダム性をもたせる1（推定した標準偏差のパラメータを使用）\n    pred_out_draw_1_SES1 = predict(\n      outcome_model, newdata = df_cf_med |&gt; mutate(med.gauss = pred_med_draw_1_SES1)\n    ),\n    # ランダム性をもたせる2（残差からランダムにサンプリング）\n    pred_out_draw_2_SES1 = predict(\n      outcome_model, newdata = df_cf_med |&gt; mutate(med.gauss = pred_med_draw_2_SES1)\n    )\n  ) |&gt; \n  summarise(\n    across(c(out.gauss, pred_out_SES1:pred_out_draw_2_SES1), mean),\n    .by = SES\n  ) |&gt; \n  arrange(SES) |&gt; \n  kable()\n\n\n\n\n\n\n\n\n\n\n\nSES\nout.gauss\npred_out_SES1\npred_out_draw_1_SES1\npred_out_draw_2_SES1\n\n\n\n\n1\n4.309\n4.309\n4.303\n4.347\n\n\n2\n3.237\n3.507\n3.485\n3.498\n\n\n3\n2.217\n2.949\n2.920\n2.979"
+  },
+  {
+    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#monte-carloとbootstrapの実装",
+    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#monte-carloとbootstrapの実装",
+    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "section": "monte carloとbootstrapの実装",
+    "text": "monte carloとbootstrapの実装\n\n実際にはrandom drawは一回ではなく何回か行うことで不確実性を表現する\n標準誤差の推定のためにbootstrap法も必要\nまずはtreatmentとoutcomeのモデルを推定し、パラメータを取得\n\n\n# パラメータ推定\nestimate_model &lt;- function(data) {\n  \n  mediator_model &lt;- lm(med.gauss ~ SES * age, data = data)\n  outcome_model &lt;- lm(out.gauss ~ SES * age * med.gauss, data = data)\n  \n  pred_mean_m &lt;- predict(mediator_model, newdata = data, type = \"response\")\n  residual_ref_m &lt;- mediator_model$residuals\n  sd_ref_m &lt;- sd(residual_ref_m)\n\n  pred_mean_m_SES1 &lt;- predict(mediator_model, newdata = data |&gt; mutate(SES = '1'))\n  residual_ref_m_SES1 &lt;-\n    broom::augment(mediator_model)  |&gt;\n    filter(SES == '1') |&gt; \n    pull(.resid)\n  sd_ref_m_SES1 &lt;- sd(residual_ref_m_SES1)\n\n}\n\n\nパラメータをもとにmediatorをシミュレートするのを何回か繰り返す\n\n\nmontecarlo_sampling &lt;- function(data, mc = 10) {\n  # パラメータ推定\n  estimate_model(data)\n  # モンテカルロシミュレーション\n  map(1:mc, \\(mc) {\n    # mediatorサンプリング\n    boot_sample &lt;- \n      data |&gt; \n      mutate(\n        pred_med_draw_1 = rnorm(n(), mean = pred_mean_m, sd = sd_ref_m),\n        pred_med_draw_2 = pred_mean_m + sample(residual_ref_m, n(), replace = TRUE),\n        pred_med_draw_1_SES1 = rnorm(n(), mean = pred_mean_m_SES1, sd = sd_ref_m_SES1),\n        pred_med_draw_2_SES1 = pred_mean_m_SES1 + sample(residual_ref_m_SES1, n(), replace = TRUE),\n      )\n    # サンプリングしたものからoutcome予測\n    boot_sample |&gt; \n      mutate(\n        pred_out_draw_1 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_1)\n        ),\n        pred_out_draw_2 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_2)\n        ),\n        pred_out_draw_1_SES1 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_1_SES1)\n        ),\n        pred_out_draw_2_SES1 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_2_SES1)\n        )\n      ) |&gt; \n      group_by(SES) |&gt; \n      summarise(across(c(pred_out_draw_1:pred_out_draw_2_SES1), mean))\n    \n  }) |&gt; \n    list_rbind(names_to = 'mc') |&gt; \n    # シミュレーション結果を集計\n    group_by(SES) |&gt; \n    summarise(across(c(pred_out_draw_1:pred_out_draw_2_SES1), mean))\n  \n}\n\n\nこれをbootstrapで繰り返す\n\n\nresult &lt;- \n  map(1:250, \\(index) {\n    # bootstrapサンプル発生\n    bootsample &lt;- slice_sample(data, prop = 1, replace = TRUE)\n    montecarlo_sampling(bootsample, mc = 10) \n  }) |&gt; \n  list_rbind(names_to = 'index')\n\n\n結果を集計\n\n\nresult |&gt; \n  pivot_longer(\n    cols = c(pred_out_draw_1:pred_out_draw_2_SES1), \n    names_to = 'type', \n    values_to = 'value'\n  ) |&gt; \n  summarise(\n    mean = mean(value), \n    conf.low = quantile(value, 0.025),\n    conf.high = quantile(value, 0.975),\n    .by = c(SES, type)\n  ) |&gt; \n  arrange(type) |&gt; \n  kable()\n\n\n\n\nSES\ntype\nmean\nconf.low\nconf.high\n\n\n\n\n1\npred_out_draw_1\n4.015\n3.937\n4.091\n\n\n2\npred_out_draw_1\n3.183\n3.124\n3.251\n\n\n3\npred_out_draw_1\n2.645\n2.599\n2.688\n\n\n1\npred_out_draw_1_SES1\n4.276\n4.193\n4.351\n\n\n2\npred_out_draw_1_SES1\n3.513\n3.446\n3.582\n\n\n3\npred_out_draw_1_SES1\n2.970\n2.934\n3.000\n\n\n1\npred_out_draw_2\n4.015\n3.938\n4.094\n\n\n2\npred_out_draw_2\n3.182\n3.123\n3.253\n\n\n3\npred_out_draw_2\n2.646\n2.600\n2.687\n\n\n1\npred_out_draw_2_SES1\n4.276\n4.183\n4.358\n\n\n2\npred_out_draw_2_SES1\n3.515\n3.457\n3.584\n\n\n3\npred_out_draw_2_SES1\n2.970\n2.941\n2.998"
   },
   {
     "objectID": "Causal_Inference/L-TMLE.html",
@@ -217,102 +273,60 @@
     "text": "TMLEではbootstrapによらずとも標準誤差を算出できる（！）\nまずは、Influence Functionを推定する\nInfluence Function：各サンプルがどれだけATEに影響をあたえるか？\n\n\ndat_tmle4 &lt;- \n  dat_tmle3 |&gt; \n  mutate(\n    IF = (Y - Q_A_update)*H_A + Q_A1_update - Q_A0_update - ATE\n  )\n\nATEの標準誤差はIFを用いて\n\\[\nSE = \\sqrt{\\frac{\\mathrm{var}(IF)}{N}}\n\\]\n\ndat_tmle4 |&gt; \n  summarise(SE = sqrt(var(IF) / 1000))\n\n# A tibble: 1 × 1\n         SE\n      &lt;dbl&gt;\n1 0.0000215"
   },
   {
-    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html",
-    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "objectID": "Others/rlang学習.html",
+    "href": "Others/rlang学習.html",
+    "title": "rlang学習",
     "section": "",
-    "text": "パッケージ\n\n\nlibrary(tidyverse)\nlibrary(cfdecomp)\n\nkable &lt;- partial(\n  knitr::kable,\n  digits = 3\n)\n\n\nデータ\n\n\n# the decomposition functions in our package are computationally intensive\n# to make the example run quick, I perform it on a subsample (n=125) of the data:\nset.seed(100)\ndata &lt;- \n  cfd.example.data[sample(1000),] |&gt; \n  select(SES, age, med.gauss, out.gauss, id) |&gt; \n  as_tibble()"
+    "text": "Advanced R"
   },
   {
-    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#下準備",
-    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#下準備",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "objectID": "Others/rlang学習.html#参考",
+    "href": "Others/rlang学習.html#参考",
+    "title": "rlang学習",
     "section": "",
-    "text": "パッケージ\n\n\nlibrary(tidyverse)\nlibrary(cfdecomp)\n\nkable &lt;- partial(\n  knitr::kable,\n  digits = 3\n)\n\n\nデータ\n\n\n# the decomposition functions in our package are computationally intensive\n# to make the example run quick, I perform it on a subsample (n=125) of the data:\nset.seed(100)\ndata &lt;- \n  cfd.example.data[sample(1000),] |&gt; \n  select(SES, age, med.gauss, out.gauss, id) |&gt; \n  as_tibble()"
+    "text": "Advanced R"
   },
   {
-    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#パッケージによる推定",
-    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#パッケージによる推定",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
-    "section": "パッケージによる推定",
-    "text": "パッケージによる推定\n\ncfdecompパッケージで推定\n\n\n# cfd.mean \nmean.results.1 &lt;- \n  cfd.mean(\n    formula.y = out.gauss ~ SES * med.gauss * age,\n    formula.m = med.gauss ~ SES * age,\n    mediator = 'med.gauss',\n    group = 'SES',\n    data = as.data.frame(data),\n    family.y = 'gaussian',\n    family.m = 'gaussian',\n    bs.size=250,\n    mc.size=10,\n    alpha=0.05,\n    # cluster.sample=FALSE,\n    # cluster.name='id'\n  )\n\n\nSES2とSES3のmediatorの分布をSES1のmediatorの分布に揃える\n\n\ntibble(\n  category = c(\"SES1\", \"SES2\", \"SES3\"),\n  factual_mean = c(\n    mean(mean.results.1$out_nc_y[, 1]),\n    mean(mean.results.1$out_nc_y[, 2]),\n    mean(mean.results.1$out_nc_y[, 3])\n  ),\n  # and after giving the gaussian mediator of SES group 2 the distribution of the one in group 1\n  # the difference becomes:\n  counterfactual_mean = c(\n    mean(mean.results.1$out_cf_y[, 1]),\n    mean(mean.results.1$out_cf_y[, 2]),\n    mean(mean.results.1$out_cf_y[, 3])\n  )) |&gt; \n  kable()\n\n\n\n\ncategory\nfactual_mean\ncounterfactual_mean\n\n\n\n\nSES1\n4.306\n4.306\n\n\nSES2\n3.239\n3.511\n\n\nSES3\n2.212\n2.946"
+    "objectID": "Others/rlang学習.html#下準備",
+    "href": "Others/rlang学習.html#下準備",
+    "title": "rlang学習",
+    "section": "下準備",
+    "text": "下準備\n\nlibrary(rlang)\nlibrary(lobstr)"
   },
   {
-    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#自分でコードを書いてみる",
-    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#自分でコードを書いてみる",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
-    "section": "自分でコードを書いてみる",
-    "text": "自分でコードを書いてみる"
+    "objectID": "Others/rlang学習.html#expression",
+    "href": "Others/rlang学習.html#expression",
+    "title": "rlang学習",
+    "section": "expression",
+    "text": "expression\n\nexpr：コードをそのまま捕まえる\n\n作成されたオブジェクト：expression\ncall, symbol, constant, pairlistの4つからなる\n\n\n\nexpr(mean(x, na.rm = TRUE))\n\nmean(x, na.rm = TRUE)\n\nexpr(10 + 100 + 1000)\n\n10 + 100 + 1000\n\n\n\nexprは関数の引数なども書いてあるまま保持する\n\n\n# これはxになる\ncapture_it &lt;- function(x) {\n  expr(x)\n}\n\ncapture_it(a + b + c)\n\nx\n\n\n\n引数は評価した上でコードを保持したい場合はenexprを使う\n\n\ncapture_it &lt;- function(x) {\n  enexpr(x)\n}\ncapture_it(a + b + c)\n\na + b + c"
   },
   {
-    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-1-regression-estimates",
-    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-1-regression-estimates",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
-    "section": "step 1: regression estimates",
-    "text": "step 1: regression estimates\n\nmediatorとoutcomeのモデルをデータから推定\n\n\nmediator_model &lt;- lm(med.gauss ~ SES * age, data = data)\noutcome_model &lt;- lm(out.gauss ~ SES * age * med.gauss, data = data)"
+    "objectID": "Others/rlang学習.html#abstract-syntax-tree-ast-による表現",
+    "href": "Others/rlang学習.html#abstract-syntax-tree-ast-による表現",
+    "title": "rlang学習",
+    "section": "abstract syntax tree (AST) による表現",
+    "text": "abstract syntax tree (AST) による表現\n\ncodeはtree形式で表現できる\nfがcall, aがsymbol, “b”がconstantらしい\n\n\nlobstr::ast(f(a, \"b\"))\n\n█─f \n├─a \n└─\"b\" \n\n\n\n+や*も関数であることがわかる\n\n\nlobstr::ast(1 + 2 * 3)\n\n█─`+` \n├─1 \n└─█─`*` \n  ├─2 \n  └─3"
   },
   {
-    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-2-simulate-the-natural-course-pseudo-population",
-    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-2-simulate-the-natural-course-pseudo-population",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
-    "section": "step 2: simulate the natural-course pseudo-population",
-    "text": "step 2: simulate the natural-course pseudo-population\n\n推定したmediatorのモデルから、mediatorの「分布」を再現\n\n\\[\\begin{align*}\nMed_i = \\mathrm{E}[Med | X] + e_i \\\\\ne_i \\sim \\mathrm{N}(0, \\sigma)\n\\end{align*}\\]\n\nmediatorの分布のパラメータを取得\n\n\n# predict mediator\n# mediatorの「分布」のパラメータを取得\npred_mean_m &lt;- predict(mediator_model, newdata = data, type = \"response\")\nresidual_ref_m &lt;- mediator_model$residuals\nsd_ref_m &lt;- sd(residual_ref_m)\n\n\n推定したパラメータをもとに、mediatorの値をシミュレート\n\n\ndf_nc_med &lt;- \n  data |&gt; \n  mutate(\n    # ランダム性なし\n    pred_med = pred_mean_m,\n    # ランダム性をもたせる1（推定した標準偏差のパラメータを使用）\n    pred_med_draw_1 = rnorm(n(), mean = pred_mean_m, sd = sd_ref_m),\n    # ランダム性をもたせる2（残差からランダムにサンプリング）\n    pred_med_draw_2 = pred_mean_m + sample(residual_ref_m, n(), replace = TRUE)\n  )\n\ndf_nc_med |&gt; \n  summarise(\n    across(c(med.gauss, pred_med:pred_med_draw_2), mean),\n    .by = SES\n  ) |&gt; \n  arrange(SES) |&gt; \n  kable()\n\n\n\n\nSES\nmed.gauss\npred_med\npred_med_draw_1\npred_med_draw_2\n\n\n\n\n1\n8.428\n8.428\n8.418\n8.286\n\n\n2\n7.223\n7.223\n7.276\n7.454\n\n\n3\n5.410\n5.410\n5.579\n5.374\n\n\n\n\n\n\nシミュレートした値をoutcomeモデルに代入して予測値を計算・集計\n\n\ndf_nc_med |&gt; \n  mutate(\n    # ランダム性なし\n    pred_out = predict(\n      outcome_model, newdata = df_nc_med |&gt; mutate(med.gauss = pred_med)\n    ),\n    # ランダム性をもたせる1（推定した標準偏差のパラメータを使用）\n    pred_out_draw_1 = predict(\n      outcome_model, newdata = df_nc_med |&gt; mutate(med.gauss = pred_med_draw_1)\n    ),\n    # ランダム性をもたせる2（残差からランダムにサンプリング）\n    pred_out_draw_2 = predict(\n      outcome_model, newdata = df_nc_med |&gt; mutate(med.gauss = pred_med_draw_2)\n    )\n  ) |&gt; \n  summarise(\n    across(c(out.gauss, pred_out:pred_out_draw_2), mean),\n    .by = SES\n  ) |&gt; \n  arrange(SES) |&gt; \n  kable()\n\n\n\n\nSES\nout.gauss\npred_out\npred_out_draw_1\npred_out_draw_2\n\n\n\n\n1\n4.309\n4.309\n4.312\n4.286\n\n\n2\n3.237\n3.237\n3.249\n3.292\n\n\n3\n2.217\n2.217\n2.254\n2.214"
+    "objectID": "Others/rlang学習.html#codeを生成するcode",
+    "href": "Others/rlang学習.html#codeを生成するcode",
+    "title": "rlang学習",
+    "section": "codeを生成するcode",
+    "text": "codeを生成するcode\n\ncall2\n\n\ncall2('f', 1, 2)\n\nf(1, 2)\n\ncall2('+', 1, call2('*', 2, 3))\n\n1 + 2 * 3\n\n\n\n!!を使ったcodeの生成\n\n捕まえておいたコードを評価したいところで評価する\n\n\n\nxx &lt;- expr(x + x)\nyy &lt;- expr(y + y)\n\nexpr(!!xx / !!yy)\n\n(x + x)/(y + y)"
   },
   {
-    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-3-simulate-the-counterfactual-pseudo-population",
-    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-3-simulate-the-counterfactual-pseudo-population",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
-    "section": "step 3: simulate the counterfactual pseudo-population",
-    "text": "step 3: simulate the counterfactual pseudo-population\n\n推定したmediatorのモデルにおいて、全員のSESが1だった場合のmediatorの分布を再現\n全員のSESを1にしてmediatorのパラメータを取得\n回帰モデルでは残差の部分は共変量に依存しない（SES間で分布が同じ、平均0・共通の標準偏差の正規分布）\n\nならばSESが1のグループの標準偏差を使わなくても良いのでは？（全体の標準偏差でもよい）\n標準偏差もグループによって異なる、といったモデルの場合にはどうなるか？\n\n\n\n# 平均\npred_mean_m_SES1 &lt;- predict(mediator_model, newdata = data |&gt; mutate(SES = '1'))\n# SES = 1のグループの残差\nresidual_ref_m_SES1 &lt;-\n  broom::augment(mediator_model)  |&gt;\n  filter(SES == '1') |&gt; \n  pull(.resid)\n# 標準偏差\nsd_ref_m_SES1 &lt;- sd(residual_ref_m_SES1)\n\n\n推定したパラメータをもとに、mediatorの値をシミュレート\n\n\ndf_cf_med &lt;- \n  data |&gt; \n  mutate(\n    # ランダム性なし\n    pred_med_SES1 = pred_mean_m_SES1,\n    # ランダム性をもたせる1（推定した標準偏差のパラメータを使用）\n    pred_med_draw_1_SES1 = rnorm(n(), mean = pred_mean_m_SES1, sd = sd_ref_m_SES1),\n    # ランダム性をもたせる2（残差からランダムにサンプリング）\n    pred_med_draw_2_SES1 = pred_mean_m_SES1 + sample(residual_ref_m_SES1, n(), replace = TRUE)\n  )\n\ndf_cf_med |&gt; \n  summarise(\n    across(c(med.gauss, pred_med_SES1:pred_med_draw_2_SES1), mean),\n    .by = SES\n  ) |&gt; \n  arrange(SES) |&gt; \n  kable()\n\n\n\n\n\n\n\n\n\n\n\nSES\nmed.gauss\npred_med_SES1\npred_med_draw_1_SES1\npred_med_draw_2_SES1\n\n\n\n\n1\n8.428\n8.428\n8.386\n8.632\n\n\n2\n7.223\n8.337\n8.258\n8.292\n\n\n3\n5.410\n8.442\n8.292\n8.593\n\n\n\n\n\n\nシミュレートした値をoutcomeモデルに代入して予測値を計算・集計\n\n\ndf_cf_med |&gt; \n  mutate(\n    # ランダム性なし\n    pred_out_SES1 = predict(\n      outcome_model, newdata = df_cf_med |&gt; mutate(med.gauss = pred_med_SES1)\n    ),\n    # ランダム性をもたせる1（推定した標準偏差のパラメータを使用）\n    pred_out_draw_1_SES1 = predict(\n      outcome_model, newdata = df_cf_med |&gt; mutate(med.gauss = pred_med_draw_1_SES1)\n    ),\n    # ランダム性をもたせる2（残差からランダムにサンプリング）\n    pred_out_draw_2_SES1 = predict(\n      outcome_model, newdata = df_cf_med |&gt; mutate(med.gauss = pred_med_draw_2_SES1)\n    )\n  ) |&gt; \n  summarise(\n    across(c(out.gauss, pred_out_SES1:pred_out_draw_2_SES1), mean),\n    .by = SES\n  ) |&gt; \n  arrange(SES) |&gt; \n  kable()\n\n\n\n\n\n\n\n\n\n\n\nSES\nout.gauss\npred_out_SES1\npred_out_draw_1_SES1\npred_out_draw_2_SES1\n\n\n\n\n1\n4.309\n4.309\n4.303\n4.347\n\n\n2\n3.237\n3.507\n3.485\n3.498\n\n\n3\n2.217\n2.949\n2.920\n2.979"
+    "objectID": "Others/rlang学習.html#codeの評価",
+    "href": "Others/rlang学習.html#codeの評価",
+    "title": "rlang学習",
+    "section": "codeの評価",
+    "text": "codeの評価\n\neval(expr, env)：exprをenvで評価\n\n\neval(expr(x + y), env(x = 1, y = 10))\n\n[1] 11\n\neval(expr(x + y), env(x = 2, y = 100))\n\n[1] 102\n\n\n\nenvを指定しないときは現在のenvironmentで評価\n\n\nx &lt;- 10\ny &lt;- 100\n\neval(expr(x + y))\n\n[1] 110\n\n\n\nデータを環境として扱う\neval_tidy(expr, data)：exprをdata内部で評価\n\ndataでcurrent environmentを上書きするのでdata-mask呼ばれる\n\nevalでもできないことはないが、落とし穴があるらしい\n\n\ndf &lt;- data.frame(x = 1:5, y = sample(5))\neval_tidy(expr(x + y), df)\n\n[1]  2  5  5  8 10\n\n\n\ndplyrっぽい関数\n\n\nwith2 &lt;- function(df, expr) {\n  eval_tidy(enexpr(expr), df)\n}\n\nwith2(df, x + y)\n\n[1]  2  5  5  8 10"
   },
   {
-    "objectID": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#monte-carloとbootstrapの実装",
-    "href": "Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#monte-carloとbootstrapの実装",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
-    "section": "monte carloとbootstrapの実装",
-    "text": "monte carloとbootstrapの実装\n\n実際にはrandom drawは一回ではなく何回か行うことで不確実性を表現する\n標準誤差の推定のためにbootstrap法も必要\nまずはtreatmentとoutcomeのモデルを推定し、パラメータを取得\n\n\n# パラメータ推定\nestimate_model &lt;- function(data) {\n  \n  mediator_model &lt;- lm(med.gauss ~ SES * age, data = data)\n  outcome_model &lt;- lm(out.gauss ~ SES * age * med.gauss, data = data)\n  \n  pred_mean_m &lt;- predict(mediator_model, newdata = data, type = \"response\")\n  residual_ref_m &lt;- mediator_model$residuals\n  sd_ref_m &lt;- sd(residual_ref_m)\n\n  pred_mean_m_SES1 &lt;- predict(mediator_model, newdata = data |&gt; mutate(SES = '1'))\n  residual_ref_m_SES1 &lt;-\n    broom::augment(mediator_model)  |&gt;\n    filter(SES == '1') |&gt; \n    pull(.resid)\n  sd_ref_m_SES1 &lt;- sd(residual_ref_m_SES1)\n\n}\n\n\nパラメータをもとにmediatorをシミュレートするのを何回か繰り返す\n\n\nmontecarlo_sampling &lt;- function(data, mc = 10) {\n  # パラメータ推定\n  estimate_model(data)\n  # モンテカルロシミュレーション\n  map(1:mc, \\(mc) {\n    # mediatorサンプリング\n    boot_sample &lt;- \n      data |&gt; \n      mutate(\n        pred_med_draw_1 = rnorm(n(), mean = pred_mean_m, sd = sd_ref_m),\n        pred_med_draw_2 = pred_mean_m + sample(residual_ref_m, n(), replace = TRUE),\n        pred_med_draw_1_SES1 = rnorm(n(), mean = pred_mean_m_SES1, sd = sd_ref_m_SES1),\n        pred_med_draw_2_SES1 = pred_mean_m_SES1 + sample(residual_ref_m_SES1, n(), replace = TRUE),\n      )\n    # サンプリングしたものからoutcome予測\n    boot_sample |&gt; \n      mutate(\n        pred_out_draw_1 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_1)\n        ),\n        pred_out_draw_2 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_2)\n        ),\n        pred_out_draw_1_SES1 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_1_SES1)\n        ),\n        pred_out_draw_2_SES1 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_2_SES1)\n        )\n      ) |&gt; \n      group_by(SES) |&gt; \n      summarise(across(c(pred_out_draw_1:pred_out_draw_2_SES1), mean))\n    \n  }) |&gt; \n    list_rbind(names_to = 'mc') |&gt; \n    # シミュレーション結果を集計\n    group_by(SES) |&gt; \n    summarise(across(c(pred_out_draw_1:pred_out_draw_2_SES1), mean))\n  \n}\n\n\nこれをbootstrapで繰り返す\n\n\nresult &lt;- \n  map(1:250, \\(index) {\n    # bootstrapサンプル発生\n    bootsample &lt;- slice_sample(data, prop = 1, replace = TRUE)\n    montecarlo_sampling(bootsample, mc = 10) \n  }) |&gt; \n  list_rbind(names_to = 'index')\n\n\n結果を集計\n\n\nresult |&gt; \n  pivot_longer(\n    cols = c(pred_out_draw_1:pred_out_draw_2_SES1), \n    names_to = 'type', \n    values_to = 'value'\n  ) |&gt; \n  summarise(\n    mean = mean(value), \n    conf.low = quantile(value, 0.025),\n    conf.high = quantile(value, 0.975),\n    .by = c(SES, type)\n  ) |&gt; \n  arrange(type) |&gt; \n  kable()\n\n\n\n\nSES\ntype\nmean\nconf.low\nconf.high\n\n\n\n\n1\npred_out_draw_1\n4.015\n3.937\n4.091\n\n\n2\npred_out_draw_1\n3.183\n3.124\n3.251\n\n\n3\npred_out_draw_1\n2.645\n2.599\n2.688\n\n\n1\npred_out_draw_1_SES1\n4.276\n4.193\n4.351\n\n\n2\npred_out_draw_1_SES1\n3.513\n3.446\n3.582\n\n\n3\npred_out_draw_1_SES1\n2.970\n2.934\n3.000\n\n\n1\npred_out_draw_2\n4.015\n3.938\n4.094\n\n\n2\npred_out_draw_2\n3.182\n3.123\n3.253\n\n\n3\npred_out_draw_2\n2.646\n2.600\n2.687\n\n\n1\npred_out_draw_2_SES1\n4.276\n4.183\n4.358\n\n\n2\npred_out_draw_2_SES1\n3.515\n3.457\n3.584\n\n\n3\npred_out_draw_2_SES1\n2.970\n2.941\n2.998"
-  },
-  {
-    "objectID": "Others/tensorflow_with_Rstudio.html",
-    "href": "Others/tensorflow_with_Rstudio.html",
-    "title": "tensorflowをRstudioで",
-    "section": "",
-    "text": "pythonをRStudioで使うのはreticulateパッケージによりだいぶ楽になった。\nただpythonにおけるdeep learningの代表的パッケージであるtensorflowをRStudioで使う際に少しつまづいたのでメモです。"
-  },
-  {
-    "objectID": "Others/tensorflow_with_Rstudio.html#pythonの環境をどうやって構築するか",
-    "href": "Others/tensorflow_with_Rstudio.html#pythonの環境をどうやって構築するか",
-    "title": "tensorflowをRstudioで",
-    "section": "pythonの環境をどうやって構築するか？",
-    "text": "pythonの環境をどうやって構築するか？\nRではrenvパッケージを使っている。ではpythonでは？\npythonはRよりも環境が複雑で変化も早そうなので、環境構築は重要。\n今回はpython公式が推奨しているっぽいvenvを使う。\n\n\n\n\n\n\nNote\n\n\n\n最初global環境でそのままやろうとしたが上手くいかず挫折。Dockerとかも有力だと思う。"
-  },
-  {
-    "objectID": "Others/tensorflow_with_Rstudio.html#venvを使って仮想環境を用意",
-    "href": "Others/tensorflow_with_Rstudio.html#venvを使って仮想環境を用意",
-    "title": "tensorflowをRstudioで",
-    "section": "venvを使って仮想環境を用意",
-    "text": "venvを使って仮想環境を用意\n\npythonがインストールされているか確認\n\nhomebrewなりでインストールしておく\nPATHを通しておく\n\n作業ディレクトリにて、terminalで以下のコマンドを実行し.venvフォルダを作成\n\n\n\n\nterminal\n\npython3 -m venv .venv"
-  },
-  {
-    "objectID": "Others/tensorflow_with_Rstudio.html#pythonライブラリをインストール",
-    "href": "Others/tensorflow_with_Rstudio.html#pythonライブラリをインストール",
-    "title": "tensorflowをRstudioで",
-    "section": "pythonライブラリをインストール",
-    "text": "pythonライブラリをインストール\n\n以下のコマンドを実行し、仮想環境を起動\n\npythonの場所が.venv内のフォルダになる\n\n\n\n\n\nterminal\n\nsource .venv/bin/activate\n\n\n\n\n\n\n\n\nNote\n\n\n\nsource .venv/bin/activateは、ライブラリをインストールするときは毎回実行する必要があります！\nまちがってglobal環境を汚さないように！\n\n\n\nライブラリをインストール\n\ntensorflowのほか、numpyも必須（tensorflowをインストールしたときに入る）\nM1 macでGPUを使いたい場合はtensorflow-metalもインストールする\n\n\n\n\n\nterminal\n\npip install tensorflow-macos\npip install tensorflow-metal\n\n\n\n仮想環境を抜けるときは以下のコマンドを実行\n\n\n\n\nterminal\n\ndeactivate"
-  },
-  {
-    "objectID": "Others/tensorflow_with_Rstudio.html#rstudioでpythonを使う",
-    "href": "Others/tensorflow_with_Rstudio.html#rstudioでpythonを使う",
-    "title": "tensorflowをRstudioで",
-    "section": "RStudioでpythonを使う",
-    "text": "RStudioでpythonを使う\n\npythonの場所を指定\n\nRStudioでpythonを使うには、RStudioにpythonの場所を教えてやる必要がある\n\n今回は.venv内のpythonを使いたいので、作業ディレクトリに.Rprofileを作成し、以下のコードを書く\nrenvを使っている場合は、.Rprofileが既に作成されていると思うので、その中に追記する\n\n\n\n\n\n.Rprofile\n\n# renv起動\nsource(\"renv/activate.R\")\n# pythonの場所を指定\nSys.setenv(RETICULATE_PYTHON = \".venv/bin/python3\")\n\n\n\n\n\n\n\n\nNote\n\n\n\npythonの場所の指定はrenvの起動より後に行う必要がある。もし先にpythonの場所を指定してしまうと、renvを起動したときにpythonの場所が上書きされてしまい、上手くいかなくなる。\n\n\n\n\npythonを起動\n\nRStudioでpythonのコードを実行すると、reticulate::repl_python()が走ってコンソールがpythonになる\n\n\n\n\npython\n\nimport sys\nprint(sys.version)\n\n\n3.11.7 (main, Dec  4 2023, 18:10:11) [Clang 15.0.0 (clang-1500.1.0.2.5)]\n\n\n\ntensorflowを起動して、GPUが使えるかを確認\nphysical_deviceでCPUとGPUの両方が表示されてればOK\n\n\n\n\npython\n\nimport tensorflow as tf\ntf.config.list_physical_devices()\n\n\n[PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU'), PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]"
-  },
-  {
-    "objectID": "Others/tensorflow_with_Rstudio.html#ニューラルネットをやってみる",
-    "href": "Others/tensorflow_with_Rstudio.html#ニューラルネットをやってみる",
-    "title": "tensorflowをRstudioで",
-    "section": "ニューラルネットをやってみる",
-    "text": "ニューラルネットをやってみる\n\nチュートリアルとして、手書きのアルファベットを分類するモデルを作成してみる\nRでデータを読み込んで、pythonに渡してtensorflowで分析\n参考\n\n\n\n\nR\n\nlibrary(tidyverse)\nlibrary(rsample)\nlibrary(reticulate)\n\n\n\nデータのダウンロード\n\n\n\nR\n\n# データのダウンロード\nif (!dir.exists('data')) dir.create('data')\ndownload.file('https://ai.stanford.edu/~btaskar/ocr/letter.data.gz', destfile = 'data/letter.data')\n\n\n\n\nデータの読み込み\n\n列名はhttps://ai.stanford.edu/~btaskar/ocr/letter.namesより取得できる\n詳細は以下の通り\n\nid: each letter is assigned a unique integer id\nletter: a-z\nnext_id: id for next letter in the word, -1 if last letter\nword_id: each word is assigned a unique integer id (not used)\nposition: position of letter in the word (not used)\nfold: 0-9 – cross-validation fold\np_i_j: 0/1 – value of pixel in row i, column j\n\nletterとp_i_j（pixel）のみ使うのでそれ以外は削除\n\n\n\n\nR\n\ncolname &lt;- read_lines('https://ai.stanford.edu/~btaskar/ocr/letter.names')\ndata &lt;- \n  read_tsv('data/letter.data', col_names = colname) |&gt; \n  # letterとpixelだけ残す\n  select(id, letter, matches('p_\\\\d+_\\\\d+'))\n\n\n\n\nデータの前処理\n\nletterを数値に変換\n\n\n\n\nR\n\ndf &lt;- \n  data |&gt; \n  mutate(\n    letter = factor(letter),\n    # pythonは0からはじまるので-1する（Rは1から）\n    letter_num = as.numeric(letter) - 1\n  )\n\n\n\n訓練データとテストデータに分割\n\n\n\n\nR\n\nsplit &lt;- rsample::initial_split(df, prop = 0.9)\ntrain &lt;- rsample::training(split)\ntest &lt;- rsample::testing(split)\n\n\n\npythonに渡せる形にデータを変換\n\nreticulate::np_array()であらかじめndarrayにしておくと便利\n\n\n\n\n\nR\n\ntrain_x &lt;- \n  train |&gt; \n  select(!c(id, letter, letter_num)) |&gt;\n  as.matrix() |&gt; \n  np_array()\n\ntrain_y &lt;-\n  train |&gt;\n  pull(letter_num) |&gt;\n  np_array()\n\ntest_x &lt;-\n  test |&gt; \n  select(!c(id, letter, letter_num)) |&gt;\n  as.matrix() |&gt; \n  np_array()\n\ntest_y &lt;-\n  test |&gt;\n  pull(letter_num) |&gt;\n  np_array()\n\n\n\n\nニューラルネットで学習\n\n中間層が1つのニューラルネットを作成\n\n入力層は16x8=128（ピクセル）\n中間層は64次元\n出力層はa-zの26分類\n\n\n\n\n\npython\n\nimport tensorflow as tf\nimport numpy as np\n\n# モデルの作成\nmodel = tf.keras.Sequential([\n  tf.keras.layers.Dense(64, activation='relu'),\n  tf.keras.layers.Dense(26, activation='softmax')\n])\n\nmodel.compile(\n  optimizer='adam',\n  loss='sparse_categorical_crossentropy',\n  metrics=['accuracy']\n)\n\n\n\nrで作成したデータをpythonに渡して学習\nr.train_xでRのtrain_xを参照できる\npythonのオブジェクトを渡すときはpy$train_x\n\n\n\n\npython\n\n# モデルの学習\nmodel.fit(r.train_x, r.train_y, epochs=10, verbose=2)\n\n\nEpoch 1/10\n1467/1467 - 7s - loss: 1.3412 - accuracy: 0.6353 - 7s/epoch - 5ms/step\nEpoch 2/10\n1467/1467 - 7s - loss: 0.9432 - accuracy: 0.7488 - 7s/epoch - 4ms/step\nEpoch 3/10\n1467/1467 - 6s - loss: 0.8793 - accuracy: 0.7660 - 6s/epoch - 4ms/step\nEpoch 4/10\n1467/1467 - 7s - loss: 0.8487 - accuracy: 0.7738 - 7s/epoch - 5ms/step\nEpoch 5/10\n1467/1467 - 7s - loss: 0.8330 - accuracy: 0.7756 - 7s/epoch - 4ms/step\nEpoch 6/10\n1467/1467 - 7s - loss: 0.8244 - accuracy: 0.7786 - 7s/epoch - 4ms/step\nEpoch 7/10\n1467/1467 - 7s - loss: 0.8220 - accuracy: 0.7777 - 7s/epoch - 4ms/step\nEpoch 8/10\n1467/1467 - 7s - loss: 0.8197 - accuracy: 0.7792 - 7s/epoch - 4ms/step\nEpoch 9/10\n1467/1467 - 7s - loss: 0.8201 - accuracy: 0.7786 - 7s/epoch - 4ms/step\nEpoch 10/10\n1467/1467 - 6s - loss: 0.8217 - accuracy: 0.7771 - 6s/epoch - 4ms/step\n&lt;keras.src.callbacks.History object at 0x2824ed250&gt;\n\n\n\n\nテストデータで評価\n\nテストデータでの正答率は77%くらい\n\n\n\n\npython\n\n# モデルの評価\nmodel.evaluate(r.test_x, r.test_y, verbose=2)\n\n\n163/163 - 1s - loss: 0.8303 - accuracy: 0.7699 - 549ms/epoch - 3ms/step\n[0.8303112387657166, 0.7699386477470398]"
+    "objectID": "Others/rlang学習.html#quosure",
+    "href": "Others/rlang学習.html#quosure",
+    "title": "rlang学習",
+    "section": "Quosure",
+    "text": "Quosure\n\nexprだけを使う方法は問題がでてくる\n関数の内部でaを定義してみる\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eval_tidy(enexpr(expr), df)\n}\n\n\nさらに関数の外部（global environment）でもaを定義する\n\n\ndf &lt;- data.frame(x = 1:3)\na &lt;- 10\n\n\nこの状態でwith2を使うと問題が発生\n\nglobal environmentのaではなく、関数内部で定義したaが優先的に使われる\n\n\n\nwith2(df, x + a)\n\n[1] 1001 1002 1003\n\n\n\nquosure：expressionとenvironmentをセットで保持する\n\ndata-maskでは、eval_tidyのdata -&gt; quosureのenv -&gt; global envの順で評価される\n\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eval_tidy(enquo(expr), df)\n}\n\nx &lt;- 10\n\nwith2(df, x + a)\n\n[1] 11 12 13"
   },
   {
     "objectID": "Others/Multilevel.html",
@@ -341,5 +355,26 @@
     "title": "マルチレベルモデルは点推定値に影響を及ぼすか？",
     "section": "シミュレーション",
     "text": "シミュレーション\nデータを1000個作成\n\ndata_list &lt;- \n  map(1:1000, \\(x) dgp(1000)) |&gt; \n  enframe()\n\nOLSと変量効果モデルで推定\n\nresult &lt;- \n  data_list |&gt; \n  mutate(\n    lm = map(value, \\(data) lm(y ~ x, data = data)),\n    lmer = map(value, \\(data) lmer(y ~ x + (1|group), data = data))\n  )\n\nxの係数のみ取り出す\n\nres2 &lt;- \n  result |&gt; \n  mutate(\n    lm_res = map(lm, \\(model) {\n      tidy(model) |&gt; \n        select(term, estimate)\n    }),\n    lmer_res = map(lmer, \\(model) {\n      tidy(model) |&gt; \n        select(term, estimate)\n    })\n  ) |&gt; \n  select(name, lm_res, lmer_res) |&gt; \n  pivot_longer(!name, names_to = 'model', values_to = 'value') |&gt; \n  unnest(value) |&gt; \n  filter(term == 'x')\n\n結果を図示\n\nどちらの点推定値も真の値の0.5を中心に分布＝バイアスはない\nOLSによる点推定値はバリアンスが大きい\n変量効果（マルチレベル）モデルによる点推定値はバリアンスが小さい\n\n\nres2 |&gt; \n  ggplot(aes(estimate, fill = model))+\n  geom_vline(xintercept = 0.5, linetype = 'dashed', alpha = 0.5)+\n  geom_histogram(alpha = 0.3, color = 'black', binwidth = 0.02, position = 'identity')+\n  scale_x_continuous(breaks = seq(0, 1, 0.2))"
+  },
+  {
+    "objectID": "Others/度数から対数尤度を計算.html",
+    "href": "Others/度数から対数尤度を計算.html",
+    "title": "観測度数・期待度数から対数尤度を計算する方法",
+    "section": "",
+    "text": "\\(f_{ij}\\)：観測度数\n\n\n\n\n\nB\nB’\n\n\n\n\nA\n\\(f_{11}\\)\n\\(f_{12}\\)\n\n\nA’\n\\(f_{21}\\)\n\\(f_{22}\\)\n\n\n\n\n\\(p_{ij}\\)：セル確率\n\nモデルから計算されたセルの確率\nAとBに関連がないモデルにおいては、期待度数をサンプルサイズで割ったもの\n\n\n\n\n\n\nB\nB’\n\n\n\n\nA\n\\(p_{11}\\)\n\\(p_{12}\\)\n\n\nA’\n\\(p_{21}\\)\n\\(p_{22}\\)\n\n\n\n尤度関数を\\(L\\)とすると\n\\[\nL = \\prod_i \\prod_j p_{ij}^{f_{ij}} =  p_{11}^{f_{11}} \\times p_{12}^{f_{12}} \\times p_{21}^{f_{21}} \\times p_{22}^{f_{22}}\n\\]\n各セルの確率を(観測度数)乗したものを全部掛け算\n対数尤度はこれの対数を取ったもの\n\\[\n\\log L = \\sum_i \\sum_j f_{ij} \\log p_{ij} = f_{11} \\log p_{11} + f_{12} \\log p_{12} + f_{21} \\log p_{21} + f_{22} \\log p_{22}\n\\]\n掛け算が足し算になるので計算しやすい"
+  },
+  {
+    "objectID": "Others/度数から対数尤度を計算.html#観測度数とセル確率から対数尤度を計算",
+    "href": "Others/度数から対数尤度を計算.html#観測度数とセル確率から対数尤度を計算",
+    "title": "観測度数・期待度数から対数尤度を計算する方法",
+    "section": "",
+    "text": "\\(f_{ij}\\)：観測度数\n\n\n\n\n\nB\nB’\n\n\n\n\nA\n\\(f_{11}\\)\n\\(f_{12}\\)\n\n\nA’\n\\(f_{21}\\)\n\\(f_{22}\\)\n\n\n\n\n\\(p_{ij}\\)：セル確率\n\nモデルから計算されたセルの確率\nAとBに関連がないモデルにおいては、期待度数をサンプルサイズで割ったもの\n\n\n\n\n\n\nB\nB’\n\n\n\n\nA\n\\(p_{11}\\)\n\\(p_{12}\\)\n\n\nA’\n\\(p_{21}\\)\n\\(p_{22}\\)\n\n\n\n尤度関数を\\(L\\)とすると\n\\[\nL = \\prod_i \\prod_j p_{ij}^{f_{ij}} =  p_{11}^{f_{11}} \\times p_{12}^{f_{12}} \\times p_{21}^{f_{21}} \\times p_{22}^{f_{22}}\n\\]\n各セルの確率を(観測度数)乗したものを全部掛け算\n対数尤度はこれの対数を取ったもの\n\\[\n\\log L = \\sum_i \\sum_j f_{ij} \\log p_{ij} = f_{11} \\log p_{11} + f_{12} \\log p_{12} + f_{21} \\log p_{21} + f_{22} \\log p_{22}\n\\]\n掛け算が足し算になるので計算しやすい"
+  },
+  {
+    "objectID": "Others/度数から対数尤度を計算.html#尤度比カイ2乗値との関係",
+    "href": "Others/度数から対数尤度を計算.html#尤度比カイ2乗値との関係",
+    "title": "観測度数・期待度数から対数尤度を計算する方法",
+    "section": "尤度比カイ2乗値との関係",
+    "text": "尤度比カイ2乗値との関係\n尤度比カイ2乗値（\\(G^2\\)）と観測度数（\\(f\\)）・期待度数（\\(F\\)）の関係は以下の式で表される(Hout 1983; McCutcheon 1987)\n\\[\nG^2 = 2 \\sum_i \\sum_j f_{ij} \\log \\frac{f_{ij}}{F_{ij}}\n\\]\nなぜこうなるのか？対数尤度の比から考えてみる。\nまず、AとBに関連がないというモデル（独立モデル）のもとで対数尤度を計算する。この条件ではセル確率\\(p_{ij}\\)は期待度数\\(F_{ij}\\)をサンプルサイズ\\(N\\)で割ったものになる。\n\\[\n\\log L_1 = \\sum_i \\sum_j f_{ij} \\log p_{ij} = \\sum_i \\sum_j f_{ij} \\log \\frac{F_{ij}}{N} = \\sum_i \\sum_j f_{ij} \\log F_{ij} - \\sum_i \\sum_j f_{ij} \\log N\n\\]\n次に、AとBに関連があるというモデル（飽和モデル）のもとで対数尤度を計算する。この条件ではセル確率\\(p_{ij}\\)は観測度数\\(f_{ij}\\)をサンプルサイズ\\(N\\)で割ったものになる。\n\\[\n\\log L_2 = \\sum_i \\sum_j f_{ij} \\log p_{ij} = \\sum_i \\sum_j f_{ij} \\log \\frac{f_{ij}}{N} = \\sum_i \\sum_j f_{ij} \\log f_{ij} - \\sum_i \\sum_j f_{ij} \\log N\n\\]\n対数尤度の差（＝尤度の比）を計算すると\n\\[\\begin{align}\n\\log L_2 - \\log L_1 &= \\sum_i \\sum_j f_{ij} \\log f_{ij} - \\sum_i \\sum_j f_{ij} \\log F_{ij} \\\\\n\\log \\frac{L_2}{L_1} &= \\sum_i \\sum_j (f_{ij} \\log f_{ij} - f_{ij} \\log F_{ij}) \\\\\n\\log \\frac{L_2}{L_1} &= \\sum_i \\sum_j f_{ij} \\log \\frac{f_{ij}}{F_{ij}} \\\\\n\\end{align}\\]\nそれっぽい形になった。\nさらに両辺を2倍すると\n\\[\n2 \\log \\frac{L_2}{L_1} = \\log (\\frac{L_2}{L_1})^2 = 2 \\sum_i \\sum_j f_{ij} \\log \\frac{f_{ij}}{F_{ij}}\n\\]\nしたがって尤度比カイ二乗値は、尤度比の2乗の対数をとったものである。\nあるいは、以下のように変形すればdeviance（-2対数尤度）の差としても表現できる。\n\\[\n2 \\log \\frac{L_2}{L_1} = (-2 \\log L_1) - (- 2 \\log L_2)\n\\]"
   }
 ]

@@ -20,12 +20,14 @@ website:
           - Others/度数から対数尤度を計算.qmd
           - Others/Multilevel.qmd
           - Others/tensorflow_with_Rstudio.qmd
+          - Others/how_to_change_BLAS.qmd
 
 format:
   html:
     theme: cosmo
     css: styles.css
     toc: true
+
 
 bibliography: reference.bib
 

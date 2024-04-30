@@ -1,5 +1,6 @@
 ---
 title: "バージョンを指定したRのインストール"
+engine: knitr
 ---
 
 
@@ -21,7 +22,7 @@ title: "バージョンを指定したRのインストール"
 
 まずはrigをhomebrewからインストール
 
-```{r}
+```{bash}
 #| eval: false
 brew tap r-lib/rig
 brew install --cask rig 
@@ -29,14 +30,14 @@ brew install --cask rig
 
 次に、rigを使ってインストールしたいRのバージョンを指定してインストール
 
-```{r}
+```{bash}
 #| eval: false
 rig add 4.3.3
 ```
 
 アンインストールしたい時はこう
 
-```{r}
+```{bash}
 #| eval: false
 rig rm 4.3.3
 ```

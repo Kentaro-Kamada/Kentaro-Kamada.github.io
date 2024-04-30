@@ -1,0 +1,16 @@
+{
+  "hash": "c1e57f674949c8c8f51118bddc76ce93",
+  "result": {
+    "markdown": "---\ntitle: \"バージョンを指定したRのインストール\"\n---\n\n\n\n## 背景\n\n- わたし：Macユーザーで、MacのソフトウェアはすべてHomebrewで管理\n- ある日：Rのバージョンが4.4.0になっていたのに気づかずにアップデートしてしまった\n- やりたいこと：Rのバージョンを4.3.3に戻したい\n\n## こんなのを見つけた\n\n[イマドキRのインストール事情？ ～rig、pak、p3m～](https://zenn.dev/eitsupi/articles/rig-pak-p3m-2023)\n\nどうやらrigというものを使えば、Rのバージョンを指定してインストールできるらしい。\n\n## 使ってみる\n\n[github](https://github.com/r-lib/rig)を見ながらインストール。\n\nまずはrigをhomebrewからインストール\n\n\n::: {.cell}\n\n```{.r .cell-code}\nbrew tap r-lib/rig\nbrew install --cask rig \n```\n:::\n\n\n次に、rigを使ってインストールしたいRのバージョンを指定してインストール\n\n\n::: {.cell}\n\n```{.r .cell-code}\nrig add 4.3.3\n```\n:::\n\n\nアンインストールしたい時はこう\n\n\n::: {.cell}\n\n```{.r .cell-code}\nrig rm 4.3.3\n```\n:::\n\n\nかんたん！\n",
+    "supporting": [
+      "r_installation_with_rig_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -22,6 +22,7 @@ website:
           - Others/tensorflow_with_Rstudio.qmd
           - Others/how_to_change_BLAS.qmd
           - Others/r_installation_with_rig.qmd
+          - Others/multi_answer.qmd
 
 format:
   html:

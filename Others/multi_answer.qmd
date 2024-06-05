@@ -1,0 +1,89 @@
+---
+title: マルチアンサーの処理
+engine: knitr
+---
+
+## パッケージ
+
+```{r}
+library(tidyverse)
+```
+
+## Googleフォームなどのマルチアンサーの処理
+
+googleフォームでマルチアンサー形式の設問を作ると、以下のようにカンマで区切られた形式でデータが入力される。
+
+```{r}
+data <- 
+  tibble(
+    q1 = c('A,B,C', 'A,B', 'A,C', 'B,C', 'A', 'B', 'C'),
+  ) |> 
+  mutate(id = row_number()) |> 
+  relocate(id, .before = q1) 
+
+data
+```
+
+まずはカンマで区切られているやつを分割する。
+
+```{r}
+
+data |> 
+  separate_longer_delim(cols = q1, delim = ',') 
+
+```
+
+このデータの意味自体は、id:1はA,B,Cを選択した、というものである。
+
+なのでフラグとして1を立てておく。
+
+```{r}
+
+data |> 
+  separate_longer_delim(cols = q1, delim = ',') |>
+  mutate(flag = 1)
+
+```
+
+つぎにこれを横持ちに展開する。
+
+```{r}
+
+data |> 
+  separate_longer_delim(cols = q1, delim = ',') |>
+  mutate(flag = 1) |> 
+  pivot_wider(names_from = q1, values_from = flag)
+
+```
+
+これで、A,B,Cの選択状況がわかるようになった。
+
+非選択がNAになっているのは少々アレなので、0で埋めるようにする。
+
+```{r}
+
+data |> 
+  separate_longer_delim(cols = q1, delim = ',') |>
+  mutate(flag = 1) |> 
+  pivot_wider(names_from = q1, values_from = flag, values_fill = 0)
+
+```
+
+これでダミー変数に変換できた。
+
+もともとの変数名であるq1が消えてしまっているので、それを残すには`names_prefix`を指定する。
+
+```{r}
+
+data |> 
+  separate_longer_delim(cols = q1, delim = ',') |>
+  mutate(flag = 1) |> 
+  pivot_wider(
+    names_from = q1, 
+    names_prefix = 'q1_', 
+    values_from = flag, 
+    values_fill = 0
+  ) 
+
+```
+

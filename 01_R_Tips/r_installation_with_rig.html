@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.555">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Kentaro-Kamada - BLASの変更によるRの高速化</title>
+<title>バージョンを指定したRのインストール – Kentaro-Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -117,7 +117,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -127,66 +127,81 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-causal-inference" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-causal-inference" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Causal Inference</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-causal-inference">    
         <li>
-    <a class="dropdown-item" href="../Causal_Inference/TMLE.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/TMLE.html">
  <span class="dropdown-text">Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Causal_Inference/L-TMLE.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/L-TMLE.html">
  <span class="dropdown-text">Longitudinal TMLE</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Causal_Inference/Causal_Decomposition.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/Causal_Decomposition.html">
  <span class="dropdown-text">Causal Decomposition Analysis</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html">
  <span class="dropdown-text">Sudharsanan_Bijlsma_2021_Educational note 読解</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../01_Causal_Inference/Borusyak_2024.html">
+ <span class="dropdown-text">Borusyak et al.&nbsp;2024</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-others" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-r-tips" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">R Tips</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-r-tips">    
+        <li>
+    <a class="dropdown-item" href="../01_R_Tips/tensorflow_with_Rstudio.html">
+ <span class="dropdown-text">tensorflowをRstudioで</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../01_R_Tips/how_to_change_BLAS.html">
+ <span class="dropdown-text">BLASの変更によるRの高速化</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../01_R_Tips/r_installation_with_rig.html">
+ <span class="dropdown-text">バージョンを指定したRのインストール</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-others" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Others</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-others">    
         <li>
-    <a class="dropdown-item" href="../Others/rlang学習.html">
+    <a class="dropdown-item" href="../01_Others/rlang学習.html">
  <span class="dropdown-text">rlang学習</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Others/度数から対数尤度を計算.html">
+    <a class="dropdown-item" href="../01_Others/度数から対数尤度を計算.html">
  <span class="dropdown-text">観測度数・期待度数から対数尤度を計算する方法</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Others/Multilevel.html">
+    <a class="dropdown-item" href="../01_Others/Multilevel.html">
  <span class="dropdown-text">マルチレベルモデルは点推定値に影響を及ぼすか？</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Others/tensorflow_with_Rstudio.html">
- <span class="dropdown-text">tensorflowをRstudioで</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../Others/how_to_change_BLAS.html">
- <span class="dropdown-text">BLASの変更によるRの高速化</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../Others/r_installation_with_rig.html">
- <span class="dropdown-text">バージョンを指定したRのインストール</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../Others/multi_answer.html">
+    <a class="dropdown-item" href="../01_Others/multi_answer.html">
  <span class="dropdown-text">マルチアンサーの処理</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../01_Others/複利計算.html">
+ <span class="dropdown-text">複利計算</span></a>
   </li>  
     </ul>
   </li>
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -200,10 +215,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#参考" id="toc-参考" class="nav-link active" data-scroll-target="#参考">参考</a></li>
-  <li><a href="#概要" id="toc-概要" class="nav-link" data-scroll-target="#概要">概要</a></li>
-  <li><a href="#blasとは" id="toc-blasとは" class="nav-link" data-scroll-target="#blasとは">BLASとは</a></li>
-  <li><a href="#blasの変更" id="toc-blasの変更" class="nav-link" data-scroll-target="#blasの変更">BLASの変更</a></li>
+  <li><a href="#背景" id="toc-背景" class="nav-link active" data-scroll-target="#背景">背景</a></li>
+  <li><a href="#こんなのを見つけた" id="toc-こんなのを見つけた" class="nav-link" data-scroll-target="#こんなのを見つけた">こんなのを見つけた</a></li>
+  <li><a href="#使ってみる" id="toc-使ってみる" class="nav-link" data-scroll-target="#使ってみる">使ってみる</a></li>
   </ul>
 </nav>
     </div>
@@ -212,7 +226,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">BLASの変更によるRの高速化</h1>
+<h1 class="title">バージョンを指定したRのインストール</h1>
 </div>
 
 
@@ -229,74 +243,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="参考" class="level2">
-<h2 class="anchored" data-anchor-id="参考">参考</h2>
+<section id="背景" class="level2">
+<h2 class="anchored" data-anchor-id="背景">背景</h2>
 <ul>
-<li><a href="https://www.inwt-statistics.com/blog/basic-linear-algebra-subprograms-in-r">Do GPU-based Basic Linear Algebra Subprograms (BLAS) improve the performance of standard modeling techniques in R?</a></li>
-<li><a href="https://mpopov.com/blog/2021/10/10/even-faster-matrix-math-in-r-on-macos-with-m1/">Even faster matrix math in R on macOS with M1</a></li>
-<li><a href="https://www.nttpc.co.jp/gpu/article/benchmark05.html">NVBLASを使って「R」の並列演算処理を高速化</a></li>
+<li>わたし：Macユーザーで、MacのソフトウェアはすべてHomebrewで管理</li>
+<li>ある日：Rのバージョンが4.4.0になっていたのに気づかずにアップデートしてしまった</li>
+<li>やりたいこと：Rのバージョンを4.3.3に戻したい</li>
 </ul>
 </section>
-<section id="概要" class="level2">
-<h2 class="anchored" data-anchor-id="概要">概要</h2>
-<p>R言語の計算速度はそれほど速くはないが、いくつか工夫することで高速化が可能。</p>
-<ul>
-<li>ベクトル演算の駆使</li>
-<li>並列化（paralell, future, furrrなど）</li>
-<li>BLAS (Basic Linear Algebra Subprograms) の変更</li>
-</ul>
-<p>今回はBLASの変更による高速化について。</p>
+<section id="こんなのを見つけた" class="level2">
+<h2 class="anchored" data-anchor-id="こんなのを見つけた">こんなのを見つけた</h2>
+<p><a href="https://zenn.dev/eitsupi/articles/rig-pak-p3m-2023">イマドキRのインストール事情？ ～rig、pak、p3m～</a></p>
+<p>どうやらrigというものを使えば、Rのバージョンを指定してインストールできるらしい。</p>
 </section>
-<section id="blasとは" class="level2">
-<h2 class="anchored" data-anchor-id="blasとは">BLASとは</h2>
-<p>BLASは、行列演算を高速に行うためのライブラリ。たとえば分散や共分散を計算するときは、行列の掛け算をする必要がある。機械学習やニューラルネットワークでは行列の掛け算が多用されるため、BLASの高速化は全体としての計算速度の向上に大きく貢献する。</p>
-<p>BLASはオープンソースのものもあるが、各CPU、GPUメーカーがそれぞれのチップに適したライブラリを提供している。</p>
-<ul>
-<li>RについてるBLAS
-<ul>
-<li>RにデフォルトでついてくるBLAS</li>
-</ul></li>
-<li>OpenBLAS
-<ul>
-<li>オープンソースのBLASで、homebrewでインストール可能</li>
-<li>pythonのnumpyで使われているらしい</li>
-</ul></li>
-<li>ATLAS
-<ul>
-<li>こちらもオープンソース</li>
-</ul></li>
-<li>MKL
-<ul>
-<li>Intelが提供するBLAS</li>
-<li>Macだと使えない</li>
-</ul></li>
-<li>NVBLAS
-<ul>
-<li>NVIDIAが提供するBLAS</li>
-<li>GPUを使用するのでめちゃくちゃ速いらしい</li>
-<li>NVIDIAのGPUじゃないと使えない…</li>
-</ul></li>
-<li><strong>Accelerate</strong>
-<ul>
-<li>Appleが提供</li>
-<li>今回使用するやつ</li>
-</ul></li>
-</ul>
-</section>
-<section id="blasの変更" class="level2">
-<h2 class="anchored" data-anchor-id="blasの変更">BLASの変更</h2>
-<p>以下、homebrewでRをインストールしていることを前提とする。</p>
-<p>terminalで以下のコマンドを実行する。</p>
+<section id="使ってみる" class="level2">
+<h2 class="anchored" data-anchor-id="使ってみる">使ってみる</h2>
+<p><a href="https://github.com/r-lib/rig">github</a>を見ながらインストール。</p>
+<p>まずはrigをhomebrewからインストール</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Library/Frameworks/R.framework/Resources/lib</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-sf</span> libRblas.veclib.dylib libRblas.dylib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> tap r-lib/rig</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install <span class="at">--cask</span> rig </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>意味としては、Rは<code>libRblas.dylib</code>をBLASとして認識するので、<code>libRblas.veclib.dylib</code>を<code>libRblas.dylib</code>にリンクすることで、<code>libRblas.veclib.dylib</code>をBLASとして使うようにする。</p>
-<p>もどすときは<code>libRblas.veclib.dylib</code>の代わりに、<code>libRblas.0.dylib</code>（デフォルトのBLAS）をリンクすればよい。</p>
+<p>次に、rigを使ってインストールしたいRのバージョンを指定してインストール</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Library/Frameworks/R.framework/Resources/lib</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-sf</span> libRblas.0.dylib libRblas.dylib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rig</span> add 4.3.3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>アンインストールしたい時はこう</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rig</span> rm 4.3.3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>かんたん！</p>
 
 
 </section>
@@ -337,18 +313,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -380,7 +345,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp("https:\/\/Kentaro-Kamada\.github\.io\/");
@@ -388,7 +375,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {

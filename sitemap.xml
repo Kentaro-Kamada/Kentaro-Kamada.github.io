@@ -1,47 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://Kentaro-Kamada.github.io/Causal_Inference/L-TMLE.html</loc>
-    <lastmod>2024-06-05T08:34:29.431Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/01_Causal_Inference/Borusyak_2024.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/Causal_Inference/Causal_Decomposition.html</loc>
-    <lastmod>2024-06-05T08:34:29.431Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/01_Causal_Inference/Causal_Decomposition.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/Others/度数から対数尤度を計算.html</loc>
-    <lastmod>2024-06-05T08:34:29.435Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/01_R_Tips/how_to_change_BLAS.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/Others/r_installation_with_rig.html</loc>
-    <lastmod>2024-06-05T08:34:29.431Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/01_R_Tips/r_installation_with_rig.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/Others/Multilevel.html</loc>
-    <lastmod>2024-06-05T08:34:29.431Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/01_Others/Multilevel.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/Others/rlang学習.html</loc>
-    <lastmod>2024-06-05T08:34:29.431Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/01_Others/複利計算.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/Others/tensorflow_with_Rstudio.html</loc>
-    <lastmod>2024-06-05T08:34:29.435Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/01_Others/rlang学習.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/Others/how_to_change_BLAS.html</loc>
-    <lastmod>2024-06-05T08:34:29.431Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/01_Others/度数から対数尤度を計算.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/Others/multi_answer.html</loc>
-    <lastmod>2024-06-05T08:34:29.431Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/01_Others/multi_answer.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html</loc>
-    <lastmod>2024-06-05T08:34:29.431Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/01_R_Tips/tensorflow_with_Rstudio.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/Causal_Inference/TMLE.html</loc>
-    <lastmod>2024-06-05T08:34:29.431Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/01_Causal_Inference/L-TMLE.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/01_Causal_Inference/TMLE.html</loc>
+    <lastmod>2024-08-11T22:07:14.803Z</lastmod>
   </url>
 </urlset>

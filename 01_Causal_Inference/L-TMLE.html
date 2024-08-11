@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.555">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Kentaro-Kamada - Longitudinal TMLE</title>
+<title>Longitudinal TMLE – Kentaro-Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -121,7 +121,7 @@ div.csl-indent {
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -166,7 +166,7 @@ window.Quarto = {
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -176,66 +176,81 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-causal-inference" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-causal-inference" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Causal Inference</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-causal-inference">    
         <li>
-    <a class="dropdown-item" href="../Causal_Inference/TMLE.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/TMLE.html">
  <span class="dropdown-text">Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Causal_Inference/L-TMLE.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/L-TMLE.html">
  <span class="dropdown-text">Longitudinal TMLE</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Causal_Inference/Causal_Decomposition.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/Causal_Decomposition.html">
  <span class="dropdown-text">Causal Decomposition Analysis</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html">
  <span class="dropdown-text">Sudharsanan_Bijlsma_2021_Educational note 読解</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../01_Causal_Inference/Borusyak_2024.html">
+ <span class="dropdown-text">Borusyak et al.&nbsp;2024</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-others" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-r-tips" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">R Tips</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-r-tips">    
+        <li>
+    <a class="dropdown-item" href="../01_R_Tips/tensorflow_with_Rstudio.html">
+ <span class="dropdown-text">tensorflowをRstudioで</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../01_R_Tips/how_to_change_BLAS.html">
+ <span class="dropdown-text">BLASの変更によるRの高速化</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../01_R_Tips/r_installation_with_rig.html">
+ <span class="dropdown-text">バージョンを指定したRのインストール</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-others" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Others</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-others">    
         <li>
-    <a class="dropdown-item" href="../Others/rlang学習.html">
+    <a class="dropdown-item" href="../01_Others/rlang学習.html">
  <span class="dropdown-text">rlang学習</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Others/度数から対数尤度を計算.html">
+    <a class="dropdown-item" href="../01_Others/度数から対数尤度を計算.html">
  <span class="dropdown-text">観測度数・期待度数から対数尤度を計算する方法</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Others/Multilevel.html">
+    <a class="dropdown-item" href="../01_Others/Multilevel.html">
  <span class="dropdown-text">マルチレベルモデルは点推定値に影響を及ぼすか？</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Others/tensorflow_with_Rstudio.html">
- <span class="dropdown-text">tensorflowをRstudioで</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../Others/how_to_change_BLAS.html">
- <span class="dropdown-text">BLASの変更によるRの高速化</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../Others/r_installation_with_rig.html">
- <span class="dropdown-text">バージョンを指定したRのインストール</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../Others/multi_answer.html">
+    <a class="dropdown-item" href="../01_Others/multi_answer.html">
  <span class="dropdown-text">マルチアンサーの処理</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../01_Others/複利計算.html">
+ <span class="dropdown-text">複利計算</span></a>
   </li>  
     </ul>
   </li>
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -292,7 +307,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="下準備">下準備</h2>
 <section id="ライブラリなど" class="level3">
 <h3 class="anchored" data-anchor-id="ライブラリなど">ライブラリなど</h3>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-1_fc111b58227fdc7cd460ae2719164f81">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SuperLearner)</span>
@@ -315,7 +330,7 @@ window.Quarto = {
 <section id="データの作成" class="level3">
 <h3 class="anchored" data-anchor-id="データの作成">データの作成</h3>
 <p>以下のDAGを考える</p>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-2_7e11f7e91ad852841d3aa5d30bd5f0d9">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dagify</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  L1 <span class="sc">~</span> A0 <span class="sc">+</span> U1,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  A1 <span class="sc">~</span> A0 <span class="sc">+</span> L1,</span>
@@ -345,7 +360,7 @@ window.Quarto = {
 \mathrm{E}[Y^{1, 0} - Y^{1, 1}] &amp;= 0\\
 \mathrm{E}[Y^{0, 1} - Y^{1, 1}] &amp;= 0
 \end{align}\]</span></p>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-3_607046d5c8fe5016c5c84c3a11206643">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>generate_data <span class="ot">&lt;-</span> <span class="cf">function</span>(n){ </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    A0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size=</span><span class="dv">1</span>, <span class="at">prob=</span><span class="fl">0.3</span>) <span class="co"># binary treatment</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    U1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>) <span class="co"># latent continuous confounder</span></span>
@@ -360,7 +375,7 @@ window.Quarto = {
 <ul>
 <li>A0の因果効果</li>
 </ul>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-4_dff7c7addbcabc1a432ddd3dd2a2b4a9">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">|&gt;</span> </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
@@ -398,7 +413,7 @@ window.Quarto = {
 <ul>
 <li>A1の因果効果</li>
 </ul>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-5_00b912f8a2eb9367b8e783784cdc5bf2">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">|&gt;</span> </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A1 <span class="sc">+</span> L1, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
@@ -444,7 +459,7 @@ window.Quarto = {
 <li>collider bias</li>
 </ul>
 <p><span class="math inline">\(L_1\)</span>を条件づけると、<span class="math inline">\(A_0 \to L_1 \gets U_1 \to Y\)</span>というパスが開いて、バイアスをもたらす</p>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-6_0bb79cabbce7463590cde4d3db9de2a5">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">|&gt;</span> </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0 <span class="sc">+</span> L1, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
@@ -486,7 +501,7 @@ window.Quarto = {
 </table>
 </div>
 </div>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-7_fc337c2baad250285d0a8a594d8007d6">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">|&gt;</span> </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0<span class="sc">*</span>A1, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
@@ -548,7 +563,7 @@ W^{A_0, A_1} = \frac{1}{f(A_0 | L_0)} \times \frac{1}{f(A_1 | A_0, L_0, L_1)}
 <p><span class="math display">\[
 W^{A_0, A_1} = \frac{1}{f(A_0)} \times \frac{1}{f(A_1 | A_0, L_1)}
 \]</span></p>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-8_c585999db1001ca8275c606bdc6dd4ac">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>res_ipw <span class="ot">&lt;-</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">augment_columns</span>(</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">glm</span>(A0 <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> data_obs, <span class="at">family =</span> <span class="st">'binomial'</span>), </span>
@@ -583,7 +598,7 @@ W^{A_0, A_1} = \frac{1}{f(A_0)} \times \frac{1}{f(A_1 | A_0, L_1)}
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(A0, A1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>ipwによる各treatment strategyにおけるcounterfactual mean</p>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-9_e6cca1cefac259f873545db1f1bc2ba4">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>res_ipw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
@@ -596,7 +611,7 @@ W^{A_0, A_1} = \frac{1}{f(A_0)} \times \frac{1}{f(A_1 | A_0, L_1)}
 </div>
 </div>
 <p>counterfactual meanの差分</p>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-10_50fa85a09efa52c4fb94fe24e3909006">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cross_join</span>(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  res_ipw <span class="sc">|&gt;</span> </span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">A0_A1 =</span> <span class="fu">str_c</span>(A0, <span class="st">','</span>, A1)) <span class="sc">|&gt;</span> </span>
@@ -631,7 +646,7 @@ W^{A_0, A_1} = \frac{1}{f(A_0)} \times \frac{1}{f(A_1 | A_0, L_1)}
 <ul>
 <li><code>ltmle</code>による実装</li>
 </ul>
-<div class="cell" data-hash="L-TMLE_cache/html/unnamed-chunk-11_0995180f1a3887fd4b799c95f710f9f4">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>res_tmle <span class="ot">&lt;-</span> </span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  ltmle<span class="sc">::</span><span class="fu">ltmle</span>(</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># データセットの列の順番が大切</span></span>
@@ -722,18 +737,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -765,7 +769,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp("https:\/\/Kentaro-Kamada\.github\.io\/");
@@ -773,7 +799,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {

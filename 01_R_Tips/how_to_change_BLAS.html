@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.555">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Kentaro-Kamada - マルチレベルモデルは点推定値に影響を及ぼすか？</title>
+<title>BLASの変更によるRの高速化 – Kentaro-Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -101,35 +101,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -146,7 +117,7 @@ window.Quarto = {
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -156,66 +127,81 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-causal-inference" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-causal-inference" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Causal Inference</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-causal-inference">    
         <li>
-    <a class="dropdown-item" href="../Causal_Inference/TMLE.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/TMLE.html">
  <span class="dropdown-text">Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Causal_Inference/L-TMLE.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/L-TMLE.html">
  <span class="dropdown-text">Longitudinal TMLE</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Causal_Inference/Causal_Decomposition.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/Causal_Decomposition.html">
  <span class="dropdown-text">Causal Decomposition Analysis</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html">
  <span class="dropdown-text">Sudharsanan_Bijlsma_2021_Educational note 読解</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../01_Causal_Inference/Borusyak_2024.html">
+ <span class="dropdown-text">Borusyak et al.&nbsp;2024</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-others" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-r-tips" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">R Tips</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-r-tips">    
+        <li>
+    <a class="dropdown-item" href="../01_R_Tips/tensorflow_with_Rstudio.html">
+ <span class="dropdown-text">tensorflowをRstudioで</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../01_R_Tips/how_to_change_BLAS.html">
+ <span class="dropdown-text">BLASの変更によるRの高速化</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../01_R_Tips/r_installation_with_rig.html">
+ <span class="dropdown-text">バージョンを指定したRのインストール</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-others" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Others</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-others">    
         <li>
-    <a class="dropdown-item" href="../Others/rlang学習.html">
+    <a class="dropdown-item" href="../01_Others/rlang学習.html">
  <span class="dropdown-text">rlang学習</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Others/度数から対数尤度を計算.html">
+    <a class="dropdown-item" href="../01_Others/度数から対数尤度を計算.html">
  <span class="dropdown-text">観測度数・期待度数から対数尤度を計算する方法</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Others/Multilevel.html">
+    <a class="dropdown-item" href="../01_Others/Multilevel.html">
  <span class="dropdown-text">マルチレベルモデルは点推定値に影響を及ぼすか？</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Others/tensorflow_with_Rstudio.html">
- <span class="dropdown-text">tensorflowをRstudioで</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../Others/how_to_change_BLAS.html">
- <span class="dropdown-text">BLASの変更によるRの高速化</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../Others/r_installation_with_rig.html">
- <span class="dropdown-text">バージョンを指定したRのインストール</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../Others/multi_answer.html">
+    <a class="dropdown-item" href="../01_Others/multi_answer.html">
  <span class="dropdown-text">マルチアンサーの処理</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../01_Others/複利計算.html">
+ <span class="dropdown-text">複利計算</span></a>
   </li>  
     </ul>
   </li>
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -229,9 +215,10 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#マルチレベルモデルにおけるよくある誤解" id="toc-マルチレベルモデルにおけるよくある誤解" class="nav-link active" data-scroll-target="#マルチレベルモデルにおけるよくある誤解">マルチレベルモデルにおけるよくある誤解</a></li>
-  <li><a href="#データ生成" id="toc-データ生成" class="nav-link" data-scroll-target="#データ生成">データ生成</a></li>
-  <li><a href="#シミュレーション" id="toc-シミュレーション" class="nav-link" data-scroll-target="#シミュレーション">シミュレーション</a></li>
+  <li><a href="#参考" id="toc-参考" class="nav-link active" data-scroll-target="#参考">参考</a></li>
+  <li><a href="#概要" id="toc-概要" class="nav-link" data-scroll-target="#概要">概要</a></li>
+  <li><a href="#blasとは" id="toc-blasとは" class="nav-link" data-scroll-target="#blasとは">BLASとは</a></li>
+  <li><a href="#blasの変更" id="toc-blasの変更" class="nav-link" data-scroll-target="#blasの変更">BLASの変更</a></li>
   </ul>
 </nav>
     </div>
@@ -240,7 +227,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">マルチレベルモデルは点推定値に影響を及ぼすか？</h1>
+<h1 class="title">BLASの変更によるRの高速化</h1>
 </div>
 
 
@@ -257,150 +244,73 @@ window.Quarto = {
 </header>
 
 
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<section id="マルチレベルモデルにおけるよくある誤解" class="level2">
-<h2 class="anchored" data-anchor-id="マルチレベルモデルにおけるよくある誤解">マルチレベルモデルにおけるよくある誤解</h2>
-<p>「マルチレベルモデルでやんなきゃ係数にバイアスが…」←ホント？</p>
-</section>
-<section id="データ生成" class="level2">
-<h2 class="anchored" data-anchor-id="データ生成">データ生成</h2>
-<p>マルチレベルのデータを考える サンプルサイズ1000、グループ数50のデータ</p>
-<p><span class="math display">\[\begin{align}
-y_{ig} \sim 0.5x_{ig} + \mathrm{Normal}(\theta_g, 1) \\
-\theta_g \sim \mathrm{Normal}(0, 3) \\
-x_i \sim \mathrm{Normal}(0, 1)
-\end{align}\]</span></p>
-<div class="cell" data-hash="Multilevel_cache/html/unnamed-chunk-2_993da7ae4b3a770f793f9ddbfd5653a1">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dgp <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">samplesize =</span> <span class="dv">1000</span>) {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span>samplesize,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">group =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>, <span class="dv">20</span>),</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">rnorm</span>(samplesize, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>),</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(group) <span class="sc">|&gt;</span> </span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">group_mean =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">3</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fl">0.5</span><span class="sc">*</span>x <span class="sc">+</span> <span class="fu">rnorm</span>(samplesize, <span class="at">mean =</span> group_mean, <span class="at">sd =</span> <span class="dv">1</span>))</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">dgp</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-hash="Multilevel_cache/html/unnamed-chunk-3_cee3be06ddb41a0a1b5cf2e9b5320f43">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data) <span class="sc">|&gt;</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = y ~ x, data = data)
-
-Residuals:
-   Min     1Q Median     3Q    Max 
--7.204 -2.101 -0.026  2.141  8.066 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) -0.38089    0.09163  -4.157 3.51e-05 ***
-x            0.50111    0.09371   5.347 1.11e-07 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 2.895 on 998 degrees of freedom
-Multiple R-squared:  0.02785,   Adjusted R-squared:  0.02688 
-F-statistic: 28.59 on 1 and 998 DF,  p-value: 1.107e-07</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>group), <span class="at">data =</span> data) <span class="sc">|&gt;</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
-lmerModLmerTest]
-Formula: y ~ x + (1 | group)
-   Data: data
-
-REML criterion at convergence: 3140.8
-
-Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--2.8801 -0.6852 -0.0267  0.6389  3.3316 
-
-Random effects:
- Groups   Name        Variance Std.Dev.
- group    (Intercept) 7.464    2.732   
- Residual             1.053    1.026   
-Number of obs: 1000, groups:  group, 50
-
-Fixed effects:
-             Estimate Std. Error        df t value Pr(&gt;|t|)    
-(Intercept)  -0.37872    0.38773  49.00115  -0.977    0.333    
-x             0.45115    0.03431 949.88893  13.148   &lt;2e-16 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Correlation of Fixed Effects:
-  (Intr)
-x -0.004</code></pre>
-</div>
-</div>
-</section>
-<section id="シミュレーション" class="level2">
-<h2 class="anchored" data-anchor-id="シミュレーション">シミュレーション</h2>
-<p>データを1000個作成</p>
-<div class="cell" data-hash="Multilevel_cache/html/unnamed-chunk-4_2eed8e12b687694c3be501587928d0be">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data_list <span class="ot">&lt;-</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, \(x) <span class="fu">dgp</span>(<span class="dv">1000</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">enframe</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>OLSと変量効果モデルで推定</p>
-<div class="cell" data-hash="Multilevel_cache/html/unnamed-chunk-5_f71d39484b471caacbba6d54215109fe">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  data_list <span class="sc">|&gt;</span> </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">lm =</span> <span class="fu">map</span>(value, \(data) <span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data)),</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">lmer =</span> <span class="fu">map</span>(value, \(data) <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>group), <span class="at">data =</span> data))</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>xの係数のみ取り出す</p>
-<div class="cell" data-hash="Multilevel_cache/html/unnamed-chunk-6_a0c7c31c6816eebf2d2c1131a27bb98e">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>res2 <span class="ot">&lt;-</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  result <span class="sc">|&gt;</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">lm_res =</span> <span class="fu">map</span>(lm, \(model) {</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tidy</span>(model) <span class="sc">|&gt;</span> </span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">select</span>(term, estimate)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    }),</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">lmer_res =</span> <span class="fu">map</span>(lmer, \(model) {</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tidy</span>(model) <span class="sc">|&gt;</span> </span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">select</span>(term, estimate)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, lm_res, lmer_res) <span class="sc">|&gt;</span> </span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span>name, <span class="at">names_to =</span> <span class="st">'model'</span>, <span class="at">values_to =</span> <span class="st">'value'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(value) <span class="sc">|&gt;</span> </span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">'x'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>結果を図示</p>
+<section id="参考" class="level2">
+<h2 class="anchored" data-anchor-id="参考">参考</h2>
 <ul>
-<li>どちらの点推定値も真の値の0.5を中心に分布＝バイアスはない</li>
-<li>OLSによる点推定値はバリアンスが大きい</li>
-<li>変量効果（マルチレベル）モデルによる点推定値はバリアンスが小さい</li>
+<li><a href="https://www.inwt-statistics.com/blog/basic-linear-algebra-subprograms-in-r">Do GPU-based Basic Linear Algebra Subprograms (BLAS) improve the performance of standard modeling techniques in R?</a></li>
+<li><a href="https://mpopov.com/blog/2021/10/10/even-faster-matrix-math-in-r-on-macos-with-m1/">Even faster matrix math in R on macOS with M1</a></li>
+<li><a href="https://www.nttpc.co.jp/gpu/article/benchmark05.html">NVBLASを使って「R」の並列演算処理を高速化</a></li>
 </ul>
-<div class="cell" data-hash="Multilevel_cache/html/unnamed-chunk-7_ea6a0250774e73ac051e9d6d73427c59">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>res2 <span class="sc">|&gt;</span> </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(estimate, <span class="at">fill =</span> model))<span class="sc">+</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="st">'dashed'</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">color =</span> <span class="st">'black'</span>, <span class="at">binwidth =</span> <span class="fl">0.02</span>, <span class="at">position =</span> <span class="st">'identity'</span>)<span class="sc">+</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Multilevel_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+</section>
+<section id="概要" class="level2">
+<h2 class="anchored" data-anchor-id="概要">概要</h2>
+<p>R言語の計算速度はそれほど速くはないが、いくつか工夫することで高速化が可能。</p>
+<ul>
+<li>ベクトル演算の駆使</li>
+<li>並列化（paralell, future, furrrなど）</li>
+<li>BLAS (Basic Linear Algebra Subprograms) の変更</li>
+</ul>
+<p>今回はBLASの変更による高速化について。</p>
+</section>
+<section id="blasとは" class="level2">
+<h2 class="anchored" data-anchor-id="blasとは">BLASとは</h2>
+<p>BLASは、行列演算を高速に行うためのライブラリ。たとえば分散や共分散を計算するときは、行列の掛け算をする必要がある。機械学習やニューラルネットワークでは行列の掛け算が多用されるため、BLASの高速化は全体としての計算速度の向上に大きく貢献する。</p>
+<p>BLASはオープンソースのものもあるが、各CPU、GPUメーカーがそれぞれのチップに適したライブラリを提供している。</p>
+<ul>
+<li>RについてるBLAS
+<ul>
+<li>RにデフォルトでついてくるBLAS</li>
+</ul></li>
+<li>OpenBLAS
+<ul>
+<li>オープンソースのBLASで、homebrewでインストール可能</li>
+<li>pythonのnumpyで使われているらしい</li>
+</ul></li>
+<li>ATLAS
+<ul>
+<li>こちらもオープンソース</li>
+</ul></li>
+<li>MKL
+<ul>
+<li>Intelが提供するBLAS</li>
+<li>Macだと使えない</li>
+</ul></li>
+<li>NVBLAS
+<ul>
+<li>NVIDIAが提供するBLAS</li>
+<li>GPUを使用するのでめちゃくちゃ速いらしい</li>
+<li>NVIDIAのGPUじゃないと使えない…</li>
+</ul></li>
+<li><strong>Accelerate</strong>
+<ul>
+<li>Appleが提供</li>
+<li>今回使用するやつ</li>
+</ul></li>
+</ul>
+</section>
+<section id="blasの変更" class="level2">
+<h2 class="anchored" data-anchor-id="blasの変更">BLASの変更</h2>
+<p>以下、homebrewでRをインストールしていることを前提とする。</p>
+<p>terminalで以下のコマンドを実行する。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Library/Frameworks/R.framework/Resources/lib</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-sf</span> libRblas.veclib.dylib libRblas.dylib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
+<p>意味としては、Rは<code>libRblas.dylib</code>をBLASとして認識するので、<code>libRblas.veclib.dylib</code>を<code>libRblas.dylib</code>にリンクすることで、<code>libRblas.veclib.dylib</code>をBLASとして使うようにする。</p>
+<p>もどすときは<code>libRblas.veclib.dylib</code>の代わりに、<code>libRblas.0.dylib</code>（デフォルトのBLAS）をリンクすればよい。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Library/Frameworks/R.framework/Resources/lib</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-sf</span> libRblas.0.dylib libRblas.dylib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
@@ -442,18 +352,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -485,7 +384,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp("https:\/\/Kentaro-Kamada\.github\.io\/");
@@ -493,7 +414,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {

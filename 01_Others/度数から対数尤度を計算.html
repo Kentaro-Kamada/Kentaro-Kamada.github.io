@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Welcome – Kentaro-Kamada</title>
+<title>観測度数・期待度数から対数尤度を計算する方法 – Kentaro-Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,25 +20,45 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -67,8 +87,37 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-fixed">
@@ -78,7 +127,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Kentaro-Kamada</span>
     </a>
   </div>
@@ -89,7 +138,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -98,23 +147,23 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-causal-inference">    
         <li>
-    <a class="dropdown-item" href="./01_Causal_Inference/TMLE.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/TMLE.html">
  <span class="dropdown-text">Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./01_Causal_Inference/L-TMLE.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/L-TMLE.html">
  <span class="dropdown-text">Longitudinal TMLE</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./01_Causal_Inference/Causal_Decomposition.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/Causal_Decomposition.html">
  <span class="dropdown-text">Causal Decomposition Analysis</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html">
  <span class="dropdown-text">Sudharsanan_Bijlsma_2021_Educational note 読解</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./01_Causal_Inference/Borusyak_2024.html">
+    <a class="dropdown-item" href="../01_Causal_Inference/Borusyak_2024.html">
  <span class="dropdown-text">Borusyak et al.&nbsp;2024</span></a>
   </li>  
     </ul>
@@ -125,15 +174,15 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-r-tips">    
         <li>
-    <a class="dropdown-item" href="./01_R_Tips/tensorflow_with_Rstudio.html">
+    <a class="dropdown-item" href="../01_R_Tips/tensorflow_with_Rstudio.html">
  <span class="dropdown-text">tensorflowをRstudioで</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./01_R_Tips/how_to_change_BLAS.html">
+    <a class="dropdown-item" href="../01_R_Tips/how_to_change_BLAS.html">
  <span class="dropdown-text">BLASの変更によるRの高速化</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./01_R_Tips/r_installation_with_rig.html">
+    <a class="dropdown-item" href="../01_R_Tips/r_installation_with_rig.html">
  <span class="dropdown-text">バージョンを指定したRのインストール</span></a>
   </li>  
     </ul>
@@ -144,23 +193,23 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-others">    
         <li>
-    <a class="dropdown-item" href="./01_Others/rlang学習.html">
+    <a class="dropdown-item" href="../01_Others/rlang学習.html">
  <span class="dropdown-text">rlang学習</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./01_Others/度数から対数尤度を計算.html">
+    <a class="dropdown-item" href="../01_Others/度数から対数尤度を計算.html">
  <span class="dropdown-text">観測度数・期待度数から対数尤度を計算する方法</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./01_Others/Multilevel.html">
+    <a class="dropdown-item" href="../01_Others/Multilevel.html">
  <span class="dropdown-text">マルチレベルモデルは点推定値に影響を及ぼすか？</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./01_Others/multi_answer.html">
+    <a class="dropdown-item" href="../01_Others/multi_answer.html">
  <span class="dropdown-text">マルチアンサーの処理</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./01_Others/複利計算.html">
+    <a class="dropdown-item" href="../01_Others/複利計算.html">
  <span class="dropdown-text">複利計算</span></a>
   </li>  
     </ul>
@@ -176,15 +225,22 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#観測度数とセル確率から対数尤度を計算" id="toc-観測度数とセル確率から対数尤度を計算" class="nav-link active" data-scroll-target="#観測度数とセル確率から対数尤度を計算">観測度数とセル確率から対数尤度を計算</a></li>
+  <li><a href="#尤度比カイ2乗値との関係" id="toc-尤度比カイ2乗値との関係" class="nav-link" data-scroll-target="#尤度比カイ2乗値との関係">尤度比カイ2乗値との関係</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Welcome</h1>
+<h1 class="title">観測度数・期待度数から対数尤度を計算する方法</h1>
 </div>
 
 
@@ -201,10 +257,115 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="観測度数とセル確率から対数尤度を計算" class="level2">
+<h2 class="anchored" data-anchor-id="観測度数とセル確率から対数尤度を計算">観測度数とセル確率から対数尤度を計算</h2>
+<ul>
+<li><span class="math inline">\(f_{ij}\)</span>：観測度数</li>
+</ul>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th>B</th>
+<th>B’</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td><span class="math inline">\(f_{11}\)</span></td>
+<td><span class="math inline">\(f_{12}\)</span></td>
+</tr>
+<tr class="even">
+<td>A’</td>
+<td><span class="math inline">\(f_{21}\)</span></td>
+<td><span class="math inline">\(f_{22}\)</span></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><span class="math inline">\(p_{ij}\)</span>：セル確率
+<ul>
+<li>モデルから計算されたセルの確率</li>
+<li>AとBに関連がないモデルにおいては、期待度数をサンプルサイズで割ったもの</li>
+</ul></li>
+</ul>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th>B</th>
+<th>B’</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td><span class="math inline">\(p_{11}\)</span></td>
+<td><span class="math inline">\(p_{12}\)</span></td>
+</tr>
+<tr class="even">
+<td>A’</td>
+<td><span class="math inline">\(p_{21}\)</span></td>
+<td><span class="math inline">\(p_{22}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>尤度関数を<span class="math inline">\(L\)</span>とすると</p>
+<p><span class="math display">\[
+L = \prod_i \prod_j p_{ij}^{f_{ij}} =  p_{11}^{f_{11}} \times p_{12}^{f_{12}} \times p_{21}^{f_{21}} \times p_{22}^{f_{22}}
+\]</span></p>
+<p>各セルの確率を(観測度数)乗したものを全部掛け算</p>
+<p>対数尤度はこれの対数を取ったもの</p>
+<p><span class="math display">\[
+\log L = \sum_i \sum_j f_{ij} \log p_{ij} = f_{11} \log p_{11} + f_{12} \log p_{12} + f_{21} \log p_{21} + f_{22} \log p_{22}
+\]</span></p>
+<p>掛け算が足し算になるので計算しやすい</p>
+</section>
+<section id="尤度比カイ2乗値との関係" class="level2">
+<h2 class="anchored" data-anchor-id="尤度比カイ2乗値との関係">尤度比カイ2乗値との関係</h2>
+<p>尤度比カイ2乗値（<span class="math inline">\(G^2\)</span>）と観測度数（<span class="math inline">\(f\)</span>）・期待度数（<span class="math inline">\(F\)</span>）の関係は以下の式で表される<span class="citation" data-cites="Hout1983 McCutcheon1987">(<a href="#ref-Hout1983" role="doc-biblioref">Hout 1983</a>; <a href="#ref-McCutcheon1987" role="doc-biblioref">McCutcheon 1987</a>)</span></p>
+<p><span class="math display">\[
+G^2 = 2 \sum_i \sum_j f_{ij} \log \frac{f_{ij}}{F_{ij}}
+\]</span></p>
+<p>なぜこうなるのか？対数尤度の比から考えてみる。</p>
+<p>まず、AとBに関連がないというモデル（独立モデル）のもとで対数尤度を計算する。この条件ではセル確率<span class="math inline">\(p_{ij}\)</span>は期待度数<span class="math inline">\(F_{ij}\)</span>をサンプルサイズ<span class="math inline">\(N\)</span>で割ったものになる。</p>
+<p><span class="math display">\[
+\log L_1 = \sum_i \sum_j f_{ij} \log p_{ij} = \sum_i \sum_j f_{ij} \log \frac{F_{ij}}{N} = \sum_i \sum_j f_{ij} \log F_{ij} - \sum_i \sum_j f_{ij} \log N
+\]</span></p>
+<p>次に、AとBに関連があるというモデル（飽和モデル）のもとで対数尤度を計算する。この条件ではセル確率<span class="math inline">\(p_{ij}\)</span>は観測度数<span class="math inline">\(f_{ij}\)</span>をサンプルサイズ<span class="math inline">\(N\)</span>で割ったものになる。</p>
+<p><span class="math display">\[
+\log L_2 = \sum_i \sum_j f_{ij} \log p_{ij} = \sum_i \sum_j f_{ij} \log \frac{f_{ij}}{N} = \sum_i \sum_j f_{ij} \log f_{ij} - \sum_i \sum_j f_{ij} \log N
+\]</span></p>
+<p>対数尤度の差（＝尤度の比）を計算すると</p>
+<p><span class="math display">\[\begin{align}
+\log L_2 - \log L_1 &amp;= \sum_i \sum_j f_{ij} \log f_{ij} - \sum_i \sum_j f_{ij} \log F_{ij} \\
+\log \frac{L_2}{L_1} &amp;= \sum_i \sum_j (f_{ij} \log f_{ij} - f_{ij} \log F_{ij}) \\
+\log \frac{L_2}{L_1} &amp;= \sum_i \sum_j f_{ij} \log \frac{f_{ij}}{F_{ij}} \\
+\end{align}\]</span></p>
+<p>それっぽい形になった。</p>
+<p>さらに両辺を2倍すると</p>
+<p><span class="math display">\[
+2 \log \frac{L_2}{L_1} = \log (\frac{L_2}{L_1})^2 = 2 \sum_i \sum_j f_{ij} \log \frac{f_{ij}}{F_{ij}}
+\]</span></p>
+<p>したがって尤度比カイ二乗値は、尤度比の2乗の対数をとったものである。</p>
+<p>あるいは、以下のように変形すればdeviance（-2対数尤度）の差としても表現できる。</p>
+<p><span class="math display">\[
+2 \log \frac{L_2}{L_1} = (-2 \log L_1) - (- 2 \log L_2)
+\]</span></p>
 
 
 
-</main> <!-- /main -->
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-Hout1983" class="csl-entry" role="listitem">
+Hout, Michael. 1983. <em>Mobility <span>Tables</span></em>. <span>Thousand Oaks</span>: <span>SAGE Publications, Inc.</span> <a href="https://doi.org/10.4135/9781412985086">https://doi.org/10.4135/9781412985086</a>.
+</div>
+<div id="ref-McCutcheon1987" class="csl-entry" role="listitem">
+McCutcheon, Allan L. 1987. <em>Latent <span>Class Analysis</span></em>. <span>Oaks</span>: <span>Sage</span>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

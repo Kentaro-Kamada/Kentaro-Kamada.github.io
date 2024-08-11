@@ -1,0 +1,159 @@
+---
+title: "Borusyak et al. 2024"
+---
+
+## 文献
+
+Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, "Revisiting Event-Study Designs: Robust and Efficient Estimation," _The Review of Economic Studies_, [10.1093/restud/rdae007](https://doi.org/10.1093/restud/rdae007).
+
+## ざっくりとした要約
+
+DiD推定をg-computationのようなアイデアで行う手法を提案した論文です。従来のTwo-way fixed effectによる推定では問題が生じることが指摘されてきた、処置のタイミングによる効果の異質性（staggerd DiD design）の問題などに対処しています。通常g-computationによる推定量の標準誤差はBootstrapで計算することが多いと思うのですが、この論文では推定量の漸近正規性などを示しつつ、Bootstrapを使わずに標準誤差を計算する方法を提案している点が興味深いです。
+
+## Estimand
+
+- $Y_{it}(1), Y_{it}(0)$：個人$i$、時点$t$における介入を受けた場合と受けていない場合のpotential outcome
+- $D_{it}$：介入を受けたかどうかのバイナリ変数
+
+個人レベルの因果効果
+
+\begin{align*}
+\tau_{it} = Y_{it}(1) - Y_{it}(0) = Y_{it} - Y_{it}(0)
+\end{align*}
+
+これを関心のある集団について平均する
+
+- ATT：$\mathrm{E}[\tau_{it}|D_{it} = 1] = \mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1]$
+- event study：$\mathrm{E}[\tau_{it}|D_{it} = 1, T = t] = \mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1, T = t]$
+- 特定の集団におけるATT：$\mathrm{E}[\tau_{it}|D_{it} = 1, Gender] = \mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1, Gender]$
+
+論文ではウェイトを使った書き方をしているのでややこしいが、おそらくはこういうことだと思われる。
+
+## 識別
+
+因果効果を識別するための仮定は以下の通り
+
+1. General moodel of $Y(0)$：$\mathrm{E}[Y_{it}(0)] = A'_{it}\lambda_i + X'_{it}\delta$の形で書けること
+  - $A'_{it}\lambda_i$：個体の固定効果＋固定効果と共変量の交互作用
+  - $X'_{it}\delta$：時点の固定効果＋時変の共変量
+  - 要するに$\mathrm{E}[Y_{it}(0)]$が適切のモデル化できていること
+2. No-anticipation effects：$Y_{it} = Y_{it}(0) \ if \ D_{it} = 0$
+  - Consistencyと同じ？
+3. Model of causal effects
+  - 効果の異質性がパラメトリックモデルで書けること（？）
+  - 複雑すぎるとダメということ？このあたりちょっとわからなかったです
+
+## 推定
+
+1. $\mathrm{E}[Y_{it}(0)]$の推定
+
+- 処置を受けていないサンプル（$D_{it} = 0$）を用いて、以下のモデルをOLSで推定
+
+$$
+Y_{it} = A'_{it}\lambda_i + X'_{it}\delta + \varepsilon_{it}
+$$
+
+2. $\hat{Y}_{it}(0) | D_{it} = 1$ の推定
+
+- 推定したモデルに、処置を受けたサンプル（$D_{it} = 1$）を代入し、処置を受けたサンプルにおいて、処置を受けていなかった場合のpotential outcomeを予測
+
+3. $\hat{\tau}_{it}$の推定
+
+- 処置を受けたサンプルの、観察データ$Y_{it}$と予測したpotential outcome$\hat{Y}_{it}(0)$の差を取る
+
+4. 関心のある集団について平均値をとる
+
+$$
+\mathrm{ATT} = \mathrm{E}[\hat{\tau}_{it}|D_{it} = 1]
+$$
+
+標準誤差の推定も説明があるが、理解できなかった...
+
+## 分析例
+
+著者によるStataパッケージの他、RではKyle Buttsによる[`didimputation`](https://github.com/kylebutts/didimputation)パッケージがある。
+
+ここでは`didimputation`パッケージのトイデータを用いて、パッケージによる結果と、手計算による結果を比較する。
+
+```{r}
+#| message: false
+# remotes::install_github('kylebutts/didimputation')
+library(tidyverse)
+library(fixest)
+library(didimputation)
+```
+
+## パッケージの結果
+
+```{r}
+
+did_imputation(data = df_het, yname = "dep_var", gname = "g", tname = "year", idname = "unit") |> 
+  knitr::kable()
+
+```
+
+## 手計算
+
+```{r}
+
+# OLSで処置を受けていないサンプルにおけるモデルを推定
+model <- feols(dep_var ~ 1 | year + unit, data = df_het |> filter(!treat), combine.quick = TRUE)
+
+prediction <- 
+  # 処置を受けた集団の予測値（potential outcome）を計算
+  broom::augment(model, newdata = df_het |> filter(treat)) |> 
+  # 差分を計算
+  mutate(tau = dep_var - .fitted) 
+
+# 集計
+prediction |> 
+  summarise(
+    ATT = mean(tau)
+  ) |> 
+  knitr::kable()
+
+```
+
+ATTの点推定値は一致する。
+
+## 集団による異質性
+
+次に、処置のタイミングにより効果が異なる場合の分析を考える。
+
+パッケージでは以下のように、処置のタイミングが同じグループごとにウェイトを作成してやることで、集団ごとの効果を推定できる。
+
+```{r}
+
+df_het |> 
+  mutate(
+    group1 = case_when(
+      group == 'Group 1' & treat ~ 1,
+      .default = 0
+    ),
+    group2 = case_when(
+      group == 'Group 2' & treat ~ 1,
+      .default = 0
+    )
+  ) |> 
+  did_imputation(yname = "dep_var", gname = "g", tname = "year", idname = "unit", wtr = c('group1', 'group2')) |> 
+  knitr::kable()
+
+```
+
+手計算では、集計をグループごとに行えばよい。
+
+```{r}
+
+# 集計
+prediction |> 
+  summarise(
+    ATT = mean(tau),
+    .by = c(group)
+  ) |> 
+  knitr::kable()
+
+```
+
+
+こちらも点推定値は一致する。
+

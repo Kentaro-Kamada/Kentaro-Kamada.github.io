@@ -10,19 +10,22 @@ website:
         text: "Home"
       - text: "Causal Inference"
         menu:
-          - Causal_Inference/TMLE.qmd
-          - Causal_Inference/L-TMLE.qmd
-          - Causal_Inference/Causal_Decomposition.qmd
-          - Causal_Inference/Sudharsanan_Bijlsma_2021_読解.qmd
+          - 01_Causal_Inference/TMLE.qmd
+          - 01_Causal_Inference/L-TMLE.qmd
+          - 01_Causal_Inference/Causal_Decomposition.qmd
+          - 01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.qmd
+      - text: "R Tips"
+        menu:
+          - 01_R_Tips/tensorflow_with_Rstudio.qmd
+          - 01_R_Tips/how_to_change_BLAS.qmd
+          - 01_R_Tips/r_installation_with_rig.qmd
       - text: "Others"
         menu:
-          - Others/rlang学習.qmd
-          - Others/度数から対数尤度を計算.qmd
-          - Others/Multilevel.qmd
-          - Others/tensorflow_with_Rstudio.qmd
-          - Others/how_to_change_BLAS.qmd
-          - Others/r_installation_with_rig.qmd
-          - Others/multi_answer.qmd
+          - 01_Others/rlang学習.qmd
+          - 01_Others/度数から対数尤度を計算.qmd
+          - 01_Others/Multilevel.qmd
+          - 01_Others/multi_answer.qmd
+          - 01_Others/複利計算.qmd
 
 format:
   html:

@@ -121,6 +121,20 @@
       ],
       "Hash": "8c7115cd3a0e048bda2a7cd110549f7a"
     },
+    "MatrixExtra": {
+      "Package": "MatrixExtra",
+      "Version": "0.1.15",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "Matrix",
+        "Rcpp",
+        "RhpcBLASctl",
+        "float",
+        "methods"
+      ],
+      "Hash": "810aca0f5275951ca65e83941a060662"
+    },
     "ModelMetrics": {
       "Package": "ModelMetrics",
       "Version": "1.2.2.2",
@@ -293,6 +307,13 @@
         "utils"
       ],
       "Hash": "3e1384ada5d3948b392e98b11434d972"
+    },
+    "RhpcBLASctl": {
+      "Package": "RhpcBLASctl",
+      "Version": "0.23-42",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "c966ea2957ff75e77afa5c908dfc89e1"
     },
     "Rsolnp": {
       "Package": "Rsolnp",
@@ -940,6 +961,25 @@
       ],
       "Hash": "c7f527c59edc72c4bce63519b8d38752"
     },
+    "didimputation": {
+      "Package": "didimputation",
+      "Version": "0.4.0",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "kylebutts",
+      "RemoteRepo": "didimputation",
+      "RemoteRef": "main",
+      "RemoteSha": "d18fd68086f0cb1bcfcead8438b604cfab6c643e",
+      "Requirements": [
+        "Matrix",
+        "MatrixExtra",
+        "R",
+        "data.table",
+        "fixest"
+      ],
+      "Hash": "b8faf755b8861d3fabf1849a53fb7527"
+    },
     "diffobj": {
       "Package": "diffobj",
       "Version": "0.3.5",
@@ -1002,6 +1042,18 @@
         "vctrs"
       ],
       "Hash": "fedd9d00c2944ff00a0e2696ccf048ec"
+    },
+    "dreamerr": {
+      "Package": "dreamerr",
+      "Version": "1.4.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "Formula",
+        "stringmagic",
+        "utils"
+      ],
+      "Hash": "8ff490ff7faf6952d558f046ab9a363a"
     },
     "dtplyr": {
       "Package": "dtplyr",
@@ -1098,6 +1150,41 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "f7736a18de97dea803bde0a2daaafb27"
+    },
+    "fixest": {
+      "Package": "fixest",
+      "Version": "0.12.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "dreamerr",
+        "grDevices",
+        "graphics",
+        "methods",
+        "nlme",
+        "numDeriv",
+        "sandwich",
+        "stats",
+        "stringmagic",
+        "tools",
+        "utils"
+      ],
+      "Hash": "47745b31b09a5707d8197f616364249b"
+    },
+    "float": {
+      "Package": "float",
+      "Version": "0.3-2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods",
+        "tools",
+        "utils"
+      ],
+      "Hash": "0d644aed82556eaf30e1601599592e47"
     },
     "fontawesome": {
       "Package": "fontawesome",
@@ -2819,6 +2906,19 @@
       ],
       "Hash": "0bcf0c6f274e90ea314b812a6d19a519"
     },
+    "sandwich": {
+      "Package": "sandwich",
+      "Version": "3.1-0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "stats",
+        "utils",
+        "zoo"
+      ],
+      "Hash": "1cf6ae532f0179350862fefeb0987c9b"
+    },
     "sass": {
       "Package": "sass",
       "Version": "0.4.8",
@@ -2995,6 +3095,18 @@
         "utils"
       ],
       "Hash": "058aebddea264f4c99401515182e656a"
+    },
+    "stringmagic": {
+      "Package": "stringmagic",
+      "Version": "1.1.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "Rcpp",
+        "stats",
+        "utils"
+      ],
+      "Hash": "4eb812159ccaf2b0b6e70d1fa23e7515"
     },
     "stringr": {
       "Package": "stringr",
@@ -3495,6 +3607,21 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "29240487a071f535f5e5d5a323b7afbd"
+    },
+    "zoo": {
+      "Package": "zoo",
+      "Version": "1.8-12",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "grDevices",
+        "graphics",
+        "lattice",
+        "stats",
+        "utils"
+      ],
+      "Hash": "5c715954112b45499fb1dadc6ee6ee3e"
     }
   }
 }

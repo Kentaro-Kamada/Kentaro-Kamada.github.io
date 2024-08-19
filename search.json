@@ -2,70 +2,70 @@
   {
     "objectID": "01_Causal_Inference/Borusyak_2024.html",
     "href": "01_Causal_Inference/Borusyak_2024.html",
-    "title": "Borusyak et al. 2024",
+    "title": "Borusyak et al. (2024)",
     "section": "",
-    "text": "Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, “Revisiting Event-Study Designs: Robust and Efficient Estimation,” The Review of Economic Studies, 10.1093/restud/rdae007."
+    "text": "Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, “Revisiting Event-Study Designs: Robust and Efficient Estimation,” The Review of Economic Studies, (10.1093/restud/rdae007)."
   },
   {
     "objectID": "01_Causal_Inference/Borusyak_2024.html#文献",
     "href": "01_Causal_Inference/Borusyak_2024.html#文献",
-    "title": "Borusyak et al. 2024",
+    "title": "Borusyak et al. (2024)",
     "section": "",
-    "text": "Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, “Revisiting Event-Study Designs: Robust and Efficient Estimation,” The Review of Economic Studies, 10.1093/restud/rdae007."
+    "text": "Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, “Revisiting Event-Study Designs: Robust and Efficient Estimation,” The Review of Economic Studies, (10.1093/restud/rdae007)."
   },
   {
     "objectID": "01_Causal_Inference/Borusyak_2024.html#ざっくりとした要約",
     "href": "01_Causal_Inference/Borusyak_2024.html#ざっくりとした要約",
-    "title": "Borusyak et al. 2024",
+    "title": "Borusyak et al. (2024)",
     "section": "ざっくりとした要約",
     "text": "ざっくりとした要約\nDiD推定をg-computationのようなアイデアで行う手法を提案した論文です。従来のTwo-way fixed effectによる推定では問題が生じることが指摘されてきた、処置のタイミングによる効果の異質性（staggerd DiD design）の問題などに対処しています。通常g-computationによる推定量の標準誤差はBootstrapで計算することが多いと思うのですが、この論文では推定量の漸近正規性などを示しつつ、Bootstrapを使わずに標準誤差を計算する方法を提案している点が興味深いです。"
   },
   {
     "objectID": "01_Causal_Inference/Borusyak_2024.html#estimand",
     "href": "01_Causal_Inference/Borusyak_2024.html#estimand",
-    "title": "Borusyak et al. 2024",
+    "title": "Borusyak et al. (2024)",
     "section": "Estimand",
     "text": "Estimand\n\n\\(Y_{it}(1), Y_{it}(0)\\)：個人\\(i\\)、時点\\(t\\)における介入を受けた場合と受けていない場合のpotential outcome\n\\(D_{it}\\)：介入を受けたかどうかのバイナリ変数\n\n個人レベルの因果効果\n\\[\\begin{align*}\n\\tau_{it} = Y_{it}(1) - Y_{it}(0) = Y_{it} - Y_{it}(0)\n\\end{align*}\\]\nこれを関心のある集団について平均する\n\nATT：\\(\\mathrm{E}[\\tau_{it}|D_{it} = 1] = \\mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1]\\)\nevent study：\\(\\mathrm{E}[\\tau_{it}|D_{it} = 1, T = t] = \\mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1, T = t]\\)\n特定の集団におけるATT：\\(\\mathrm{E}[\\tau_{it}|D_{it} = 1, Gender] = \\mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1, Gender]\\)\n\n論文ではウェイトを使った書き方をしているのでややこしいが、おそらくはこういうことだと思われる。"
   },
   {
     "objectID": "01_Causal_Inference/Borusyak_2024.html#識別",
     "href": "01_Causal_Inference/Borusyak_2024.html#識別",
-    "title": "Borusyak et al. 2024",
+    "title": "Borusyak et al. (2024)",
     "section": "識別",
     "text": "識別\n因果効果を識別するための仮定は以下の通り\n\nGeneral moodel of \\(Y(0)\\)：\\(\\mathrm{E}[Y_{it}(0)] = A'_{it}\\lambda_i + X'_{it}\\delta\\)の形で書けること\n\n\n\\(A'_{it}\\lambda_i\\)：個体の固定効果＋固定効果と共変量の交互作用\n\\(X'_{it}\\delta\\)：時点の固定効果＋時変の共変量\n要するに\\(\\mathrm{E}[Y_{it}(0)]\\)が適切のモデル化できていること\n\n\nNo-anticipation effects：\\(Y_{it} = Y_{it}(0) \\ if \\ D_{it} = 0\\)\n\n\nConsistencyと同じ？\n\n\nModel of causal effects\n\n\n効果の異質性がパラメトリックモデルで書けること（？）\n複雑すぎるとダメということ？このあたりちょっとわからなかったです"
   },
   {
     "objectID": "01_Causal_Inference/Borusyak_2024.html#推定",
     "href": "01_Causal_Inference/Borusyak_2024.html#推定",
-    "title": "Borusyak et al. 2024",
+    "title": "Borusyak et al. (2024)",
     "section": "推定",
     "text": "推定\n\n\\(\\mathrm{E}[Y_{it}(0)]\\)の推定\n\n\n処置を受けていないサンプル（\\(D_{it} = 0\\)）を用いて、以下のモデルをOLSで推定\n\n\\[\nY_{it} = A'_{it}\\lambda_i + X'_{it}\\delta + \\varepsilon_{it}\n\\]\n\n\\(\\hat{Y}_{it}(0) | D_{it} = 1\\) の推定\n\n\n推定したモデルに、処置を受けたサンプル（\\(D_{it} = 1\\)）を代入し、処置を受けたサンプルにおいて、処置を受けていなかった場合のpotential outcomeを予測\n\n\n\\(\\hat{\\tau}_{it}\\)の推定\n\n\n処置を受けたサンプルの、観察データ\\(Y_{it}\\)と予測したpotential outcome\\(\\hat{Y}_{it}(0)\\)の差を取る\n\n\n関心のある集団について平均値をとる\n\n\\[\n\\mathrm{ATT} = \\mathrm{E}[\\hat{\\tau}_{it}|D_{it} = 1]\n\\]\n標準誤差の推定も説明があるが、理解できなかった…"
   },
   {
     "objectID": "01_Causal_Inference/Borusyak_2024.html#分析例",
     "href": "01_Causal_Inference/Borusyak_2024.html#分析例",
-    "title": "Borusyak et al. 2024",
+    "title": "Borusyak et al. (2024)",
     "section": "分析例",
     "text": "分析例\n著者によるStataパッケージの他、RではKyle Buttsによるdidimputationパッケージがある。\nここではdidimputationパッケージのトイデータを用いて、パッケージによる結果と、手計算による結果を比較する。\n\n# remotes::install_github('kylebutts/didimputation')\nlibrary(tidyverse)\nlibrary(fixest)\nlibrary(didimputation)"
   },
   {
     "objectID": "01_Causal_Inference/Borusyak_2024.html#パッケージの結果",
     "href": "01_Causal_Inference/Borusyak_2024.html#パッケージの結果",
-    "title": "Borusyak et al. 2024",
+    "title": "Borusyak et al. (2024)",
     "section": "パッケージの結果",
     "text": "パッケージの結果\n\ndid_imputation(data = df_het, yname = \"dep_var\", gname = \"g\", tname = \"year\", idname = \"unit\") |&gt; \n  knitr::kable()\n\n\n\n\nterm\nestimate\nstd.error\nconf.low\nconf.high\n\n\n\n\ntreat\n2.262952\n0.0313968\n2.201414\n2.32449"
   },
   {
     "objectID": "01_Causal_Inference/Borusyak_2024.html#手計算",
     "href": "01_Causal_Inference/Borusyak_2024.html#手計算",
-    "title": "Borusyak et al. 2024",
+    "title": "Borusyak et al. (2024)",
     "section": "手計算",
     "text": "手計算\n\n# OLSで処置を受けていないサンプルにおけるモデルを推定\nmodel &lt;- feols(dep_var ~ 1 | year + unit, data = df_het |&gt; filter(!treat), combine.quick = TRUE)\n\nprediction &lt;- \n  # 処置を受けた集団の予測値（potential outcome）を計算\n  broom::augment(model, newdata = df_het |&gt; filter(treat)) |&gt; \n  # 差分を計算\n  mutate(tau = dep_var - .fitted) \n\n# 集計\nprediction |&gt; \n  summarise(\n    ATT = mean(tau)\n  ) |&gt; \n  knitr::kable()\n\n\n\n\nATT\n\n\n\n\n2.262952\n\n\n\n\n\nATTの点推定値は一致する。"
   },
   {
     "objectID": "01_Causal_Inference/Borusyak_2024.html#集団による異質性",
     "href": "01_Causal_Inference/Borusyak_2024.html#集団による異質性",
-    "title": "Borusyak et al. 2024",
+    "title": "Borusyak et al. (2024)",
     "section": "集団による異質性",
     "text": "集団による異質性\n次に、処置のタイミングにより効果が異なる場合の分析を考える。\nパッケージでは以下のように、処置のタイミングが同じグループごとにウェイトを作成してやることで、集団ごとの効果を推定できる。\n\ndf_het |&gt; \n  mutate(\n    group1 = case_when(\n      group == 'Group 1' & treat ~ 1,\n      .default = 0\n    ),\n    group2 = case_when(\n      group == 'Group 2' & treat ~ 1,\n      .default = 0\n    )\n  ) |&gt; \n  did_imputation(yname = \"dep_var\", gname = \"g\", tname = \"year\", idname = \"unit\", wtr = c('group1', 'group2')) |&gt; \n  knitr::kable()\n\n\n\n\nterm\nestimate\nstd.error\nconf.low\nconf.high\n\n\n\n\ngroup1\n2.513439\n0.0381686\n2.438629\n2.588249\n\n\ngroup2\n1.795048\n0.0389609\n1.718685\n1.871412\n\n\n\n\n\n手計算では、集計をグループごとに行えばよい。\n\n# 集計\nprediction |&gt; \n  summarise(\n    ATT = mean(tau),\n    .by = c(group)\n  ) |&gt; \n  knitr::kable()\n\n\n\n\ngroup\nATT\n\n\n\n\nGroup 1\n2.513439\n\n\nGroup 2\n1.795048\n\n\n\n\n\nこちらも点推定値は一致する。"
   },
@@ -221,21 +221,21 @@
     "href": "01_Others/複利計算.html#複利計算",
     "title": "複利計算",
     "section": "複利計算",
-    "text": "複利計算\n\\[\\begin{align*}\n& 1年目:ar^1 \\\\\n& 2年目:ar^1 + ar^2 \\\\\n& 3年目:ar^1 + ar^2 + ar^3 \\\\\n& n年目:\\sum_{i=1}^{n} ar^i = \\frac{ar(1 - r^n)}{1 - r}\n\\end{align*}\\]\n\n等比級数の和の導出\n\n\\[\\begin{align*}\nS =& ar + ar^2 + ar^3 + ... + ar^n \\\\\nrS =& \\qquad\\; ar^2 + ar^3 + ... + ar^n + ar^{n+1} \\\\\nS - rS =& ar - ar^{n+1} \\\\\nS(1 - r) =& ar(1 - r^n) \\\\\nS =& \\frac{ar(1 - r^n)}{1 - r}\n\\end{align*}\\]\n\nn &lt;- 30\na &lt;- 40\nr &lt;- 1.05\n\ntibble(\n  n = 1:n,\n  cost = a*n,\n  gain = a*r^n,\n  return = a*r*(1 - r^n)/(1 - r),\n) |&gt; \n  ggplot()+\n  geom_line(aes(x = n, y = return), color = 'red')+\n  geom_col(aes(x = n, y = cost), alpha = .7)+\n  geom_line(aes(x = n, y = cost), color = 'blue')"
+    "text": "複利計算\n\n年間\\(a\\)万円ずつ積み立てることを考える\n年利は\\(r\\)とする\n\n\\[\\begin{align*}\n& 1年目:ar^1 \\\\\n& 2年目:ar^1 + ar^2 \\\\\n& 3年目:ar^1 + ar^2 + ar^3 \\\\\n& n年目:\\sum_{i=1}^{n} ar^i = \\frac{ar(1 - r^n)}{1 - r}\n\\end{align*}\\]\n\n等比級数の和の導出\n\n\\[\\begin{align*}\nS =& ar + ar^2 + ar^3 + ... + ar^n \\\\\nrS =& \\qquad\\; ar^2 + ar^3 + ... + ar^n + ar^{n+1} \\\\\nS - rS =& ar - ar^{n+1} \\\\\nS(1 - r) =& ar(1 - r^n) \\\\\nS =& \\frac{ar(1 - r^n)}{1 - r}\n\\end{align*}\\]\n\nシミュレーション\n\n\\(n\\)：30年積み立てる\n\\(a\\)：年間40万円ずつ（月あたり3.3333万円）\n\\(r\\)：年利は5％と仮定\n\n\n\nn &lt;- 30\na &lt;- 40\nr &lt;- 1.05\n\ntibble(\n  year = 1:n,\n  cost = a*year,\n  gain = a*r^year,\n  return = a*r*(1 - r^year)/(1 - r),\n) |&gt; \n  ggplot()+\n  geom_line(aes(x = year, y = return), color = 'red')+\n  geom_col(aes(x = year, y = cost), alpha = .7)+\n  geom_line(aes(x = year, y = cost), color = 'blue')"
   },
   {
     "objectID": "01_Others/複利計算.html#利率が年度ごとに変動する場合",
     "href": "01_Others/複利計算.html#利率が年度ごとに変動する場合",
     "title": "複利計算",
     "section": "利率が年度ごとに変動する場合",
-    "text": "利率が年度ごとに変動する場合\n\\[\\begin{align*}\n& 1年目:ar_1 \\\\\n& 2年目:ar_1 + ar_1r_2\\\\\n& 3年目:ar_1 + ar_1r_2 + ar_1r_2r_3 = a(r_1 + r_1r_2 + r_1r_2r_3)\\\\\n& n年目:ar_1 + ar_1r_2 + ar_1r_2r_3 + ... + ar_1r_2r_3...r_n = a\\sum_{i=1}^{n} \\prod_{i=1}^{n}r_i\n\\end{align*}\\]\nここで、\\(r_i \\sim \\mathrm{Normal}(1.05, 0.1)\\)とする\n\ntibble(\n  n = 1:n,\n  r = rnorm(n, r, .2),\n  cost = a*n,\n  return = a*(accumulate(r, \\(x, y) x*y) |&gt; accumulate(\\(x, y) x + y)),\n) |&gt; \n  ggplot()+\n  geom_line(aes(x = n, y = return), color = 'red')+\n  geom_col(aes(x = n, y = cost), alpha = .7)+\n  geom_line(aes(x = n, y = cost), color = 'blue')"
+    "text": "利率が年度ごとに変動する場合\n\n年利は確率的に変動する値\n\n定数（\\(r\\)）ではなく、変数（\\(r_i\\)）として考える\n\n\n\\[\\begin{align*}\n& 1年目:ar_1 \\\\\n& 2年目:ar_1 + ar_1r_2\\\\\n& 3年目:ar_1 + ar_1r_2 + ar_1r_2r_3 = a(r_1 + r_1r_2 + r_1r_2r_3)\\\\\n& n年目:ar_1 + ar_1r_2 + ar_1r_2r_3 + ... + ar_1r_2r_3...r_n = a\\sum_{i=1}^{n} \\prod_{i=1}^{n}r_i\n\\end{align*}\\]\nここで、\\(r_i \\sim \\mathrm{Normal}(1.05, 0.1)\\)とする\n\ntibble(\n  year = 1:n,\n  rate = rnorm(n, r, .1),\n  cost = a*year,\n  return = a*(accumulate(rate, \\(x, y) x*y) |&gt; accumulate(\\(x, y) x + y)),\n) |&gt; \n  ggplot()+\n  geom_line(aes(x = year, y = return), color = 'red')+\n  geom_col(aes(x = year, y = cost), alpha = .7)+\n  geom_line(aes(x = year, y = cost), color = 'blue')"
   },
   {
     "objectID": "01_Others/複利計算.html#利率がランダムウォークする場合",
     "href": "01_Others/複利計算.html#利率がランダムウォークする場合",
     "title": "複利計算",
     "section": "利率がランダムウォークする場合",
-    "text": "利率がランダムウォークする場合\n\n景気は各時点でランダムに発生するわけではない\nむしろ1時点前の状況を強く反映する\n利率がランダムウォークすると仮定する\n\n\\[\\begin{align*}\n& r_1 \\sim \\mathrm{Normal}(1.05, 0.1) \\\\\n& r_{i + 1} = r_i + e_i, \\; e_i \\sim \\mathrm{Normal}(1.05, 0.1)\n\\end{align*}\\]\n\\[\\begin{align*}\n& 1年目:ar_1 \\\\\n& 2年目:ar_1 + ar_1r_2 = a(r_1 + r_1(r_1 + e_1))\\\\\n& 3年目:ar_1 + ar_1r_2 + ar_1r_2r_3 = a(r_1 + r_1(r_1 + e_1) + r_1(r_1 + e_1)(r_2 + e_2)) = a(r_1 + r_1(r_1 + e_1) + r_1(r_1 + e_1)(r_1 + e_1 + e_2))\\\\\n\\end{align*}\\]"
+    "text": "利率がランダムウォークする場合\n\n景気は各時点でランダムに発生するわけではない\nむしろ1時点前の状況を強く反映する\n年利がランダムウォークすると仮定する\n\n\\[\\begin{align*}\n& r_1 \\sim \\mathrm{Normal}(1.05, 0.1) \\\\\n& r_{i + 1} = r_i + e_i, \\; e_i \\sim \\mathrm{Normal}(0, 0.01)\n\\end{align*}\\]\nパラメータの設定が難しい…\n\ntibble(\n  year = 1:n,\n  error = rnorm(n, 0, 0.01),\n  rate = accumulate(error, \\(x, y) x + y, .init = rnorm(1, r, .1))[-n],\n  cost = a*year,\n  return = a*(accumulate(rate, \\(x, y) x*y) |&gt; accumulate(\\(x, y) x + y)),\n) |&gt; \n  ggplot()+\n  geom_line(aes(x = year, y = return), color = 'red')+\n  geom_col(aes(x = year, y = cost), alpha = .7)+\n  geom_line(aes(x = year, y = cost), color = 'blue')"
   },
   {
     "objectID": "01_Others/rlang学習.html",
@@ -378,58 +378,65 @@
     "text": "ニューラルネットをやってみる\n\nチュートリアルとして、手書きのアルファベットを分類するモデルを作成してみる\nRでデータを読み込んで、pythonに渡してtensorflowで分析\n参考\n\n\n\n\nR\n\nlibrary(tidyverse)\nlibrary(rsample)\nlibrary(reticulate)\n\n\n\nデータのダウンロード\n\n\n\nR\n\n# データのダウンロード\nif (!dir.exists('data')) dir.create('data')\ndownload.file('https://ai.stanford.edu/~btaskar/ocr/letter.data.gz', destfile = 'data/letter.data')\n\n\n\n\nデータの読み込み\n\n列名はhttps://ai.stanford.edu/~btaskar/ocr/letter.namesより取得できる\n詳細は以下の通り\n\nid: each letter is assigned a unique integer id\nletter: a-z\nnext_id: id for next letter in the word, -1 if last letter\nword_id: each word is assigned a unique integer id (not used)\nposition: position of letter in the word (not used)\nfold: 0-9 – cross-validation fold\np_i_j: 0/1 – value of pixel in row i, column j\n\nletterとp_i_j（pixel）のみ使うのでそれ以外は削除\n\n\n\n\nR\n\ncolname &lt;- read_lines('https://ai.stanford.edu/~btaskar/ocr/letter.names')\ndata &lt;- \n  read_tsv('data/letter.data', col_names = colname) |&gt; \n  # letterとpixelだけ残す\n  select(id, letter, matches('p_\\\\d+_\\\\d+'))\n\n\n\n\nデータの前処理\n\nletterを数値に変換\n\n\n\n\nR\n\ndf &lt;- \n  data |&gt; \n  mutate(\n    letter = factor(letter),\n    # pythonは0からはじまるので-1する（Rは1から）\n    letter_num = as.numeric(letter) - 1\n  )\n\n\n\n訓練データとテストデータに分割\n\n\n\n\nR\n\nsplit &lt;- rsample::initial_split(df, prop = 0.9)\ntrain &lt;- rsample::training(split)\ntest &lt;- rsample::testing(split)\n\n\n\npythonに渡せる形にデータを変換\n\nreticulate::np_array()であらかじめndarrayにしておくと便利\n\n\n\n\n\nR\n\ntrain_x &lt;- \n  train |&gt; \n  select(!c(id, letter, letter_num)) |&gt;\n  as.matrix() |&gt; \n  np_array()\n\ntrain_y &lt;-\n  train |&gt;\n  pull(letter_num) |&gt;\n  np_array()\n\ntest_x &lt;-\n  test |&gt; \n  select(!c(id, letter, letter_num)) |&gt;\n  as.matrix() |&gt; \n  np_array()\n\ntest_y &lt;-\n  test |&gt;\n  pull(letter_num) |&gt;\n  np_array()\n\n\n\n\nニューラルネットで学習\n\n中間層が1つのニューラルネットを作成\n\n入力層は16x8=128（ピクセル）\n中間層は64次元\n出力層はa-zの26分類\n\n\n\n\n\npython\n\nimport tensorflow as tf\nimport numpy as np\n\n# モデルの作成\nmodel = tf.keras.Sequential([\n  tf.keras.layers.Dense(64, activation='relu'),\n  tf.keras.layers.Dense(26, activation='softmax')\n])\n\nmodel.compile(\n  optimizer='adam',\n  loss='sparse_categorical_crossentropy',\n  metrics=['accuracy']\n)\n\n\n\nrで作成したデータをpythonに渡して学習\nr.train_xでRのtrain_xを参照できる\npythonのオブジェクトを渡すときはpy$train_x\n\n\n\n\npython\n\n# モデルの学習\nmodel.fit(r.train_x, r.train_y, epochs=10, verbose=2)\n\n\nEpoch 1/10\n1467/1467 - 8s - loss: 1.3368 - accuracy: 0.6375 - 8s/epoch - 6ms/step\nEpoch 2/10\n1467/1467 - 6s - loss: 0.9414 - accuracy: 0.7472 - 6s/epoch - 4ms/step\nEpoch 3/10\n1467/1467 - 6s - loss: 0.8763 - accuracy: 0.7654 - 6s/epoch - 4ms/step\nEpoch 4/10\n1467/1467 - 5s - loss: 0.8460 - accuracy: 0.7722 - 5s/epoch - 4ms/step\nEpoch 5/10\n1467/1467 - 5s - loss: 0.8300 - accuracy: 0.7778 - 5s/epoch - 4ms/step\nEpoch 6/10\n1467/1467 - 5s - loss: 0.8217 - accuracy: 0.7804 - 5s/epoch - 4ms/step\nEpoch 7/10\n1467/1467 - 5s - loss: 0.8176 - accuracy: 0.7794 - 5s/epoch - 4ms/step\nEpoch 8/10\n1467/1467 - 5s - loss: 0.8149 - accuracy: 0.7816 - 5s/epoch - 4ms/step\nEpoch 9/10\n1467/1467 - 5s - loss: 0.8158 - accuracy: 0.7801 - 5s/epoch - 4ms/step\nEpoch 10/10\n1467/1467 - 5s - loss: 0.8173 - accuracy: 0.7795 - 5s/epoch - 4ms/step\n&lt;keras.src.callbacks.History object at 0x3032ac210&gt;\n\n\n\n\nテストデータで評価\n\nテストデータでの正答率は77%くらい\n\n\n\n\npython\n\n# モデルの評価\nmodel.evaluate(r.test_x, r.test_y, verbose=2)\n\n\n163/163 - 1s - loss: 0.8477 - accuracy: 0.7665 - 543ms/epoch - 3ms/step\n[0.8476578593254089, 0.766487717628479]"
   },
   {
-    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html",
-    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html",
+    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html",
+    "title": "Sudharsanan & Bijlsma (2021)",
     "section": "",
-    "text": "パッケージ\n\n\nlibrary(tidyverse)\nlibrary(cfdecomp)\n\nkable &lt;- partial(\n  knitr::kable,\n  digits = 3\n)\n\n\nデータ\n\n\n# the decomposition functions in our package are computationally intensive\n# to make the example run quick, I perform it on a subsample (n=125) of the data:\nset.seed(100)\ndata &lt;- \n  cfd.example.data[sample(1000),] |&gt; \n  select(SES, age, med.gauss, out.gauss, id) |&gt; \n  as_tibble()"
+    "text": "Sudharsanan, Nikkil & Maarten J. Bijlsma, 2021, “Educational Note: Causal Decomposition of Population Health Differences Using Monte Carlo Integration and the G-Formula,” International Journal of Epidemiology, 50(6): 2098–2107 (10.1093/ije/dyab090)."
   },
   {
-    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#下準備",
-    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#下準備",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#文献",
+    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#文献",
+    "title": "Sudharsanan & Bijlsma (2021)",
     "section": "",
-    "text": "パッケージ\n\n\nlibrary(tidyverse)\nlibrary(cfdecomp)\n\nkable &lt;- partial(\n  knitr::kable,\n  digits = 3\n)\n\n\nデータ\n\n\n# the decomposition functions in our package are computationally intensive\n# to make the example run quick, I perform it on a subsample (n=125) of the data:\nset.seed(100)\ndata &lt;- \n  cfd.example.data[sample(1000),] |&gt; \n  select(SES, age, med.gauss, out.gauss, id) |&gt; \n  as_tibble()"
+    "text": "Sudharsanan, Nikkil & Maarten J. Bijlsma, 2021, “Educational Note: Causal Decomposition of Population Health Differences Using Monte Carlo Integration and the G-Formula,” International Journal of Epidemiology, 50(6): 2098–2107 (10.1093/ije/dyab090)."
   },
   {
-    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#パッケージによる推定",
-    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#パッケージによる推定",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#下準備",
+    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#下準備",
+    "title": "Sudharsanan & Bijlsma (2021)",
+    "section": "下準備",
+    "text": "下準備\n\nパッケージ\n\n\nlibrary(tidyverse)\nlibrary(cfdecomp)\n\nkable &lt;- partial(\n  knitr::kable,\n  digits = 3\n)\n\n\nデータ\n\n\n# the decomposition functions in our package are computationally intensive\n# to make the example run quick, I perform it on a subsample (n=125) of the data:\nset.seed(100)\ndata &lt;- \n  cfd.example.data[sample(1000),] |&gt; \n  select(SES, age, med.gauss, out.gauss, id) |&gt; \n  as_tibble()"
+  },
+  {
+    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#パッケージによる推定",
+    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#パッケージによる推定",
+    "title": "Sudharsanan & Bijlsma (2021)",
     "section": "パッケージによる推定",
     "text": "パッケージによる推定\n\ncfdecompパッケージで推定\n\n\n# cfd.mean \nmean.results.1 &lt;- \n  cfd.mean(\n    formula.y = out.gauss ~ SES * med.gauss * age,\n    formula.m = med.gauss ~ SES * age,\n    mediator = 'med.gauss',\n    group = 'SES',\n    data = as.data.frame(data),\n    family.y = 'gaussian',\n    family.m = 'gaussian',\n    bs.size=250,\n    mc.size=10,\n    alpha=0.05,\n    # cluster.sample=FALSE,\n    # cluster.name='id'\n  )\n\n\nSES2とSES3のmediatorの分布をSES1のmediatorの分布に揃える\n\n\ntibble(\n  category = c(\"SES1\", \"SES2\", \"SES3\"),\n  factual_mean = c(\n    mean(mean.results.1$out_nc_y[, 1]),\n    mean(mean.results.1$out_nc_y[, 2]),\n    mean(mean.results.1$out_nc_y[, 3])\n  ),\n  # and after giving the gaussian mediator of SES group 2 the distribution of the one in group 1\n  # the difference becomes:\n  counterfactual_mean = c(\n    mean(mean.results.1$out_cf_y[, 1]),\n    mean(mean.results.1$out_cf_y[, 2]),\n    mean(mean.results.1$out_cf_y[, 3])\n  )) |&gt; \n  kable()\n\n\n\n\ncategory\nfactual_mean\ncounterfactual_mean\n\n\n\n\nSES1\n4.306\n4.306\n\n\nSES2\n3.239\n3.511\n\n\nSES3\n2.212\n2.946"
   },
   {
-    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#自分でコードを書いてみる",
-    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#自分でコードを書いてみる",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#自分でコードを書いてみる",
+    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#自分でコードを書いてみる",
+    "title": "Sudharsanan & Bijlsma (2021)",
     "section": "自分でコードを書いてみる",
     "text": "自分でコードを書いてみる"
   },
   {
-    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-1-regression-estimates",
-    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-1-regression-estimates",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#step-1-regression-estimates",
+    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#step-1-regression-estimates",
+    "title": "Sudharsanan & Bijlsma (2021)",
     "section": "step 1: regression estimates",
     "text": "step 1: regression estimates\n\nmediatorとoutcomeのモデルをデータから推定\n\n\nmediator_model &lt;- lm(med.gauss ~ SES * age, data = data)\noutcome_model &lt;- lm(out.gauss ~ SES * age * med.gauss, data = data)"
   },
   {
-    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-2-simulate-the-natural-course-pseudo-population",
-    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-2-simulate-the-natural-course-pseudo-population",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#step-2-simulate-the-natural-course-pseudo-population",
+    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#step-2-simulate-the-natural-course-pseudo-population",
+    "title": "Sudharsanan & Bijlsma (2021)",
     "section": "step 2: simulate the natural-course pseudo-population",
     "text": "step 2: simulate the natural-course pseudo-population\n\n推定したmediatorのモデルから、mediatorの「分布」を再現\n\n\\[\\begin{align*}\nMed_i = \\mathrm{E}[Med | X] + e_i \\\\\ne_i \\sim \\mathrm{N}(0, \\sigma)\n\\end{align*}\\]\n\nmediatorの分布のパラメータを取得\n\n\n# predict mediator\n# mediatorの「分布」のパラメータを取得\npred_mean_m &lt;- predict(mediator_model, newdata = data, type = \"response\")\nresidual_ref_m &lt;- mediator_model$residuals\nsd_ref_m &lt;- sd(residual_ref_m)\n\n\n推定したパラメータをもとに、mediatorの値をシミュレート\n\n\ndf_nc_med &lt;- \n  data |&gt; \n  mutate(\n    # ランダム性なし\n    pred_med = pred_mean_m,\n    # ランダム性をもたせる1（推定した標準偏差のパラメータを使用）\n    pred_med_draw_1 = rnorm(n(), mean = pred_mean_m, sd = sd_ref_m),\n    # ランダム性をもたせる2（残差からランダムにサンプリング）\n    pred_med_draw_2 = pred_mean_m + sample(residual_ref_m, n(), replace = TRUE)\n  )\n\ndf_nc_med |&gt; \n  summarise(\n    across(c(med.gauss, pred_med:pred_med_draw_2), mean),\n    .by = SES\n  ) |&gt; \n  arrange(SES) |&gt; \n  kable()\n\n\n\n\nSES\nmed.gauss\npred_med\npred_med_draw_1\npred_med_draw_2\n\n\n\n\n1\n8.428\n8.428\n8.418\n8.286\n\n\n2\n7.223\n7.223\n7.276\n7.454\n\n\n3\n5.410\n5.410\n5.579\n5.374\n\n\n\n\n\n\nシミュレートした値をoutcomeモデルに代入して予測値を計算・集計\n\n\ndf_nc_med |&gt; \n  mutate(\n    # ランダム性なし\n    pred_out = predict(\n      outcome_model, newdata = df_nc_med |&gt; mutate(med.gauss = pred_med)\n    ),\n    # ランダム性をもたせる1（推定した標準偏差のパラメータを使用）\n    pred_out_draw_1 = predict(\n      outcome_model, newdata = df_nc_med |&gt; mutate(med.gauss = pred_med_draw_1)\n    ),\n    # ランダム性をもたせる2（残差からランダムにサンプリング）\n    pred_out_draw_2 = predict(\n      outcome_model, newdata = df_nc_med |&gt; mutate(med.gauss = pred_med_draw_2)\n    )\n  ) |&gt; \n  summarise(\n    across(c(out.gauss, pred_out:pred_out_draw_2), mean),\n    .by = SES\n  ) |&gt; \n  arrange(SES) |&gt; \n  kable()\n\n\n\n\nSES\nout.gauss\npred_out\npred_out_draw_1\npred_out_draw_2\n\n\n\n\n1\n4.309\n4.309\n4.312\n4.286\n\n\n2\n3.237\n3.237\n3.249\n3.292\n\n\n3\n2.217\n2.217\n2.254\n2.214"
   },
   {
-    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-3-simulate-the-counterfactual-pseudo-population",
-    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#step-3-simulate-the-counterfactual-pseudo-population",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#step-3-simulate-the-counterfactual-pseudo-population",
+    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#step-3-simulate-the-counterfactual-pseudo-population",
+    "title": "Sudharsanan & Bijlsma (2021)",
     "section": "step 3: simulate the counterfactual pseudo-population",
     "text": "step 3: simulate the counterfactual pseudo-population\n\n推定したmediatorのモデルにおいて、全員のSESが1だった場合のmediatorの分布を再現\n全員のSESを1にしてmediatorのパラメータを取得\n回帰モデルでは残差の部分は共変量に依存しない（SES間で分布が同じ、平均0・共通の標準偏差の正規分布）\n\nならばSESが1のグループの標準偏差を使わなくても良いのでは？（全体の標準偏差でもよい）\n標準偏差もグループによって異なる、といったモデルの場合にはどうなるか？\n\n\n\n# 平均\npred_mean_m_SES1 &lt;- predict(mediator_model, newdata = data |&gt; mutate(SES = '1'))\n# SES = 1のグループの残差\nresidual_ref_m_SES1 &lt;-\n  broom::augment(mediator_model)  |&gt;\n  filter(SES == '1') |&gt; \n  pull(.resid)\n# 標準偏差\nsd_ref_m_SES1 &lt;- sd(residual_ref_m_SES1)\n\n\n推定したパラメータをもとに、mediatorの値をシミュレート\n\n\ndf_cf_med &lt;- \n  data |&gt; \n  mutate(\n    # ランダム性なし\n    pred_med_SES1 = pred_mean_m_SES1,\n    # ランダム性をもたせる1（推定した標準偏差のパラメータを使用）\n    pred_med_draw_1_SES1 = rnorm(n(), mean = pred_mean_m_SES1, sd = sd_ref_m_SES1),\n    # ランダム性をもたせる2（残差からランダムにサンプリング）\n    pred_med_draw_2_SES1 = pred_mean_m_SES1 + sample(residual_ref_m_SES1, n(), replace = TRUE)\n  )\n\ndf_cf_med |&gt; \n  summarise(\n    across(c(med.gauss, pred_med_SES1:pred_med_draw_2_SES1), mean),\n    .by = SES\n  ) |&gt; \n  arrange(SES) |&gt; \n  kable()\n\n\n\n\n\n\n\n\n\n\n\nSES\nmed.gauss\npred_med_SES1\npred_med_draw_1_SES1\npred_med_draw_2_SES1\n\n\n\n\n1\n8.428\n8.428\n8.386\n8.632\n\n\n2\n7.223\n8.337\n8.258\n8.292\n\n\n3\n5.410\n8.442\n8.292\n8.593\n\n\n\n\n\n\nシミュレートした値をoutcomeモデルに代入して予測値を計算・集計\n\n\ndf_cf_med |&gt; \n  mutate(\n    # ランダム性なし\n    pred_out_SES1 = predict(\n      outcome_model, newdata = df_cf_med |&gt; mutate(med.gauss = pred_med_SES1)\n    ),\n    # ランダム性をもたせる1（推定した標準偏差のパラメータを使用）\n    pred_out_draw_1_SES1 = predict(\n      outcome_model, newdata = df_cf_med |&gt; mutate(med.gauss = pred_med_draw_1_SES1)\n    ),\n    # ランダム性をもたせる2（残差からランダムにサンプリング）\n    pred_out_draw_2_SES1 = predict(\n      outcome_model, newdata = df_cf_med |&gt; mutate(med.gauss = pred_med_draw_2_SES1)\n    )\n  ) |&gt; \n  summarise(\n    across(c(out.gauss, pred_out_SES1:pred_out_draw_2_SES1), mean),\n    .by = SES\n  ) |&gt; \n  arrange(SES) |&gt; \n  kable()\n\n\n\n\n\n\n\n\n\n\n\nSES\nout.gauss\npred_out_SES1\npred_out_draw_1_SES1\npred_out_draw_2_SES1\n\n\n\n\n1\n4.309\n4.309\n4.303\n4.347\n\n\n2\n3.237\n3.507\n3.485\n3.498\n\n\n3\n2.217\n2.949\n2.920\n2.979"
   },
   {
-    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#monte-carloとbootstrapの実装",
-    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html#monte-carloとbootstrapの実装",
-    "title": "Sudharsanan_Bijlsma_2021_Educational note 読解",
+    "objectID": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#monte-carloとbootstrapの実装",
+    "href": "01_Causal_Inference/Sudharsanan_Bijlsma_2021.html#monte-carloとbootstrapの実装",
+    "title": "Sudharsanan & Bijlsma (2021)",
     "section": "monte carloとbootstrapの実装",
     "text": "monte carloとbootstrapの実装\n\n実際にはrandom drawは一回ではなく何回か行うことで不確実性を表現する\n標準誤差の推定のためにbootstrap法も必要\nまずはtreatmentとoutcomeのモデルを推定し、パラメータを取得\n\n\n# パラメータ推定\nestimate_model &lt;- function(data) {\n  \n  mediator_model &lt;- lm(med.gauss ~ SES * age, data = data)\n  outcome_model &lt;- lm(out.gauss ~ SES * age * med.gauss, data = data)\n  \n  pred_mean_m &lt;- predict(mediator_model, newdata = data, type = \"response\")\n  residual_ref_m &lt;- mediator_model$residuals\n  sd_ref_m &lt;- sd(residual_ref_m)\n\n  pred_mean_m_SES1 &lt;- predict(mediator_model, newdata = data |&gt; mutate(SES = '1'))\n  residual_ref_m_SES1 &lt;-\n    broom::augment(mediator_model)  |&gt;\n    filter(SES == '1') |&gt; \n    pull(.resid)\n  sd_ref_m_SES1 &lt;- sd(residual_ref_m_SES1)\n\n}\n\n\nパラメータをもとにmediatorをシミュレートするのを何回か繰り返す\n\n\nmontecarlo_sampling &lt;- function(data, mc = 10) {\n  # パラメータ推定\n  estimate_model(data)\n  # モンテカルロシミュレーション\n  map(1:mc, \\(mc) {\n    # mediatorサンプリング\n    boot_sample &lt;- \n      data |&gt; \n      mutate(\n        pred_med_draw_1 = rnorm(n(), mean = pred_mean_m, sd = sd_ref_m),\n        pred_med_draw_2 = pred_mean_m + sample(residual_ref_m, n(), replace = TRUE),\n        pred_med_draw_1_SES1 = rnorm(n(), mean = pred_mean_m_SES1, sd = sd_ref_m_SES1),\n        pred_med_draw_2_SES1 = pred_mean_m_SES1 + sample(residual_ref_m_SES1, n(), replace = TRUE),\n      )\n    # サンプリングしたものからoutcome予測\n    boot_sample |&gt; \n      mutate(\n        pred_out_draw_1 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_1)\n        ),\n        pred_out_draw_2 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_2)\n        ),\n        pred_out_draw_1_SES1 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_1_SES1)\n        ),\n        pred_out_draw_2_SES1 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_2_SES1)\n        )\n      ) |&gt; \n      group_by(SES) |&gt; \n      summarise(across(c(pred_out_draw_1:pred_out_draw_2_SES1), mean))\n    \n  }) |&gt; \n    list_rbind(names_to = 'mc') |&gt; \n    # シミュレーション結果を集計\n    group_by(SES) |&gt; \n    summarise(across(c(pred_out_draw_1:pred_out_draw_2_SES1), mean))\n  \n}\n\n\nこれをbootstrapで繰り返す\n\n\nresult &lt;- \n  map(1:250, \\(index) {\n    # bootstrapサンプル発生\n    bootsample &lt;- slice_sample(data, prop = 1, replace = TRUE)\n    montecarlo_sampling(bootsample, mc = 10) \n  }) |&gt; \n  list_rbind(names_to = 'index')\n\n\n結果を集計\n\n\nresult |&gt; \n  pivot_longer(\n    cols = c(pred_out_draw_1:pred_out_draw_2_SES1), \n    names_to = 'type', \n    values_to = 'value'\n  ) |&gt; \n  summarise(\n    mean = mean(value), \n    conf.low = quantile(value, 0.025),\n    conf.high = quantile(value, 0.975),\n    .by = c(SES, type)\n  ) |&gt; \n  arrange(type) |&gt; \n  kable()\n\n\n\n\nSES\ntype\nmean\nconf.low\nconf.high\n\n\n\n\n1\npred_out_draw_1\n4.015\n3.937\n4.091\n\n\n2\npred_out_draw_1\n3.183\n3.124\n3.251\n\n\n3\npred_out_draw_1\n2.645\n2.599\n2.688\n\n\n1\npred_out_draw_1_SES1\n4.276\n4.193\n4.351\n\n\n2\npred_out_draw_1_SES1\n3.513\n3.446\n3.582\n\n\n3\npred_out_draw_1_SES1\n2.970\n2.934\n3.000\n\n\n1\npred_out_draw_2\n4.015\n3.938\n4.094\n\n\n2\npred_out_draw_2\n3.182\n3.123\n3.253\n\n\n3\npred_out_draw_2\n2.646\n2.600\n2.687\n\n\n1\npred_out_draw_2_SES1\n4.276\n4.183\n4.358\n\n\n2\npred_out_draw_2_SES1\n3.515\n3.457\n3.584\n\n\n3\npred_out_draw_2_SES1\n2.970\n2.941\n2.998"
   },

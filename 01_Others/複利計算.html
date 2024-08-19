@@ -173,12 +173,12 @@ window.Quarto = {
  <span class="dropdown-text">Causal Decomposition Analysis</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.html">
- <span class="dropdown-text">Sudharsanan_Bijlsma_2021_Educational note 読解</span></a>
+    <a class="dropdown-item" href="../01_Causal_Inference/Sudharsanan_Bijlsma_2021.html">
+ <span class="dropdown-text">Sudharsanan &amp; Bijlsma (2021)</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../01_Causal_Inference/Borusyak_2024.html">
- <span class="dropdown-text">Borusyak et al.&nbsp;2024</span></a>
+ <span class="dropdown-text">Borusyak et al.&nbsp;(2024)</span></a>
   </li>  
     </ul>
   </li>
@@ -231,6 +231,7 @@ window.Quarto = {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+    <a href="https://github.com/Kentaro-Kamada/Kentaro-Kamada.github.io" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -277,6 +278,10 @@ window.Quarto = {
 </div>
 <section id="複利計算" class="level2">
 <h2 class="anchored" data-anchor-id="複利計算">複利計算</h2>
+<ul>
+<li>年間<span class="math inline">\(a\)</span>万円ずつ積み立てることを考える</li>
+<li>年利は<span class="math inline">\(r\)</span>とする</li>
+</ul>
 <p><span class="math display">\[\begin{align*}
 &amp; 1年目:ar^1 \\
 &amp; 2年目:ar^1 + ar^2 \\
@@ -293,21 +298,29 @@ S - rS =&amp; ar - ar^{n+1} \\
 S(1 - r) =&amp; ar(1 - r^n) \\
 S =&amp; \frac{ar(1 - r^n)}{1 - r}
 \end{align*}\]</span></p>
+<ul>
+<li>シミュレーション
+<ul>
+<li><span class="math inline">\(n\)</span>：30年積み立てる</li>
+<li><span class="math inline">\(a\)</span>：年間40万円ずつ（月あたり3.3333万円）</li>
+<li><span class="math inline">\(r\)</span>：年利は5％と仮定</li>
+</ul></li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">30</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="dv">40</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fl">1.05</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost =</span> a<span class="sc">*</span>n,</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">gain =</span> a<span class="sc">*</span>r<span class="sc">^</span>n,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">return =</span> a<span class="sc">*</span>r<span class="sc">*</span>(<span class="dv">1</span> <span class="sc">-</span> r<span class="sc">^</span>n)<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> r),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost =</span> a<span class="sc">*</span>year,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">gain =</span> a<span class="sc">*</span>r<span class="sc">^</span>year,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">return =</span> a<span class="sc">*</span>r<span class="sc">*</span>(<span class="dv">1</span> <span class="sc">-</span> r<span class="sc">^</span>year)<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> r),</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> n, <span class="at">y =</span> return), <span class="at">color =</span> <span class="st">'red'</span>)<span class="sc">+</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> n, <span class="at">y =</span> cost), <span class="at">alpha =</span> .<span class="dv">7</span>)<span class="sc">+</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> n, <span class="at">y =</span> cost), <span class="at">color =</span> <span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> return), <span class="at">color =</span> <span class="st">'red'</span>)<span class="sc">+</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cost), <span class="at">alpha =</span> .<span class="dv">7</span>)<span class="sc">+</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cost), <span class="at">color =</span> <span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -319,6 +332,12 @@ S =&amp; \frac{ar(1 - r^n)}{1 - r}
 </section>
 <section id="利率が年度ごとに変動する場合" class="level2">
 <h2 class="anchored" data-anchor-id="利率が年度ごとに変動する場合">利率が年度ごとに変動する場合</h2>
+<ul>
+<li>年利は確率的に変動する値
+<ul>
+<li>定数（<span class="math inline">\(r\)</span>）ではなく、変数（<span class="math inline">\(r_i\)</span>）として考える</li>
+</ul></li>
+</ul>
 <p><span class="math display">\[\begin{align*}
 &amp; 1年目:ar_1 \\
 &amp; 2年目:ar_1 + ar_1r_2\\
@@ -328,15 +347,15 @@ S =&amp; \frac{ar(1 - r^n)}{1 - r}
 <p>ここで、<span class="math inline">\(r_i \sim \mathrm{Normal}(1.05, 0.1)\)</span>とする</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">r =</span> <span class="fu">rnorm</span>(n, r, .<span class="dv">2</span>),</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost =</span> a<span class="sc">*</span>n,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">return =</span> a<span class="sc">*</span>(<span class="fu">accumulate</span>(r, \(x, y) x<span class="sc">*</span>y) <span class="sc">|&gt;</span> <span class="fu">accumulate</span>(\(x, y) x <span class="sc">+</span> y)),</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">rate =</span> <span class="fu">rnorm</span>(n, r, .<span class="dv">1</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost =</span> a<span class="sc">*</span>year,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">return =</span> a<span class="sc">*</span>(<span class="fu">accumulate</span>(rate, \(x, y) x<span class="sc">*</span>y) <span class="sc">|&gt;</span> <span class="fu">accumulate</span>(\(x, y) x <span class="sc">+</span> y)),</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> n, <span class="at">y =</span> return), <span class="at">color =</span> <span class="st">'red'</span>)<span class="sc">+</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> n, <span class="at">y =</span> cost), <span class="at">alpha =</span> .<span class="dv">7</span>)<span class="sc">+</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> n, <span class="at">y =</span> cost), <span class="at">color =</span> <span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> return), <span class="at">color =</span> <span class="st">'red'</span>)<span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cost), <span class="at">alpha =</span> .<span class="dv">7</span>)<span class="sc">+</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cost), <span class="at">color =</span> <span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -351,17 +370,33 @@ S =&amp; \frac{ar(1 - r^n)}{1 - r}
 <ul>
 <li>景気は各時点でランダムに発生するわけではない</li>
 <li>むしろ1時点前の状況を強く反映する</li>
-<li>利率がランダムウォークすると仮定する</li>
+<li>年利がランダムウォークすると仮定する</li>
 </ul>
 <p><span class="math display">\[\begin{align*}
 &amp; r_1 \sim \mathrm{Normal}(1.05, 0.1) \\
-&amp; r_{i + 1} = r_i + e_i, \; e_i \sim \mathrm{Normal}(1.05, 0.1)
+&amp; r_{i + 1} = r_i + e_i, \; e_i \sim \mathrm{Normal}(0, 0.01)
 \end{align*}\]</span></p>
-<p><span class="math display">\[\begin{align*}
-&amp; 1年目:ar_1 \\
-&amp; 2年目:ar_1 + ar_1r_2 = a(r_1 + r_1(r_1 + e_1))\\
-&amp; 3年目:ar_1 + ar_1r_2 + ar_1r_2r_3 = a(r_1 + r_1(r_1 + e_1) + r_1(r_1 + e_1)(r_2 + e_2)) = a(r_1 + r_1(r_1 + e_1) + r_1(r_1 + e_1)(r_1 + e_1 + e_2))\\
-\end{align*}\]</span></p>
+<p>パラメータの設定が難しい…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">error =</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="fl">0.01</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">rate =</span> <span class="fu">accumulate</span>(error, \(x, y) x <span class="sc">+</span> y, <span class="at">.init =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, r, .<span class="dv">1</span>))[<span class="sc">-</span>n],</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost =</span> a<span class="sc">*</span>year,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">return =</span> a<span class="sc">*</span>(<span class="fu">accumulate</span>(rate, \(x, y) x<span class="sc">*</span>y) <span class="sc">|&gt;</span> <span class="fu">accumulate</span>(\(x, y) x <span class="sc">+</span> y)),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> return), <span class="at">color =</span> <span class="st">'red'</span>)<span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cost), <span class="at">alpha =</span> .<span class="dv">7</span>)<span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cost), <span class="at">color =</span> <span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="複利計算_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 </section>

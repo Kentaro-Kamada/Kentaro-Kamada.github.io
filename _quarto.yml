@@ -13,7 +13,7 @@ website:
           - 01_Causal_Inference/TMLE.qmd
           - 01_Causal_Inference/L-TMLE.qmd
           - 01_Causal_Inference/Causal_Decomposition.qmd
-          - 01_Causal_Inference/Sudharsanan_Bijlsma_2021_読解.qmd
+          - 01_Causal_Inference/Sudharsanan_Bijlsma_2021.qmd
           - 01_Causal_Inference/Borusyak_2024.qmd
       - text: "R Tips"
         menu:
@@ -27,6 +27,9 @@ website:
           - 01_Others/Multilevel.qmd
           - 01_Others/multi_answer.qmd
           - 01_Others/複利計算.qmd
+    tools:
+      - icon: github
+        href: https://github.com/Kentaro-Kamada/Kentaro-Kamada.github.io
 
 format:
   html:

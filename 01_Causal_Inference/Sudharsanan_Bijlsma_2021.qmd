@@ -1,6 +1,11 @@
 ---
-title: "Sudharsanan_Bijlsma_2021_Educational note 読解"
+title: "Sudharsanan & Bijlsma (2021)"
 ---
+
+## 文献
+
+Sudharsanan, Nikkil & Maarten J. Bijlsma, 2021, "Educational Note: Causal Decomposition of Population Health Differences Using Monte Carlo Integration and the G-Formula," _International Journal of Epidemiology_, 50(6): 2098–2107 ([10.1093/ije/dyab090](https://doi.org/10.1093/ije/dyab090)).
+
 
 ## 下準備
 

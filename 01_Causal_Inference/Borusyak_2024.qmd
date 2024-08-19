@@ -1,10 +1,10 @@
 ---
-title: "Borusyak et al. 2024"
+title: "Borusyak et al. (2024)"
 ---
 
 ## 文献
 
-Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, "Revisiting Event-Study Designs: Robust and Efficient Estimation," _The Review of Economic Studies_, [10.1093/restud/rdae007](https://doi.org/10.1093/restud/rdae007).
+Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, "Revisiting Event-Study Designs: Robust and Efficient Estimation," _The Review of Economic Studies_, ([10.1093/restud/rdae007](https://doi.org/10.1093/restud/rdae007)).
 
 ## ざっくりとした要約
 

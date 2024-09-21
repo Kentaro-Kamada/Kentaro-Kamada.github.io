@@ -1,0 +1,43 @@
+---
+title: "信頼区間を理解したい"
+date: 2024-09-21
+categories: [Others]
+execute:
+  eval: false
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+# 100人の研究者
+tibble(
+  researcher_ID = 1:100
+) |> 
+  # 各研究者がデータをとる。互いに独立、500人ずつ調査
+  mutate(
+    data = map(researcher_ID, \(researcher_ID) rnorm(500, 0.5, 0.1))
+  ) |> 
+  # 各研究者のデータの平均値、標準誤差、信頼区間を計算
+  mutate(
+    mean = map_dbl(data, \(data) mean(data)),
+    se = map_dbl(data, \(data) sd(data) / sqrt(length(data))),
+    lower = mean - 1.96 * se,
+    upper = mean + 1.96 * se
+  ) |> 
+  # 信頼区間が0.5を含むかどうか
+  mutate(
+    flg = case_when(
+      0.5 < lower | upper < 0.5  ~ 'Error',
+      .default = 'Not Error'
+    )
+  ) |> 
+  # 図示
+  ggplot(aes(mean, researcher_ID, xmin = lower, xmax = upper, color = flg))+
+  geom_vline(xintercept = 0.5, linetype = 'dashed')+
+  geom_pointrange()
+
+```
+

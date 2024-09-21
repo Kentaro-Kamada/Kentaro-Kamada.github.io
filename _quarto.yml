@@ -3,37 +3,24 @@ project:
   execute-dir: project
 
 website:
-  title: "Kentaro-Kamada"
+  title: "Kentaro Kamada"
   navbar:
     left:
       - href: index.qmd
         text: "Home"
-      - text: "Causal Inference"
-        menu:
-          - 01_Causal_Inference/TMLE.qmd
-          - 01_Causal_Inference/L-TMLE.qmd
-          - 01_Causal_Inference/Causal_Decomposition.qmd
-          - 01_Causal_Inference/Sudharsanan_Bijlsma_2021.qmd
-          - 01_Causal_Inference/Borusyak_2024.qmd
-      - text: "R Tips"
-        menu:
-          - 01_R_Tips/tensorflow_with_Rstudio.qmd
-          - 01_R_Tips/how_to_change_BLAS.qmd
-          - 01_R_Tips/r_installation_with_rig.qmd
-      - text: "Others"
-        menu:
-          - 01_Others/rlang学習.qmd
-          - 01_Others/度数から対数尤度を計算.qmd
-          - 01_Others/Multilevel.qmd
-          - 01_Others/multi_answer.qmd
-          - 01_Others/複利計算.qmd
+      - href: 00_profile.qmd
+        text: "Profile"
+      - href: 01_research.qmd
+        text: "Research"
+      - href: 02_Blog/index.qmd
+        text: "Blog"
     tools:
       - icon: github
         href: https://github.com/Kentaro-Kamada/Kentaro-Kamada.github.io
 
 format:
   html:
-    theme: cosmo
+    theme: yeti
     css: styles.css
     toc: true
 

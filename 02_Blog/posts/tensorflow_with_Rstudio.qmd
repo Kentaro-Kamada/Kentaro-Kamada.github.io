@@ -1,0 +1,276 @@
+---
+title: "tensorflowをRstudioで"
+date: 2024-02-23
+categories: [R Tips]
+engine: knitr
+---
+
+pythonをRStudioで使うのは`reticulate`パッケージによりだいぶ楽になった。
+
+ただpythonにおけるdeep learningの代表的パッケージである`tensorflow`をRStudioで使う際に少しつまづいたのでメモです。
+
+## pythonの環境をどうやって構築するか？
+
+Rでは`renv`パッケージを使っている。ではpythonでは？
+
+pythonはRよりも環境が複雑で変化も早そうなので、環境構築は重要。
+
+今回はpython公式が推奨しているっぽい`venv`を使う。
+
+:::{.callout-note}
+最初global環境でそのままやろうとしたが上手くいかず挫折。Dockerとかも有力だと思う。
+:::
+
+## venvを使って仮想環境を用意
+
+- pythonがインストールされているか確認
+  - homebrewなりでインストールしておく
+  - PATHを通しておく
+
+- 作業ディレクトリにて、terminalで以下のコマンドを実行し`.venv`フォルダを作成
+
+```{bash}
+#| filename: "terminal"
+#| eval: false
+python3 -m venv .venv
+```
+
+## pythonライブラリをインストール
+
+- 以下のコマンドを実行し、仮想環境を起動
+  - pythonの場所が`.venv`内のフォルダになる
+
+```{bash}
+#| filename: "terminal"
+#| eval: false
+
+source .venv/bin/activate
+```
+
+:::{.callout-note}
+`source .venv/bin/activate`は、ライブラリをインストールするときは毎回実行する必要があります！
+
+まちがってglobal環境を汚さないように！
+:::
+
+- ライブラリをインストール
+  - `tensorflow`のほか、`numpy`も必須（`tensorflow`をインストールしたときに入る）
+  - M1 macでGPUを使いたい場合は`tensorflow-metal`もインストールする
+
+```{bash}
+#| filename: "terminal"
+#| eval: false
+pip install tensorflow-macos
+pip install tensorflow-metal
+```
+
+- 仮想環境を抜けるときは以下のコマンドを実行
+
+```{bash}
+#| filename: "terminal"
+#| eval: false
+deactivate
+```
+
+
+## RStudioでpythonを使う
+
+### pythonの場所を指定
+
+- RStudioでpythonを使うには、RStudioにpythonの場所を教えてやる必要がある
+  - 今回は`.venv`内のpythonを使いたいので、作業ディレクトリに`.Rprofile`を作成し、以下のコードを書く
+  - `renv`を使っている場合は、`.Rprofile`が既に作成されていると思うので、その中に追記する
+
+```{r}
+#| filename: ".Rprofile"
+#| eval: false
+
+# renv起動
+source("renv/activate.R")
+# pythonの場所を指定
+Sys.setenv(RETICULATE_PYTHON = ".venv/bin/python3")
+```
+
+:::{.callout-note}
+pythonの場所の指定は`renv`の起動より後に行う必要がある。もし先にpythonの場所を指定してしまうと、`renv`を起動したときにpythonの場所が上書きされてしまい、上手くいかなくなる。
+:::
+
+### pythonを起動
+
+- RStudioでpythonのコードを実行すると、`reticulate::repl_python()`が走ってコンソールがpythonになる
+
+```{python}
+#| filename: "python"
+import sys
+print(sys.version)
+```
+
+- tensorflowを起動して、GPUが使えるかを確認
+- physical_deviceでCPUとGPUの両方が表示されてればOK
+
+```{python}
+#| filename: "python"
+import tensorflow as tf
+tf.config.list_physical_devices()
+```
+
+## ニューラルネットをやってみる
+
+- チュートリアルとして、手書きのアルファベットを分類するモデルを作成してみる
+- Rでデータを読み込んで、pythonに渡して`tensorflow`で分析
+- [参考](https://ai.stanford.edu/~btaskar/ocr/)
+
+```{r}
+#| filename: "R"
+#| cache: false
+
+library(tidyverse)
+library(rsample)
+library(reticulate)
+
+```
+
+
+### データのダウンロード
+
+```{r}
+#| filename: "R"
+#| eval: false
+# データのダウンロード
+if (!dir.exists('data')) dir.create('data')
+download.file('https://ai.stanford.edu/~btaskar/ocr/letter.data.gz', destfile = 'data/letter.data')
+```
+
+### データの読み込み
+
+- 列名は[https://ai.stanford.edu/~btaskar/ocr/letter.names](https://ai.stanford.edu/~btaskar/ocr/letter.names)より取得できる
+- 詳細は以下の通り
+  1. id: each letter is assigned a unique integer id
+  1. letter: a-z
+  1. next_id: id for next letter in the word, -1 if last letter
+  1. word_id: each word is assigned a unique integer id (not used)
+  1. position: position of letter in the word (not used)
+  1. fold: 0-9 -- cross-validation fold
+  1. p_i_j: 0/1 -- value of pixel in row i, column j
+- letterとp_i_j（pixel）のみ使うのでそれ以外は削除
+
+```{r}
+#| filename: "R"
+
+colname <- read_lines('https://ai.stanford.edu/~btaskar/ocr/letter.names')
+data <- 
+  read_tsv('data/letter.data', col_names = colname) |> 
+  # letterとpixelだけ残す
+  select(id, letter, matches('p_\\d+_\\d+'))
+
+```
+
+### データの前処理
+
+- letterを数値に変換
+
+```{r}
+#| filename: "R"
+
+df <- 
+  data |> 
+  mutate(
+    letter = factor(letter),
+    # pythonは0からはじまるので-1する（Rは1から）
+    letter_num = as.numeric(letter) - 1
+  )
+
+```
+
+- 訓練データとテストデータに分割
+
+```{r}
+#| filename: "R"
+
+split <- rsample::initial_split(df, prop = 0.9)
+train <- rsample::training(split)
+test <- rsample::testing(split)
+
+```
+
+- pythonに渡せる形にデータを変換
+  - `reticulate::np_array()`であらかじめ`ndarray`にしておくと便利
+
+```{r}
+#| filename: "R"
+
+train_x <- 
+  train |> 
+  select(!c(id, letter, letter_num)) |>
+  as.matrix() |> 
+  np_array()
+
+train_y <-
+  train |>
+  pull(letter_num) |>
+  np_array()
+
+test_x <-
+  test |> 
+  select(!c(id, letter, letter_num)) |>
+  as.matrix() |> 
+  np_array()
+
+test_y <-
+  test |>
+  pull(letter_num) |>
+  np_array()
+
+```
+
+
+### ニューラルネットで学習
+
+- 中間層が1つのニューラルネットを作成
+  - 入力層は16x8=128（ピクセル）
+  - 中間層は64次元
+  - 出力層はa-zの26分類
+
+```{python}
+#| filename: "python"
+
+import tensorflow as tf
+import numpy as np
+
+# モデルの作成
+model = tf.keras.Sequential([
+  tf.keras.layers.Dense(64, activation='relu'),
+  tf.keras.layers.Dense(26, activation='softmax')
+])
+
+model.compile(
+  optimizer='adam',
+  loss='sparse_categorical_crossentropy',
+  metrics=['accuracy']
+)
+
+```
+
+- rで作成したデータをpythonに渡して学習
+- `r.train_x`でRの`train_x`を参照できる
+- pythonのオブジェクトを渡すときは`py$train_x`
+
+```{python}
+#| filename: "python"
+# モデルの学習
+model.fit(r.train_x, r.train_y, epochs=10, verbose=2)
+```
+
+### テストデータで評価
+
+- テストデータでの正答率は77%くらい
+
+```{python}
+#| filename: "python"
+# モデルの評価
+model.evaluate(r.test_x, r.test_y, verbose=2)
+
+```
+
+
+

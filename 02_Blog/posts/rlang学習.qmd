@@ -1,0 +1,230 @@
+---
+title: "rlang学習"
+date: 2024-02-22
+categories: [Others]
+---
+
+## 参考
+
+[Advanced R](https://adv-r.hadley.nz/)
+
+## 下準備
+
+```{r}
+library(rlang)
+library(lobstr)
+```
+
+## expression
+
+- `expr`：コードをそのまま捕まえる
+  - 作成されたオブジェクト：**expression**
+  - call, symbol, constant, pairlistの4つからなる
+
+```{r}
+
+expr(mean(x, na.rm = TRUE))
+expr(10 + 100 + 1000)
+
+```
+
+- `expr`は関数の引数なども書いてあるまま保持する
+
+```{r}
+# これはxになる
+capture_it <- function(x) {
+  expr(x)
+}
+
+capture_it(a + b + c)
+```
+
+- 引数は評価した上でコードを保持したい場合は`enexpr`を使う
+
+```{r}
+
+capture_it <- function(x) {
+  enexpr(x)
+}
+capture_it(a + b + c)
+
+```
+
+## abstract syntax tree (AST) による表現
+
+- codeはtree形式で表現できる
+- fがcall, aがsymbol, "b"がconstantらしい
+
+```{r}
+lobstr::ast(f(a, "b"))
+```
+
+
+- `+`や`*`も関数であることがわかる
+
+```{r}
+lobstr::ast(1 + 2 * 3)
+```
+
+
+## codeを生成するcode
+
+- `call2`
+
+```{r}
+
+call2('f', 1, 2)
+
+call2('+', 1, call2('*', 2, 3))
+
+```
+
+- `!!`を使ったcodeの生成
+  - 捕まえておいたコードを評価したいところで評価する
+
+```{r}
+xx <- expr(x + x)
+yy <- expr(y + y)
+
+expr(!!xx / !!yy)
+```
+
+## codeの評価
+
+- `eval(expr, env)`：exprをenvで評価
+
+```{r}
+
+eval(expr(x + y), env(x = 1, y = 10))
+eval(expr(x + y), env(x = 2, y = 100))
+
+```
+
+- envを指定しないときは現在のenvironmentで評価
+
+```{r}
+
+x <- 10
+y <- 100
+
+eval(expr(x + y))
+
+```
+
+- データを環境として扱う
+
+- `eval_tidy(expr, data)`：exprをdata内部で評価
+  - dataでcurrent environmentを上書きするので**data-mask**呼ばれる
+- `eval`でもできないことはないが、落とし穴があるらしい
+
+```{r}
+df <- data.frame(x = 1:5, y = sample(5))
+eval_tidy(expr(x + y), df)
+
+```
+
+- dplyrっぽい関数
+
+```{r}
+with2 <- function(df, expr) {
+  eval_tidy(enexpr(expr), df)
+}
+
+with2(df, x + y)
+```
+
+
+## Quosure
+
+- exprだけを使う方法は問題がでてくる
+- 関数の内部で`a`を定義してみる
+
+```{r}
+
+with2 <- function(df, expr) {
+  a <- 1000
+  eval_tidy(enexpr(expr), df)
+}
+
+```
+
+- さらに関数の外部（global environment）でも`a`を定義する
+
+```{r}
+df <- data.frame(x = 1:3)
+a <- 10
+```
+
+- この状態で`with2`を使うと問題が発生
+  - global environmentの`a`ではなく、関数内部で定義した`a`が優先的に使われる
+
+```{r}
+
+with2(df, x + a)
+
+```
+
+- quosure：expressionとenvironmentをセットで保持する
+  - data-maskでは、eval_tidyのdata -> quosureのenv -> global envの順で評価される
+
+```{r}
+with2 <- function(df, expr) {
+  a <- 1000
+  eval_tidy(enquo(expr), df)
+}
+
+x <- 10
+
+with2(df, x + a)
+
+```
+
+# Quasiquotation
+
+```{r}
+library(rlang)
+library(purrr)
+```
+
+- pasteっぽい関数を作る
+
+```{r}
+paste('Good', 'morning', 'Hadley')
+```
+
+- 毎回''でくくるのがだるい
+
+```{r}
+
+cement <- function(...) {
+  args <- ensyms(...) |> map_chr(as_string)
+  paste(args, collapse = " ")
+}
+
+cement(Good, morning, Hadley)
+
+```
+
+- morningやeveryoneが変数だったら？
+  - pasteだとうまくいくけど、cementは想定したふうにはならない
+
+```{r}
+time <- 'afternoon'
+name <- 'Alice'
+
+paste('Good', time, name)
+cement(Good, time, name)
+
+```
+
+-- `!!`を使って変数を評価すればうまくいく
+
+```{r}
+
+cement(Good, !!time, !!name)
+
+```
+
+
+
+

@@ -1,0 +1,15 @@
+{
+  "hash": "6df5ae580bea0847ab80a7fdc0a37a65",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"信頼区間を理解したい\"\ndate: 2024-09-21\ncategories: [Others]\nexecute:\n  eval: false\n---\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\n# 100人の研究者\ntibble(\n  researcher_ID = 1:100\n) |> \n  # 各研究者がデータをとる。互いに独立、500人ずつ調査\n  mutate(\n    data = map(researcher_ID, \\(researcher_ID) rnorm(500, 0.5, 0.1))\n  ) |> \n  # 各研究者のデータの平均値、標準誤差、信頼区間を計算\n  mutate(\n    mean = map_dbl(data, \\(data) mean(data)),\n    se = map_dbl(data, \\(data) sd(data) / sqrt(length(data))),\n    lower = mean - 1.96 * se,\n    upper = mean + 1.96 * se\n  ) |> \n  # 信頼区間が0.5を含むかどうか\n  mutate(\n    flg = case_when(\n      0.5 < lower | upper < 0.5  ~ 'Error',\n      .default = 'Not Error'\n    )\n  ) |> \n  # 図示\n  ggplot(aes(mean, researcher_ID, xmin = lower, xmax = upper, color = flg))+\n  geom_vline(xintercept = 0.5, linetype = 'dashed')+\n  geom_pointrange()\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "listing": "/02_Blog/index.html",
+    "items": [
+      "/02_Blog/posts/信頼区間を理解したい.html",
+      "/02_Blog/posts/PIAAC_replicate.html",
+      "/02_Blog/posts/Borusyak_2024.html",
+      "/02_Blog/posts/複利計算.html",
+      "/02_Blog/posts/multi_answer.html",
+      "/02_Blog/posts/r_installation_with_rig.html",
+      "/02_Blog/posts/how_to_change_BLAS.html",
+      "/02_Blog/posts/tensorflow_with_Rstudio.html",
+      "/02_Blog/posts/度数から対数尤度を計算.html",
+      "/02_Blog/posts/L-TMLE.html",
+      "/02_Blog/posts/Sudharsanan_Bijlsma_2021.html",
+      "/02_Blog/posts/rlang学習.html",
+      "/02_Blog/posts/Causal_Decomposition.html",
+      "/02_Blog/posts/Multilevel.html",
+      "/02_Blog/posts/TMLE.html"
+    ]
+  }
+]

@@ -18,21 +18,21 @@
     "href": "00_profile.en.html",
     "title": "Profile",
     "section": "",
-    "text": "April 2023 - Present: Research Fellow (DC1), Japan Society for the Promotion of Science\nApril 2021 - Present: Project Academic Specialist, Center for Social Research and Data Archives, Institute of Social Science, The University of Tokyo"
+    "text": "April 2023 - Present: Research Fellow (DC1), Japan Society for the Promotion of Science\nApril 2021 - Present: Project Academic Specialist, Center for Social Research and Data Archives, Institute of Social Science, The University of Tokyo\n\n\n\n日本語"
   },
   {
     "objectID": "00_profile.en.html#position",
     "href": "00_profile.en.html#position",
     "title": "Profile",
     "section": "",
-    "text": "April 2023 - Present: Research Fellow (DC1), Japan Society for the Promotion of Science\nApril 2021 - Present: Project Academic Specialist, Center for Social Research and Data Archives, Institute of Social Science, The University of Tokyo"
+    "text": "April 2023 - Present: Research Fellow (DC1), Japan Society for the Promotion of Science\nApril 2021 - Present: Project Academic Specialist, Center for Social Research and Data Archives, Institute of Social Science, The University of Tokyo\n\n\n\n日本語"
   },
   {
     "objectID": "00_profile.en.html#education",
     "href": "00_profile.en.html#education",
     "title": "Profile",
     "section": "Education",
-    "text": "Education\n\nApril 2023 - Present: Ph.D. Student in Division of Social Sciences in Education, Graduate School of Education, The University of Tokyo\nApril 2021 - March 2023: M.A. in Division of Social Sciences in Education, Graduate School of Education, The University of Tokyo\nApril 2019 - March 2021: B.A. in Division of Social Sciences in Education, Faculty of Education, The University of Tokyo\n\n\n\n\n\n日本語"
+    "text": "Education\n\nApril 2023 - Present: Ph.D. Student in Division of Social Sciences in Education, Graduate School of Education, The University of Tokyo\nApril 2021 - March 2023: M.A. in Division of Social Sciences in Education, Graduate School of Education, The University of Tokyo\nApril 2019 - March 2021: B.A. in Division of Social Sciences in Education, Faculty of Education, The University of Tokyo"
   },
   {
     "objectID": "02_Blog/posts/TMLE.html",
@@ -588,24 +588,31 @@
     "text": "シミュレーション\nデータを1000個作成\n\ndata_list &lt;- \n  map(1:1000, \\(x) dgp(1000)) |&gt; \n  enframe()\n\nOLSと変量効果モデルで推定\n\nresult &lt;- \n  data_list |&gt; \n  mutate(\n    lm = map(value, \\(data) lm(y ~ x, data = data)),\n    lmer = map(value, \\(data) lmer(y ~ x + (1|group), data = data))\n  )\n\nxの係数のみ取り出す\n\nres2 &lt;- \n  result |&gt; \n  mutate(\n    lm_res = map(lm, \\(model) {\n      tidy(model) |&gt; \n        select(term, estimate)\n    }),\n    lmer_res = map(lmer, \\(model) {\n      tidy(model) |&gt; \n        select(term, estimate)\n    })\n  ) |&gt; \n  select(name, lm_res, lmer_res) |&gt; \n  pivot_longer(!name, names_to = 'model', values_to = 'value') |&gt; \n  unnest(value) |&gt; \n  filter(term == 'x')\n\n結果を図示\n\nどちらの点推定値も真の値の0.5を中心に分布＝バイアスはない\nOLSによる点推定値はバリアンスが大きい\n変量効果（マルチレベル）モデルによる点推定値はバリアンスが小さい\n\n\nres2 |&gt; \n  ggplot(aes(estimate, fill = model))+\n  geom_vline(xintercept = 0.5, linetype = 'dashed', alpha = 0.5)+\n  geom_histogram(alpha = 0.3, color = 'black', binwidth = 0.02, position = 'identity')+\n  scale_x_continuous(breaks = seq(0, 1, 0.2))"
   },
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "鎌田 健太郎（Kentaro Kamada）",
+    "section": "",
+    "text": "東京大学大学院教育学研究科比較教育社会学コース 博士課程・日本学術振興会 特別研究員（DC1）"
+  },
+  {
     "objectID": "00_profile.html",
     "href": "00_profile.html",
     "title": "Profile",
     "section": "",
-    "text": "2023年4月 - 現在：独立行政法人日本学術振興会 特別研究員（DC1）\n2021年4月 - 現在：東京大学社会科学研究所 附属社会調査・データアーカイブ研究センター 学術専門職員"
+    "text": "2023年4月 - 現在：独立行政法人日本学術振興会 特別研究員（DC1）\n2021年4月 - 現在：東京大学社会科学研究所 附属社会調査・データアーカイブ研究センター 学術専門職員\n\n\n\nEnglish"
   },
   {
     "objectID": "00_profile.html#職歴",
     "href": "00_profile.html#職歴",
     "title": "Profile",
     "section": "",
-    "text": "2023年4月 - 現在：独立行政法人日本学術振興会 特別研究員（DC1）\n2021年4月 - 現在：東京大学社会科学研究所 附属社会調査・データアーカイブ研究センター 学術専門職員"
+    "text": "2023年4月 - 現在：独立行政法人日本学術振興会 特別研究員（DC1）\n2021年4月 - 現在：東京大学社会科学研究所 附属社会調査・データアーカイブ研究センター 学術専門職員\n\n\n\nEnglish"
   },
   {
     "objectID": "00_profile.html#学歴",
     "href": "00_profile.html#学歴",
     "title": "Profile",
     "section": "学歴",
-    "text": "学歴\n\n2023年4月 - 現在：東京大学大学院教育学研究科比較教育社会学コース 博士課程\n2021年4月 - 2023年3月：東京大学大学院教育学研究科 比較教育社会学コース 修士課程\n2019年4月 - 2021年3月：東京大学教育学部 比較教育社会学コース\n\n\n\n\n\nEnglish"
+    "text": "学歴\n\n2023年4月 - 現在：東京大学大学院教育学研究科比較教育社会学コース 博士課程\n2021年4月 - 2023年3月：東京大学大学院教育学研究科 比較教育社会学コース 修士課程\n2019年4月 - 2021年3月：東京大学教育学部 比較教育社会学コース"
   }
 ]

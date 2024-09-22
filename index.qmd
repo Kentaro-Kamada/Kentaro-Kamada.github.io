@@ -1,6 +1,17 @@
 ---
-title: "Kentaro Kamada"
+title: "鎌田 健太郎（Kentaro Kamada）"
+image: /images/author.png
+about:
+  template: jolla
+  links:
+    - icon: github
+      text: Github
+      href: https://github.com/Kentaro-Kamada
+    - icon: book
+      text: Researchmap
+      href: https://researchmap.jp/kamaken
 ---
 
+東京大学大学院教育学研究科比較教育社会学コース 博士課程・日本学術振興会 特別研究員（DC1）
 
 

@@ -1,0 +1,15 @@
+{
+  "hash": "422a416db7137a2b4a3f1e5822aaabec",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Profile\"\nengine:\n  knitr\n---\n\n\n\n## 職歴\n\n- 2023年4月 - 現在：独立行政法人日本学術振興会 特別研究員（DC1）\n- 2021年4月 - 現在：東京大学社会科学研究所 附属社会調査・データアーカイブ研究センター 学術専門職員 \n\n## 学歴\n\n- 2023年4月 - 現在：東京大学大学院教育学研究科比較教育社会学コース 博士課程\n- 2021年4月 - 2023年3月：東京大学大学院教育学研究科 比較教育社会学コース 修士課程\n- 2019年4月 - 2021年3月：東京大学教育学部 比較教育社会学コース\n\n:::{.column-margin}\n[English](./00_profile.en.html)\n:::\n\n\n```{ojs}\ncurrenturl = window.location.href;\nenurl = currenturl.replace(/\\.html$/, \"\\.en\\.html\");\n```\n\n\n`ojs enurl`\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

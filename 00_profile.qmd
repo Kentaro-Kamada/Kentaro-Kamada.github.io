@@ -9,7 +9,7 @@ title: "Profile"
 - 2021年4月 - 現在：東京大学社会科学研究所 附属社会調査・データアーカイブ研究センター 学術専門職員 
 
 :::{.column-margin}
-[English](./00_profile.en.html)
+[English](./00_profile.en.qmd){.btn .btn-outline-primary .btn role="button"}
 :::
 
 ## 学歴

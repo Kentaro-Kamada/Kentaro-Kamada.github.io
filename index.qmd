@@ -1,6 +1,6 @@
 ---
 title: "鎌田 健太郎（Kentaro Kamada）"
-image: /images/author.png
+image: images/author.png
 about:
   template: jolla
   links:
@@ -10,8 +10,10 @@ about:
     - icon: book
       text: Researchmap
       href: https://researchmap.jp/kamaken
+    - icon: envelope
+      text: "kamaken0705[at]g.ecc.u-tokyo.ac.jp"
+      href: "javascript:void(0)"
 ---
 
 東京大学大学院教育学研究科比較教育社会学コース 博士課程・日本学術振興会 特別研究員（DC1）
-
 

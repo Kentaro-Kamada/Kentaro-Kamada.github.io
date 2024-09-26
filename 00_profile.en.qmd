@@ -1,5 +1,9 @@
 ---
 title: "Profile"
+other-links:
+  - text: 日本語
+    icon: globe
+    href: ./00_profile.html
 ---
 
 ## Position
@@ -7,9 +11,6 @@ title: "Profile"
 - April 2023 - Present: Research Fellow (DC1), Japan Society for the Promotion of Science (JSPS)
 - April 2021 - Present: Project Academic Specialist, Center for Social Research and Data Archives, Institute of Social Science, The University of Tokyo
 
-:::{.column-margin}
-[日本語](./00_profile.qmd){.btn .btn-outline-primary .btn role="button"}
-:::
 
 ## Education
 

@@ -2,42 +2,82 @@
 title: "信頼区間を理解したい"
 date: 2024-09-21
 categories: [Others]
-execute:
-  eval: false
 ---
+
+信頼区間の意味がわかりやすいシミュレーション
+
+## パッケージの読み込み
 
 ```{r}
 library(tidyverse)
 ```
 
+## 設定
+
+- 100人の研究者がいる
+- 各研究者がそれぞれデータをとる。N=500の調査を行う
+- データは平均0.5、標準偏差0.1の正規分布に従うと仮定
 
 ```{r}
-# 100人の研究者
-tibble(
-  researcher_ID = 1:100
-) |> 
-  # 各研究者がデータをとる。互いに独立、500人ずつ調査
-  mutate(
+set.seed(1)
+
+data <- 
+  tibble(
+    # 100人の研究者がいる
+    researcher_ID = 1:100,
+    # 各研究者がそれぞれデータをとる。N=500の調査を行う。
     data = map(researcher_ID, \(researcher_ID) rnorm(500, 0.5, 0.1))
-  ) |> 
+  )
+
+data
+```
+
+## データから信頼区間を計算
+
+- 各研究者のデータの平均値、標準誤差、信頼区間を計算
+- 信頼区間が真値（0.5）を含むかどうかを判定
+
+```{r}
+
+data2 <- 
+  data |> 
   # 各研究者のデータの平均値、標準誤差、信頼区間を計算
   mutate(
     mean = map_dbl(data, \(data) mean(data)),
     se = map_dbl(data, \(data) sd(data) / sqrt(length(data))),
     lower = mean - 1.96 * se,
     upper = mean + 1.96 * se
-  ) |> 
-  # 信頼区間が0.5を含むかどうか
+  ) |>  
+  # 信頼区間が0.5を含むかどうかを判定
   mutate(
     flg = case_when(
       0.5 < lower | upper < 0.5  ~ 'Error',
       .default = 'Not Error'
     )
-  ) |> 
-  # 図示
+  )
+
+data2
+
+```
+
+## 各研究者の信頼区間を図示
+
+- 点推定値は0.5に近いのもあれば、遠いのもある
+- 信頼区間が真値（0.5）を含まない、「不運」な研究者は、5人 / 100人（5％）
+  - 95％の研究者は真の値を拾える、という意味
+- 実際には自分が「不運」な研究者かもしれないし、信頼区間の端ギリギリで真値を拾っているだけかもしれない
+
+```{r}
+#| fig-height: 7
+#| fig-width: 8
+
+# 図示
+data2 |> 
   ggplot(aes(mean, researcher_ID, xmin = lower, xmax = upper, color = flg))+
   geom_vline(xintercept = 0.5, linetype = 'dashed')+
-  geom_pointrange()
+  geom_pointrange()+
+  theme_bw()+
+  theme(legend.position = 'bottom')
 
 ```
 

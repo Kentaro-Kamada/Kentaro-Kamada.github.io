@@ -283,6 +283,17 @@
       "Repository": "CRAN",
       "Hash": "1c0aa18b97e6aaa17f93b8b866c0ace5"
     },
+    "RcppRoll": {
+      "Package": "RcppRoll",
+      "Version": "0.3.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp"
+      ],
+      "Hash": "6659c0ecb7b85f322f93e7f1e6ac7d35"
+    },
     "RcppTOML": {
       "Package": "RcppTOML",
       "Version": "0.2.2",

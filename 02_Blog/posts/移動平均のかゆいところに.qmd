@@ -1,0 +1,113 @@
+---
+title: "移動平均のかゆいところに，partial = TRUE"
+date: 2020-10-25
+categories: [R]
+---
+
+
+## はじめに
+
+『前処理大全』の4章で移動平均の計算が出てきたのでメモ。
+
+移動平均の基本的な算出方法は[「dplyrを使いこなす！Window関数編」](https://qiita.com/matsuou1/items/db6e8c48fcfd791dd876)などが詳しい。
+
+## 移動平均の基本
+
+xにこんな感じでデータ入っているとき，移動平均は以下のように計算される。
+
+（以下ではすべて，3つずつ計算，右詰め，の前提で書く）
+
+|  x|rollsum |rollmean  |
+|--:|:-------|:---------|
+|  1|NA      |NA        |
+|  2|NA      |NA        |
+|  3|1+2+3   |(1+2+3)/3 |
+|  4|2+3+4   |(2+3+4)/3 |
+|  5|3+4+5   |(3+4+5)/3 |
+|  6|4+5+6   |(4+5+6)/3 |
+
+Rで実装するとこんな感じになる
+
+```{r}
+library(tidyverse)
+
+tibble(x = 1:6) |> 
+  mutate(
+    rollsum = RcppRoll::roll_sum(x, n = 3L, align = 'right', fill = NA),
+    rollmean = RcppRoll::roll_mean(x, n = 3L, align = 'right', fill = NA)
+  )
+
+```
+
+## 移動平均のかゆいところ
+
+ここまでの移動平均は，値が3つ揃っているところだけ計算し，3つに満たない端っこのケースに関しては欠損で埋める，というルールで計算している。
+
+ただし，場合によっては**3件に満たない場合でも欠損値扱いにせずに平均値を計算したい**，という場合もあるだろう。
+
+（イメージ）
+
+|  x|rollsum |rollmean  |
+|--:|:-------|:---------|
+|  1|1       |1/1       |
+|  2|1+2     |(1+2)/2   |
+|  3|1+2+3   |(1+2+3)/3 |
+|  4|2+3+4   |(2+3+4)/3 |
+|  5|3+4+5   |(3+4+5)/3 |
+|  6|4+5+6   |(4+5+6)/3 |
+
+『前処理大全』でもこのようなケースが扱われており，Rのサンプルコードでは`lag`と条件式の組み合わせで突破していたが，あんまりきれいじゃない。
+
+## `zoo::rollapply`を用いた実装
+
+以上の問題を解決するには`zoo::rollapply()`が有効である。
+
+この関数の引数で，`partial = TRUE`とすると，以上の問題に対処できる。
+
+詳しくは[vignette](https://cran.r-project.org/web/packages/zoo/zoo.pdf)を参照。
+
+```{r}
+tibble(x = 1:6) |> 
+  mutate(
+    rollsum = zoo::rollapply(x, width = 3L, FUN = sum, align = 'right', partial = TRUE),
+    rollmean = zoo::rollapply(x, width = 3L, FUN = mean, align = 'right', partial = TRUE)
+  )
+```
+
+この場合1行目の値は和でも平均でも，元のデータがダイレクトに反映されることになる。
+
+**最低でも2つ以上の値の場合だけ計算したい！**という時は，`partial = 2L`のように，引数に整数を入れればよい。
+
+```{r}
+tibble(x = 1:6) |> 
+  mutate(
+    rollsum = zoo::rollapply(x, width = 3L, FUN = sum, align = 'right', fill = NA, partial = 2L),
+    rollmean = zoo::rollapply(x, width = 3L, FUN = mean, align = 'right', fill = NA, partial = 2L)
+  )
+```
+
+また，なぜか`zoo::rollsum`や`zoo::rollmean`で`partial = TRUE`としても上手くいかない。なぜ…？
+
+```{r}
+zoo::rollapply(1:6, width = 3L, FUN = mean, align = 'right', partial = TRUE)
+zoo::rollmean(1:6, k = 3L, align = 'right', partial = TRUE)
+```
+
+## `RcppRoll`にも`partial`があるが… 
+
+移動平均といえば`RcppRoll`を使う人が多いはず。速度もzooより断然速いので基本的にはこちらを使うべきと筆者も思っている。
+
+実は`RcppRoll`の関数にも`partial`引数が入っている。
+
+これを見た時に「これで行けるやん」と思ったのだが…
+
+>partial Partial application? Currently unimplemented.
+<https://cran.r-project.org/web/packages/RcppRoll/RcppRoll.pdf>
+
+実装されてませんでした…
+
+## まとめ
+
+というわけで，移動平均の計算は通常時は`RcppRoll`を使いつつ，ああいった特殊な場合には`zoo`を使えばよいということがわかった。`RcppRoll`は早く`partial`を実装してほしいところ。
+
+

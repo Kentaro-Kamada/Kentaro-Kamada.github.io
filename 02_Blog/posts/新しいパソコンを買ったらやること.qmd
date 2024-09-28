@@ -1,0 +1,73 @@
+---
+title: "新しいパソコンを買ったらやること"
+date: 2022-02-14
+categories: [Setup]
+---
+
+# 新しいパソコンの初期設定
+
+## Google Chromeのインストール
+
+## Office関連のインストール
+
+- Office365のインストール
+- Onedriveのインストール
+
+特に問題なくできた
+
+## Homebrewのインストール（Mac）
+
+- 定番のパッケージマネージャー
+
+[https://brew.sh/index_ja:embed:cite]
+
+
+## R関連のインストール
+
+- R本体のインストール
+
+rigというツールを使う。[参考](./r_installation_with_rig.qmd)
+
+```sh
+brew tap r-lib/rig
+brew install --cask rig 
+rig add 4.3.3
+```
+
+- Rstudioのインストール
+
+```sh
+brew install --cask rstudio
+```
+  - 自作したRstudioテーマを持ってくる（あとでgithubにでも置いておく）
+  - エディタで使用するフォントを選択
+    - myricaを使いたかったが，なぜかMacだとうまくいっていない（調査中）
+- Rtools（Windows）or Xcode（Mac）のインストール
+  - github産のパッケージのビルドなどに必要
+- （Macのみ）Xquartzのインストール
+  - 詳しくはわからないが，入れないとRmarkdownがちゃんと動かなかった
+
+## gitのインストール
+
+- （winのみ）gitをインストール
+  - macだとgit自体がすでにインストールされていた
+- ssh keyの作成→githubへ登録
+- git clone で適宜必要なプロジェクトをダウンロード
+
+## Rmarkdown関連のインストール
+
+- tinytexのインストール
+- `tinytex::install_tinytex()`でtex本体をインストール
+- `latex_engine: lualatex`の文章を作成し，エラーを見ながら適宜`tinytex::tlmgr_install()`で足りないパッケージを追加
+  - （Mac）haranoajiで引っかかった
+
+## Zoteroのインストール
+
+- 同期の開始
+  - 「環境設定」の「同期」からユーザー名，パスワードを打ち込んで同期を開始
+  - 「詳細」→「ファイルとフォルダ」から，基本ディレクトリを正しく設定する→pdfファイルと文献情報が紐づいた形で設定が引き継がれる
+
+あとは以下を参考に設定する
+
+[https://sickle-sword.hatenablog.com/entry/2021/06/05/160818?_ga=2.261856205.1735845236.1644808541-16137706.1644808541:embed:cite]
+

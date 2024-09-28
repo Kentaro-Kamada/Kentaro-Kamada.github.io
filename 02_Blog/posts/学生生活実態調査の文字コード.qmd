@@ -1,0 +1,41 @@
+---
+title: "学生生活実態調査の文字コード"
+date: 2022-06-25
+categories: [Others]
+---
+
+
+文字コードがカオスで調べるのが大変だったのでメモ
+
+| 年次|当該データ |文字コード |URL                                                       |
+|----:|:----------|:----------|:---------------------------------------------------------|
+| 1991|0078.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0078 |
+| 1992|0079.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0079 |
+| 1993|0053.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0053 |
+| 1994|0080.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0080 |
+| 1995|0125.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0125 |
+| 1996|0126.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0126 |
+| 1997|0127.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0127 |
+| 1998|0128.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0128 |
+| 1999|0157.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0157 |
+| 2000|0201.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0201 |
+| 2001|0267.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0267 |
+| 2002|0292.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0292 |
+| 2003|0345.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0345 |
+| 2004|0399.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0399 |
+| 2005|0519.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0519 |
+| 2006|0562.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0562 |
+| 2007|0605.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0605 |
+| 2008|0664.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0664 |
+| 2009|0753.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0753 |
+| 2010|0812.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0812 |
+| 2011|0841.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0841 |
+| 2012|0879.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0879 |
+| 2013|0955.sav   |utf8       |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0955 |
+| 2014|1057.sav   |utf8       |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1057 |
+| 2015|1099.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1099 |
+| 2016|1163.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1163 |
+| 2017|1232.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1232 |
+| 2018|1295.sav   |utf8       |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1295 |
+| 2019|1384.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1384 |
+| 2020|1442.sav   |cp932      |https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1442 |

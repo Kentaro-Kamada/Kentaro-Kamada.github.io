@@ -1,0 +1,42 @@
+---
+title: "Rでロジットモデル"
+date: 2021-04-29
+categories: [Statistics, R]
+---
+
+
+## 二項ロジット
+
+これは簡単で，2値のfactorを従属変数，リンク関数を`glm(family = binomial('logit'))`のように指定してやればOK  
+
+ちなみに`binomial('probit')`にしてやればプロビット回帰になる  
+
+## 多項ロジット
+
+`nnet::multinom`は検定とかやってくれないし，かといって`mlogit::mlogit`は独自のデータ形式を要求してくるので面倒くさい．ただ，`nnet`は`broom`に対応しているので，検定部分は`broom`に任せることでこの問題は解決．
+
+ということでこれからは`nnet`で推定→`broom`に放り込んで検定というのを使っていきたい  
+
+## 順序ロジット
+
+`MASS::polr`が最有力か？ただし，data.frame形式しか受け付けていないのでtibbleのままデータを入れるとエラーになるのが難点．以前`LMest`で潜在移行モデルを動かした時にも似たようなことがあった．なんとかならんものか...
+
+ちなみにpolrってなんだろうと思ったら，proportional odds logistic regression（比例オッズロジスティック回帰）の略でした．  
+
+## 一般化順序ロジット
+
+平行性の仮定を一部緩めた部分比例オッズモデル（partial proportional odds model）[^1]とかをやりたいときは，`VGAM::vglm`が使える．
+
+x1，x2，x3のうち，x1だけ平行性の仮定を緩めたいときは，以下のように書く
+
+```R
+VGAM::vglm(formula = y ~ x1 + x2 + x3, 
+           family = VGAM::cumulative(parallel = FALSE ~ 1 + x1, reverse = TRUE),
+           data = data) 
+```
+
+`parallel`の書き方がミソで，`parallel = FALSE`のあとに等値制約を緩めたいパラメタをformulaで記述する．今回の場合は切片（閾値）とx1の係数だけは各段階で異なるので`~ 1 + x1`と記述する．また，`parallel = TRUE`とすると通常の順序ロジットモデルになる．
+
+`reverse`は係数の符号を反転させるオプションで，`reverse = TRUE`を入れるとStataのgologit2を用いた時の結果と同じになる．  
+
+[^1]: 教育社会学での使用例は[近藤・古田（2009）](https://www.jstage.jst.go.jp/article/jsr/59/4/59_4_682/_article/-char/ja)とか．

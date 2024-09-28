@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kentaro Kamada">
-<meta name="dcterms.date" content="2024-09-21">
+<meta name="dcterms.date" content="2021-06-05">
 
-<title>信頼区間を理解したい – Kentaro Kamada</title>
+<title>Zoteroの設定備忘録 – Kentaro Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -152,9 +152,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">信頼区間を理解したい</h1>
+      <h1 class="title">Zoteroの設定備忘録</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">Others</div>
+                <div class="quarto-category">Setup</div>
+                <div class="quarto-category">Zotero</div>
               </div>
                   </div>
   </div>
@@ -172,7 +173,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">September 21, 2024</p>
+        <p class="date">June 5, 2021</p>
       </div>
     </div>
     
@@ -188,10 +189,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#パッケージの読み込み" id="toc-パッケージの読み込み" class="nav-link active" data-scroll-target="#パッケージの読み込み">パッケージの読み込み</a></li>
-  <li><a href="#設定" id="toc-設定" class="nav-link" data-scroll-target="#設定">設定</a></li>
-  <li><a href="#データから信頼区間を計算" id="toc-データから信頼区間を計算" class="nav-link" data-scroll-target="#データから信頼区間を計算">データから信頼区間を計算</a></li>
-  <li><a href="#各研究者の信頼区間を図示" id="toc-各研究者の信頼区間を図示" class="nav-link" data-scroll-target="#各研究者の信頼区間を図示">各研究者の信頼区間を図示</a></li>
+  <li><a href="#ようやく始めた文献管理" id="toc-ようやく始めた文献管理" class="nav-link active" data-scroll-target="#ようやく始めた文献管理">ようやく始めた文献管理</a></li>
+  <li><a href="#zoteroのインストール" id="toc-zoteroのインストール" class="nav-link" data-scroll-target="#zoteroのインストール">Zoteroのインストール</a></li>
+  <li><a href="#ブラウザコネクタのインストール" id="toc-ブラウザコネクタのインストール" class="nav-link" data-scroll-target="#ブラウザコネクタのインストール">ブラウザコネクタのインストール</a></li>
+  <li><a href="#はじめにやっとく設定" id="toc-はじめにやっとく設定" class="nav-link" data-scroll-target="#はじめにやっとく設定">はじめにやっとく設定</a></li>
+  <li><a href="#アドオンのインストール" id="toc-アドオンのインストール" class="nav-link" data-scroll-target="#アドオンのインストール">アドオンのインストール</a>
+  <ul class="collapse">
+  <li><a href="#zotfileの導入zotero-7では使えないので注意" id="toc-zotfileの導入zotero-7では使えないので注意" class="nav-link" data-scroll-target="#zotfileの導入zotero-7では使えないので注意">ZotFileの導入（Zotero 7では使えないので注意！）</a></li>
+  <li><a href="#better-bibtexの導入" id="toc-better-bibtexの導入" class="nav-link" data-scroll-target="#better-bibtexの導入">Better BibTeXの導入</a></li>
+  </ul></li>
+  <li><a href="#j-stageのtranslatorの修正" id="toc-j-stageのtranslatorの修正" class="nav-link" data-scroll-target="#j-stageのtranslatorの修正">J-StageのTranslatorの修正</a></li>
+  <li><a href="#社会学評論のcslファイル" id="toc-社会学評論のcslファイル" class="nav-link" data-scroll-target="#社会学評論のcslファイル">社会学評論のcslファイル</a></li>
   </ul>
 </nav>
     </div>
@@ -202,119 +210,140 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>信頼区間の意味がわかりやすいシミュレーション</p>
-<section id="パッケージの読み込み" class="level2">
-<h2 class="anchored" data-anchor-id="パッケージの読み込み">パッケージの読み込み</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<section id="ようやく始めた文献管理" class="level2">
+<h2 class="anchored" data-anchor-id="ようやく始めた文献管理">ようやく始めた文献管理</h2>
+<p>先日ようやく文献管理をはじめた．<br>
+社会学周りだと，ここらへんのメソッドが全く確立されていない&amp;共有されないので，試行錯誤が大変だった．<br>
+以下では自分なりに見つけた方法をメモっていく．（メモらないと絶対忘れる）</p>
 </section>
-<section id="設定" class="level2">
-<h2 class="anchored" data-anchor-id="設定">設定</h2>
-<ul>
-<li>100人の研究者がいる</li>
-<li>各研究者がそれぞれデータをとる。N=500の調査を行う</li>
-<li>データは平均0.5、標準偏差0.1の正規分布に従うと仮定</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 100人の研究者がいる</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">researcher_ID =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 各研究者がそれぞれデータをとる。N=500の調査を行う。</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">map</span>(researcher_ID, \(researcher_ID) <span class="fu">rnorm</span>(<span class="dv">500</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>))</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 100 × 2
-   researcher_ID data       
-           &lt;int&gt; &lt;list&gt;     
- 1             1 &lt;dbl [500]&gt;
- 2             2 &lt;dbl [500]&gt;
- 3             3 &lt;dbl [500]&gt;
- 4             4 &lt;dbl [500]&gt;
- 5             5 &lt;dbl [500]&gt;
- 6             6 &lt;dbl [500]&gt;
- 7             7 &lt;dbl [500]&gt;
- 8             8 &lt;dbl [500]&gt;
- 9             9 &lt;dbl [500]&gt;
-10            10 &lt;dbl [500]&gt;
-# ℹ 90 more rows</code></pre>
-</div>
-</div>
+<section id="zoteroのインストール" class="level2">
+<h2 class="anchored" data-anchor-id="zoteroのインストール">Zoteroのインストール</h2>
+<p>なにはともあれZotero本体のインストール．<br>
+「zotero install」みたいな感じで適当にググったら出てくる． <a href="https://www.zotero.org/download/">https://www.zotero.org/download/</a></p>
+<p>インストール時の注意とかも特になし．サクサク進める．</p>
 </section>
-<section id="データから信頼区間を計算" class="level2">
-<h2 class="anchored" data-anchor-id="データから信頼区間を計算">データから信頼区間を計算</h2>
-<ul>
-<li>各研究者のデータの平均値、標準誤差、信頼区間を計算</li>
-<li>信頼区間が真値（0.5）を含むかどうかを判定</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 各研究者のデータの平均値、標準誤差、信頼区間を計算</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="fu">map_dbl</span>(data, \(data) <span class="fu">mean</span>(data)),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">map_dbl</span>(data, \(data) <span class="fu">sd</span>(data) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(data))),</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower =</span> mean <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper =</span> mean <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span>  </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 信頼区間が0.5を含むかどうかを判定</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">flg =</span> <span class="fu">case_when</span>(</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="fl">0.5</span> <span class="sc">&lt;</span> lower <span class="sc">|</span> upper <span class="sc">&lt;</span> <span class="fl">0.5</span>  <span class="sc">~</span> <span class="st">'Error'</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> <span class="st">'Not Error'</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>data2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 100 × 7
-   researcher_ID data         mean      se lower upper flg      
-           &lt;int&gt; &lt;list&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    
- 1             1 &lt;dbl [500]&gt; 0.502 0.00453 0.493 0.511 Not Error
- 2             2 &lt;dbl [500]&gt; 0.495 0.00473 0.486 0.505 Not Error
- 3             3 &lt;dbl [500]&gt; 0.500 0.00452 0.491 0.509 Not Error
- 4             4 &lt;dbl [500]&gt; 0.497 0.00479 0.488 0.506 Not Error
- 5             5 &lt;dbl [500]&gt; 0.501 0.00464 0.492 0.510 Not Error
- 6             6 &lt;dbl [500]&gt; 0.502 0.00459 0.493 0.511 Not Error
- 7             7 &lt;dbl [500]&gt; 0.509 0.00476 0.500 0.518 Not Error
- 8             8 &lt;dbl [500]&gt; 0.494 0.00451 0.486 0.503 Not Error
- 9             9 &lt;dbl [500]&gt; 0.499 0.00440 0.491 0.508 Not Error
-10            10 &lt;dbl [500]&gt; 0.497 0.00446 0.488 0.505 Not Error
-# ℹ 90 more rows</code></pre>
-</div>
-</div>
+<section id="ブラウザコネクタのインストール" class="level2">
+<h2 class="anchored" data-anchor-id="ブラウザコネクタのインストール">ブラウザコネクタのインストール</h2>
+<p>Zoteroを起動して「ツール」&gt;「ブラウザ・コネクタのインストール」をクリック．<br>
+するとウェブブラウザが立ち上がるので，自分が使うブラウザのコネクタをインストールする．<br>
+これも作りが丁寧でわかりやすいのでサクサク進める．</p>
 </section>
-<section id="各研究者の信頼区間を図示" class="level2">
-<h2 class="anchored" data-anchor-id="各研究者の信頼区間を図示">各研究者の信頼区間を図示</h2>
+<section id="はじめにやっとく設定" class="level2">
+<h2 class="anchored" data-anchor-id="はじめにやっとく設定">はじめにやっとく設定</h2>
+<p>「編集」&gt;「設定」からやっておいた方がいい設定をいじる（Macだと「Zotero」&gt;「環境設定」）</p>
 <ul>
-<li>点推定値は0.5に近いのもあれば、遠いのもある</li>
-<li>信頼区間が真値（0.5）を含まない、「不運」な研究者は、5人 / 100人（5％）
+<li>一般
 <ul>
-<li>95％の研究者は真の値を拾える、という意味</li>
+<li>「ウェブページからアイテムを作成するときに自動的にスナップショットを作成する」のチェックを<strong>外す</strong></li>
+<li>ゴミ箱の中のアイテムを7日（お好きなように）経過で削除</li>
 </ul></li>
-<li>実際には自分が「不運」な研究者かもしれないし、信頼区間の端ギリギリで真値を拾っているだけかもしれない</li>
+<li>同期
+<ul>
+<li>データの同期，作ったアカウントでログインしておく</li>
+<li>ファイルの同期，すべてチェックを外す（pdfはOnedriveに保存するので使わない）</li>
+</ul></li>
+<li>詳細
+<ul>
+<li>ファイルとフォルダ，リンク付き添付ファイルの基本ディレクトリを，pdfを保存したいディレクトリに設定する（自分の場合はOnedrive&gt;Zotero）</li>
+</ul></li>
 </ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 図示</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>data2 <span class="sc">|&gt;</span> </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(mean, researcher_ID, <span class="at">xmin =</span> lower, <span class="at">xmax =</span> upper, <span class="at">color =</span> flg))<span class="sc">+</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="st">'dashed'</span>)<span class="sc">+</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>()<span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'bottom'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="信頼区間を理解したい_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
-</div>
-</div>
+</section>
+<section id="アドオンのインストール" class="level2">
+<h2 class="anchored" data-anchor-id="アドオンのインストール">アドオンのインストール</h2>
+<p>Zoteroはオープンソースなので，便利なアドオンをいろんな人が作ってくれている．<br>
+以下ではZotFileとBetter-BibTexの二つを導入する．</p>
+<section id="zotfileの導入zotero-7では使えないので注意" class="level3">
+<h3 class="anchored" data-anchor-id="zotfileの導入zotero-7では使えないので注意">ZotFileの導入（Zotero 7では使えないので注意！）</h3>
+<ol type="1">
+<li>まずはアドオンをダウンロードしてくる．<a href="http://zotfile.com/index.html#changelog">http://zotfile.com/index.html#changelog</a></li>
+<li>xpi形式のファイルがダウンロードされるので，適当なフォルダに保存する（自分はProgram FilesのZoteroのフォルダにAddonというフォルダを作って入れている）．<br>
+</li>
+<li>Zoteroを起動し，「ツール」&gt;「アドオン」をクリックすると現在インストールされているアドオンのリストが表示されるので，右上の歯車アイコンで「Install Add-on from File…」をクリック<br>
+</li>
+<li>先ほど保存したxpi形式のファイルを選択．Zoteroを再起動しろと言われるので，Restart nowをクリック</li>
+</ol>
+<p>これでインストールは完了．</p>
+<section id="pdfの保存先を設定する" class="level4">
+<h4 class="anchored" data-anchor-id="pdfの保存先を設定する">pdfの保存先を設定する</h4>
+<p>google scholarやjstageなどから，ブラウザコネクタを使って文献を落としてきたときに，pdfファイルを保存するフォルダを任意に設定できる．自分はOnedrive内のフォルダを指定することでiPadなどから文献にアクセスできるようにしている．</p>
+<ol type="1">
+<li>「ツール」&gt;「ZotFile Preferences…」&gt;「General Settings」&gt;「Location Files」と進む<br>
+</li>
+<li>Custom Locationの横のChoose…を選択し，pdfを保存したいディレクトリを選択する<br>
+</li>
+<li>Use subfolder defined byにチェックを入れ，横に「/%c」と入力する</li>
+</ol>
+<p>最後の行はフォルダ内にサブフォルダを作るかどうかで，「/%c」はZoteroのコレクションに対応する形でサブフォルダを作る設定．もちろん著者（「/%a」）や年度（「/%y」）でサブフォルダを作ることもできる．</p>
+</section>
+<section id="pdfファイルの名前を設定する" class="level4">
+<h4 class="anchored" data-anchor-id="pdfファイルの名前を設定する">pdfファイルの名前を設定する</h4>
+<p>同じくブラウザコネクタ経由で文献を落としてきたときに，pdfファイルの命名規則を定めることができる．</p>
+<ol type="1">
+<li>「ツール」&gt;「ZotFile Preferences…」&gt;「Renaming Rules」&gt;「Renaming Format」と進む<br>
+</li>
+<li>Use Zotero to Renameのチェックを<strong>外す</strong><br>
+</li>
+<li>Format for all Item Types except Patentのところに「{%a_}{%y_}{%t}」と入力する</li>
+</ol>
+<p>最後のところが命名規則で，「著者_年度_タイトル」という名前がpdfファイルにつくことになる．ここも先ほどと同じで任意に規則を作ることができる．<br>
+命名規則を設定してから，文献を右クリックして「Manage Attachments」&gt;「Rename Attachments」とすると，pdfファイルがリネームされる．</p>
+</section>
+</section>
+<section id="better-bibtexの導入" class="level3">
+<h3 class="anchored" data-anchor-id="better-bibtexの導入">Better BibTeXの導入</h3>
+<p>導入の流れは先ほどと同じ． ダウンロード元はGithubのreleaseから． <a href="https://github.com/retorquere/zotero-better-bibtex/releases">https://github.com/retorquere/zotero-better-bibtex/releases</a></p>
+<section id="cite-keyの自動生成" class="level4">
+<h4 class="anchored" data-anchor-id="cite-keyの自動生成">Cite Keyの自動生成</h4>
+<p>Bibtexで引用する際に使用するCitekeyをいい感じで自動生成してくれる．</p>
+<ol type="1">
+<li>「編集」&gt; 「設定」&gt;「Better BibTeX」&gt;「Citation keys」とすすむ</li>
+<li>「Citation key format」のところに「[Auth]-[year]」と入力</li>
+<li>となりの「Export」に移って，「Fields to omit from export」のところに「abstract, doi, file」と入力</li>
+<li>「Advanced」に移って，「Ideographs in citekeys」の「Apply kuroshiro romajization in Japanese names/titles」のところにチェックをいれる</li>
+</ol>
+<p>2のところがCitation keyの命名規則で，「著者-年」という形で生成される．もちろんTitleなどを組み合わせてカスタマイズできる． 3はBibtexファイルの出力時にabstractやdoiを出力しないという設定（ファイルが長くなって邪魔くさいので…）． 4は著者名に日本語が含まれている場合に読みを抽出してローマ字化し，Citation keyに利用するという設定．完全に正確ではないが，今のところは不自由なく使えていると思う．</p>
+</section>
+</section>
+</section>
+<section id="j-stageのtranslatorの修正" class="level2">
+<h2 class="anchored" data-anchor-id="j-stageのtranslatorの修正">J-StageのTranslatorの修正</h2>
+<p>社会学だと主要な邦ジャーナルはjstageからダウンロードすることになるが，そのままだと著者名とタイトルがうまく取れないという問題がある．</p>
+<ul>
+<li>著者名：姓と名が反対でとれてしまう．これが連鎖的にpdfのファイル名にまで影響してくる</li>
+<li>タイトル：サブタイトルがとれない．このままだと手動入力することになる．</li>
+</ul>
+<p>これを，JstageのTranslatorを修正することで対応する．<br>
+Zoteroのデータフォルダ（Windowsの場合Users）内のTranslatorsの中にある「J-Stage.js」を開く．</p>
+<p>87行目あたりから以下のように修正する．</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// get RIS Link</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">//var bibtexurl = ZU.xpathText(doc, '//a[contains(text(), "BIB TEX")]/@href'); // コメントアウト</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> risurl <span class="op">=</span> ZU<span class="op">.</span><span class="fu">xpathText</span>(doc<span class="op">,</span> <span class="st">'//a[contains(text(), "RIS")]/@href'</span>)<span class="op">;</span> <span class="co">// 追加</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ZU.doGet(bibtexurl, function (text) { // コメントアウト</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    ZU<span class="op">.</span><span class="fu">doGet</span>(risurl<span class="op">,</span> <span class="kw">function</span> (text) { <span class="co">//追加</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">// var bibtex = text; // コメントアウト</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (text<span class="op">.</span><span class="fu">match</span>(<span class="ss">/TI  - .</span><span class="sc">+?\n</span><span class="ss">TI  -  </span><span class="sc">\n</span><span class="ss">/</span>)) { <span class="co">// 追加</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>            <span class="kw">var</span> bibtex <span class="op">=</span> text<span class="op">.</span><span class="fu">replace</span>(<span class="st">"TI  - "</span><span class="op">,</span><span class="st">"TIT  - "</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">TI  -  </span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span><span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"TIT  - "</span><span class="op">,</span><span class="st">"TI  - "</span>)<span class="op">;</span> <span class="co">// 追加</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> { <span class="co">// 追加</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>            <span class="kw">var</span> bibtex <span class="op">=</span> text<span class="op">.</span><span class="fu">replace</span>(<span class="st">"TI  - "</span><span class="op">,</span><span class="st">"TIT  - "</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">TI  - "</span><span class="op">,</span><span class="st">"――"</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"TIT  - "</span><span class="op">,</span><span class="st">"TI  - "</span>)<span class="op">;</span> <span class="co">// 追加</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        } <span class="co">// 追加</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Zotero.debug(bibtex)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">var</span> translator <span class="op">=</span> Zotero<span class="op">.</span><span class="fu">loadTranslator</span>(<span class="st">"import"</span>)<span class="op">;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">// translator.setTranslator("9cb70025-a888-4a29-a210-93ec52da40d4"); // コメントアウト</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        translator<span class="op">.</span><span class="fu">setTranslator</span>(<span class="st">"32d59d2d-b65a-4da4-b0a3-bdd3cfb979e7"</span>)<span class="op">;</span>  <span class="co">// 追加</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>何をしているかを簡単に解説すると，まずjstageから情報を取ってくるときのソースをBibtexからRISに変更している．こうすることでBibtexに適用される日本人著者の<a href="https://shirotakeda.org/blog-ja/?p=2638">オリジナルルール</a>を回避する．<br>
+またjstageが提供するRISファイルの中身を見るとタイトルを保存するフィールド（TI）が二つ用意されていることがわかるので，二つとも埋まっている（サブタイトルがある）ときはそれを「――」でつないで結合している（7～11行目）</p>
+</section>
+<section id="社会学評論のcslファイル" class="level2">
+<h2 class="anchored" data-anchor-id="社会学評論のcslファイル">社会学評論のcslファイル</h2>
+<p>社会学でよく使われる社会学評論スタイル準拠のCSLファイルを作ってみた． 現状，英語と日本語は別ファイルで，学術論文と本の章は対応している．（2021-08-29）</p>
+<p><a href="https://github.com/Kentaro-Kamada/hyoron-style">https://github.com/Kentaro-Kamada/hyoron-style</a></p>
+<ul>
+<li>jstage周りの設定について
+<ul>
+<li><a href="https://home.hirosaki-u.ac.jp/yaneura/353/">https://home.hirosaki-u.ac.jp/yaneura/353/</a></li>
+<li><a href="https://forums.zotero.org/discussion/5376/j-stage-translator-updated">https://forums.zotero.org/discussion/5376/j-stage-translator-updated</a></li>
+</ul></li>
+</ul>
 
 
 </section>

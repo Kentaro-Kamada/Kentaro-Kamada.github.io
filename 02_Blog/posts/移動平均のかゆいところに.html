@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kentaro Kamada">
-<meta name="dcterms.date" content="2024-09-21">
+<meta name="dcterms.date" content="2020-10-25">
 
-<title>信頼区間を理解したい – Kentaro Kamada</title>
+<title>移動平均のかゆいところに，partial = TRUE – Kentaro Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -152,9 +152,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">信頼区間を理解したい</h1>
+      <h1 class="title">移動平均のかゆいところに，partial = TRUE</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">Others</div>
+                <div class="quarto-category">R</div>
               </div>
                   </div>
   </div>
@@ -172,7 +172,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">September 21, 2024</p>
+        <p class="date">October 25, 2020</p>
       </div>
     </div>
     
@@ -188,10 +188,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#パッケージの読み込み" id="toc-パッケージの読み込み" class="nav-link active" data-scroll-target="#パッケージの読み込み">パッケージの読み込み</a></li>
-  <li><a href="#設定" id="toc-設定" class="nav-link" data-scroll-target="#設定">設定</a></li>
-  <li><a href="#データから信頼区間を計算" id="toc-データから信頼区間を計算" class="nav-link" data-scroll-target="#データから信頼区間を計算">データから信頼区間を計算</a></li>
-  <li><a href="#各研究者の信頼区間を図示" id="toc-各研究者の信頼区間を図示" class="nav-link" data-scroll-target="#各研究者の信頼区間を図示">各研究者の信頼区間を図示</a></li>
+  <li><a href="#はじめに" id="toc-はじめに" class="nav-link active" data-scroll-target="#はじめに">はじめに</a></li>
+  <li><a href="#移動平均の基本" id="toc-移動平均の基本" class="nav-link" data-scroll-target="#移動平均の基本">移動平均の基本</a></li>
+  <li><a href="#移動平均のかゆいところ" id="toc-移動平均のかゆいところ" class="nav-link" data-scroll-target="#移動平均のかゆいところ">移動平均のかゆいところ</a></li>
+  <li><a href="#zoorollapplyを用いた実装" id="toc-zoorollapplyを用いた実装" class="nav-link" data-scroll-target="#zoorollapplyを用いた実装"><code>zoo::rollapply</code>を用いた実装</a></li>
+  <li><a href="#rcpprollにもpartialがあるが" id="toc-rcpprollにもpartialがあるが" class="nav-link" data-scroll-target="#rcpprollにもpartialがあるが"><code>RcppRoll</code>にも<code>partial</code>があるが…</a></li>
+  <li><a href="#まとめ" id="toc-まとめ" class="nav-link" data-scroll-target="#まとめ">まとめ</a></li>
   </ul>
 </nav>
     </div>
@@ -202,119 +204,194 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>信頼区間の意味がわかりやすいシミュレーション</p>
-<section id="パッケージの読み込み" class="level2">
-<h2 class="anchored" data-anchor-id="パッケージの読み込み">パッケージの読み込み</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<section id="はじめに" class="level2">
+<h2 class="anchored" data-anchor-id="はじめに">はじめに</h2>
+<p>『前処理大全』の4章で移動平均の計算が出てきたのでメモ。</p>
+<p>移動平均の基本的な算出方法は<a href="https://qiita.com/matsuou1/items/db6e8c48fcfd791dd876">「dplyrを使いこなす！Window関数編」</a>などが詳しい。</p>
 </section>
-<section id="設定" class="level2">
-<h2 class="anchored" data-anchor-id="設定">設定</h2>
-<ul>
-<li>100人の研究者がいる</li>
-<li>各研究者がそれぞれデータをとる。N=500の調査を行う</li>
-<li>データは平均0.5、標準偏差0.1の正規分布に従うと仮定</li>
-</ul>
+<section id="移動平均の基本" class="level2">
+<h2 class="anchored" data-anchor-id="移動平均の基本">移動平均の基本</h2>
+<p>xにこんな感じでデータ入っているとき，移動平均は以下のように計算される。</p>
+<p>（以下ではすべて，3つずつ計算，右詰め，の前提で書く）</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">x</th>
+<th style="text-align: left;">rollsum</th>
+<th style="text-align: left;">rollmean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">1+2+3</td>
+<td style="text-align: left;">(1+2+3)/3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">2+3+4</td>
+<td style="text-align: left;">(2+3+4)/3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">3+4+5</td>
+<td style="text-align: left;">(3+4+5)/3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">4+5+6</td>
+<td style="text-align: left;">(4+5+6)/3</td>
+</tr>
+</tbody>
+</table>
+<p>Rで実装するとこんな感じになる</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 100人の研究者がいる</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">researcher_ID =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 各研究者がそれぞれデータをとる。N=500の調査を行う。</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">map</span>(researcher_ID, \(researcher_ID) <span class="fu">rnorm</span>(<span class="dv">500</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>))</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">rollsum =</span> RcppRoll<span class="sc">::</span><span class="fu">roll_sum</span>(x, <span class="at">n =</span> <span class="dv">3</span>L, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">rollmean =</span> RcppRoll<span class="sc">::</span><span class="fu">roll_mean</span>(x, <span class="at">n =</span> <span class="dv">3</span>L, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">fill =</span> <span class="cn">NA</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 100 × 2
-   researcher_ID data       
-           &lt;int&gt; &lt;list&gt;     
- 1             1 &lt;dbl [500]&gt;
- 2             2 &lt;dbl [500]&gt;
- 3             3 &lt;dbl [500]&gt;
- 4             4 &lt;dbl [500]&gt;
- 5             5 &lt;dbl [500]&gt;
- 6             6 &lt;dbl [500]&gt;
- 7             7 &lt;dbl [500]&gt;
- 8             8 &lt;dbl [500]&gt;
- 9             9 &lt;dbl [500]&gt;
-10            10 &lt;dbl [500]&gt;
-# ℹ 90 more rows</code></pre>
+<pre><code># A tibble: 6 × 3
+      x rollsum rollmean
+  &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+1     1      NA       NA
+2     2      NA       NA
+3     3       6        2
+4     4       9        3
+5     5      12        4
+6     6      15        5</code></pre>
 </div>
 </div>
 </section>
-<section id="データから信頼区間を計算" class="level2">
-<h2 class="anchored" data-anchor-id="データから信頼区間を計算">データから信頼区間を計算</h2>
-<ul>
-<li>各研究者のデータの平均値、標準誤差、信頼区間を計算</li>
-<li>信頼区間が真値（0.5）を含むかどうかを判定</li>
-</ul>
+<section id="移動平均のかゆいところ" class="level2">
+<h2 class="anchored" data-anchor-id="移動平均のかゆいところ">移動平均のかゆいところ</h2>
+<p>ここまでの移動平均は，値が3つ揃っているところだけ計算し，3つに満たない端っこのケースに関しては欠損で埋める，というルールで計算している。</p>
+<p>ただし，場合によっては<strong>3件に満たない場合でも欠損値扱いにせずに平均値を計算したい</strong>，という場合もあるだろう。</p>
+<p>（イメージ）</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">x</th>
+<th style="text-align: left;">rollsum</th>
+<th style="text-align: left;">rollmean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1/1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">1+2</td>
+<td style="text-align: left;">(1+2)/2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">1+2+3</td>
+<td style="text-align: left;">(1+2+3)/3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">2+3+4</td>
+<td style="text-align: left;">(2+3+4)/3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">3+4+5</td>
+<td style="text-align: left;">(3+4+5)/3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">4+5+6</td>
+<td style="text-align: left;">(4+5+6)/3</td>
+</tr>
+</tbody>
+</table>
+<p>『前処理大全』でもこのようなケースが扱われており，Rのサンプルコードでは<code>lag</code>と条件式の組み合わせで突破していたが，あんまりきれいじゃない。</p>
+</section>
+<section id="zoorollapplyを用いた実装" class="level2">
+<h2 class="anchored" data-anchor-id="zoorollapplyを用いた実装"><code>zoo::rollapply</code>を用いた実装</h2>
+<p>以上の問題を解決するには<code>zoo::rollapply()</code>が有効である。</p>
+<p>この関数の引数で，<code>partial = TRUE</code>とすると，以上の問題に対処できる。</p>
+<p>詳しくは<a href="https://cran.r-project.org/web/packages/zoo/zoo.pdf">vignette</a>を参照。</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 各研究者のデータの平均値、標準誤差、信頼区間を計算</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="fu">map_dbl</span>(data, \(data) <span class="fu">mean</span>(data)),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">map_dbl</span>(data, \(data) <span class="fu">sd</span>(data) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(data))),</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower =</span> mean <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper =</span> mean <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span>  </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 信頼区間が0.5を含むかどうかを判定</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">flg =</span> <span class="fu">case_when</span>(</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="fl">0.5</span> <span class="sc">&lt;</span> lower <span class="sc">|</span> upper <span class="sc">&lt;</span> <span class="fl">0.5</span>  <span class="sc">~</span> <span class="st">'Error'</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> <span class="st">'Not Error'</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>data2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rollsum =</span> zoo<span class="sc">::</span><span class="fu">rollapply</span>(x, <span class="at">width =</span> <span class="dv">3</span>L, <span class="at">FUN =</span> sum, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">partial =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rollmean =</span> zoo<span class="sc">::</span><span class="fu">rollapply</span>(x, <span class="at">width =</span> <span class="dv">3</span>L, <span class="at">FUN =</span> mean, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">partial =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 100 × 7
-   researcher_ID data         mean      se lower upper flg      
-           &lt;int&gt; &lt;list&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    
- 1             1 &lt;dbl [500]&gt; 0.502 0.00453 0.493 0.511 Not Error
- 2             2 &lt;dbl [500]&gt; 0.495 0.00473 0.486 0.505 Not Error
- 3             3 &lt;dbl [500]&gt; 0.500 0.00452 0.491 0.509 Not Error
- 4             4 &lt;dbl [500]&gt; 0.497 0.00479 0.488 0.506 Not Error
- 5             5 &lt;dbl [500]&gt; 0.501 0.00464 0.492 0.510 Not Error
- 6             6 &lt;dbl [500]&gt; 0.502 0.00459 0.493 0.511 Not Error
- 7             7 &lt;dbl [500]&gt; 0.509 0.00476 0.500 0.518 Not Error
- 8             8 &lt;dbl [500]&gt; 0.494 0.00451 0.486 0.503 Not Error
- 9             9 &lt;dbl [500]&gt; 0.499 0.00440 0.491 0.508 Not Error
-10            10 &lt;dbl [500]&gt; 0.497 0.00446 0.488 0.505 Not Error
-# ℹ 90 more rows</code></pre>
+<pre><code># A tibble: 6 × 3
+      x rollsum rollmean
+  &lt;int&gt;   &lt;int&gt;    &lt;dbl&gt;
+1     1       1      1  
+2     2       3      1.5
+3     3       6      2  
+4     4       9      3  
+5     5      12      4  
+6     6      15      5  </code></pre>
+</div>
+</div>
+<p>この場合1行目の値は和でも平均でも，元のデータがダイレクトに反映されることになる。</p>
+<p><strong>最低でも2つ以上の値の場合だけ計算したい！</strong>という時は，<code>partial = 2L</code>のように，引数に整数を入れればよい。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rollsum =</span> zoo<span class="sc">::</span><span class="fu">rollapply</span>(x, <span class="at">width =</span> <span class="dv">3</span>L, <span class="at">FUN =</span> sum, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">partial =</span> <span class="dv">2</span>L),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rollmean =</span> zoo<span class="sc">::</span><span class="fu">rollapply</span>(x, <span class="at">width =</span> <span class="dv">3</span>L, <span class="at">FUN =</span> mean, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">partial =</span> <span class="dv">2</span>L)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+      x rollsum rollmean
+  &lt;int&gt;   &lt;int&gt;    &lt;dbl&gt;
+1     1      NA     NA  
+2     2       3      1.5
+3     3       6      2  
+4     4       9      3  
+5     5      12      4  
+6     6      15      5  </code></pre>
+</div>
+</div>
+<p>また，なぜか<code>zoo::rollsum</code>や<code>zoo::rollmean</code>で<code>partial = TRUE</code>としても上手くいかない。なぜ…？</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>zoo<span class="sc">::</span><span class="fu">rollapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">width =</span> <span class="dv">3</span>L, <span class="at">FUN =</span> mean, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">partial =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.0 1.5 2.0 3.0 4.0 5.0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>zoo<span class="sc">::</span><span class="fu">rollmean</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">k =</span> <span class="dv">3</span>L, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">partial =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2 3 4 5</code></pre>
 </div>
 </div>
 </section>
-<section id="各研究者の信頼区間を図示" class="level2">
-<h2 class="anchored" data-anchor-id="各研究者の信頼区間を図示">各研究者の信頼区間を図示</h2>
-<ul>
-<li>点推定値は0.5に近いのもあれば、遠いのもある</li>
-<li>信頼区間が真値（0.5）を含まない、「不運」な研究者は、5人 / 100人（5％）
-<ul>
-<li>95％の研究者は真の値を拾える、という意味</li>
-</ul></li>
-<li>実際には自分が「不運」な研究者かもしれないし、信頼区間の端ギリギリで真値を拾っているだけかもしれない</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 図示</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>data2 <span class="sc">|&gt;</span> </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(mean, researcher_ID, <span class="at">xmin =</span> lower, <span class="at">xmax =</span> upper, <span class="at">color =</span> flg))<span class="sc">+</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="st">'dashed'</span>)<span class="sc">+</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>()<span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'bottom'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="信頼区間を理解したい_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
-</div>
-</div>
+<section id="rcpprollにもpartialがあるが" class="level2">
+<h2 class="anchored" data-anchor-id="rcpprollにもpartialがあるが"><code>RcppRoll</code>にも<code>partial</code>があるが…</h2>
+<p>移動平均といえば<code>RcppRoll</code>を使う人が多いはず。速度もzooより断然速いので基本的にはこちらを使うべきと筆者も思っている。</p>
+<p>実は<code>RcppRoll</code>の関数にも<code>partial</code>引数が入っている。</p>
+<p>これを見た時に「これで行けるやん」と思ったのだが…</p>
+<blockquote class="blockquote">
+<p>partial Partial application? Currently unimplemented. <a href="https://cran.r-project.org/web/packages/RcppRoll/RcppRoll.pdf" class="uri">https://cran.r-project.org/web/packages/RcppRoll/RcppRoll.pdf</a></p>
+</blockquote>
+<p>実装されてませんでした…</p>
+</section>
+<section id="まとめ" class="level2">
+<h2 class="anchored" data-anchor-id="まとめ">まとめ</h2>
+<p>というわけで，移動平均の計算は通常時は<code>RcppRoll</code>を使いつつ，ああいった特殊な場合には<code>zoo</code>を使えばよいということがわかった。<code>RcppRoll</code>は早く<code>partial</code>を実装してほしいところ。</p>
 
 
 </section>

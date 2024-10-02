@@ -8,11 +8,11 @@ website:
     left:
       - href: index.qmd
         text: "Home"
-      - href: 00_profile.qmd
+      - href: profile.qmd
         text: "Profile"
-      - href: 01_research.qmd
+      - href: research.qmd
         text: "Research"
-      - href: 02_Blog/index.qmd
+      - href: blog/index.qmd
         text: "Blog"
     tools:
       - icon: github

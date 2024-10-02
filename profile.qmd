@@ -3,7 +3,7 @@ title: "Profile"
 other-links:
   - text: English
     icon: globe
-    href: ./00_profile.en.html
+    href: ./profile.en.html
     rel: alternate
 ---
 

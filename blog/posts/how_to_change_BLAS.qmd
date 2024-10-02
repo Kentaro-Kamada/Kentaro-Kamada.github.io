@@ -1,8 +1,7 @@
 ---
 title: "BLASの変更によるRの高速化"
 date: 2024-03-10
-categories: [R Tips]
-engine: knitr
+categories: [R]
 ---
 
 ## 参考
@@ -52,24 +51,18 @@ BLASはオープンソースのものもあるが、各CPU、GPUメーカーが�
 
 terminalで以下のコマンドを実行する。
 
-```{bash}
-#| eval: false
-
+```sh
 cd /Library/Frameworks/R.framework/Resources/lib
 ln -sf libRblas.veclib.dylib libRblas.dylib
-
 ```
 
 意味としては、Rは`libRblas.dylib`をBLASとして認識するので、`libRblas.veclib.dylib`を`libRblas.dylib`にリンクすることで、`libRblas.veclib.dylib`をBLASとして使うようにする。
 
 もどすときは`libRblas.veclib.dylib`の代わりに、`libRblas.0.dylib`（デフォルトのBLAS）をリンクすればよい。
 
-```{bash}
-#| eval: false
-
+```sh
 cd /Library/Frameworks/R.framework/Resources/lib
 ln -sf libRblas.0.dylib libRblas.dylib
-
 ```
 
 

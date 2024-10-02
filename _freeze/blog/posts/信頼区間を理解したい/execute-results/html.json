@@ -1,0 +1,17 @@
+{
+  "hash": "126efab4d177393e8416313199a208b8",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"信頼区間を理解したい\"\ndate: 2024-09-21\ncategories: [Statistics]\n---\n\n\n\n信頼区間の意味がわかりやすいシミュレーション\n\n## パッケージの読み込み\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\n```\n:::\n\n\n\n## 設定\n\n- 100人の研究者がいる\n- 各研究者がそれぞれデータをとる。N=500の調査を行う\n- データは平均0.5、標準偏差0.1の正規分布に従うと仮定\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nset.seed(1)\n\ndata <- \n  tibble(\n    # 100人の研究者がいる\n    researcher_ID = 1:100,\n    # 各研究者がそれぞれデータをとる。N=500の調査を行う。\n    data = map(researcher_ID, \\(researcher_ID) rnorm(500, 0.5, 0.1))\n  )\n\ndata\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n# A tibble: 100 × 2\n   researcher_ID data       \n           <int> <list>     \n 1             1 <dbl [500]>\n 2             2 <dbl [500]>\n 3             3 <dbl [500]>\n 4             4 <dbl [500]>\n 5             5 <dbl [500]>\n 6             6 <dbl [500]>\n 7             7 <dbl [500]>\n 8             8 <dbl [500]>\n 9             9 <dbl [500]>\n10            10 <dbl [500]>\n# ℹ 90 more rows\n```\n\n\n:::\n:::\n\n\n\n## データから信頼区間を計算\n\n- 各研究者のデータの平均値、標準誤差、信頼区間を計算\n- 信頼区間が真値（0.5）を含むかどうかを判定\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\ndata2 <- \n  data |> \n  # 各研究者のデータの平均値、標準誤差、信頼区間を計算\n  mutate(\n    mean = map_dbl(data, \\(data) mean(data)),\n    se = map_dbl(data, \\(data) sd(data) / sqrt(length(data))),\n    lower = mean - 1.96 * se,\n    upper = mean + 1.96 * se\n  ) |>  \n  # 信頼区間が0.5を含むかどうかを判定\n  mutate(\n    flg = case_when(\n      0.5 < lower | upper < 0.5  ~ 'Error',\n      .default = 'Not Error'\n    )\n  )\n\ndata2\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n# A tibble: 100 × 7\n   researcher_ID data         mean      se lower upper flg      \n           <int> <list>      <dbl>   <dbl> <dbl> <dbl> <chr>    \n 1             1 <dbl [500]> 0.502 0.00453 0.493 0.511 Not Error\n 2             2 <dbl [500]> 0.495 0.00473 0.486 0.505 Not Error\n 3             3 <dbl [500]> 0.500 0.00452 0.491 0.509 Not Error\n 4             4 <dbl [500]> 0.497 0.00479 0.488 0.506 Not Error\n 5             5 <dbl [500]> 0.501 0.00464 0.492 0.510 Not Error\n 6             6 <dbl [500]> 0.502 0.00459 0.493 0.511 Not Error\n 7             7 <dbl [500]> 0.509 0.00476 0.500 0.518 Not Error\n 8             8 <dbl [500]> 0.494 0.00451 0.486 0.503 Not Error\n 9             9 <dbl [500]> 0.499 0.00440 0.491 0.508 Not Error\n10            10 <dbl [500]> 0.497 0.00446 0.488 0.505 Not Error\n# ℹ 90 more rows\n```\n\n\n:::\n:::\n\n\n\n## 各研究者の信頼区間を図示\n\n- 点推定値は0.5に近いのもあれば、遠いのもある\n- 信頼区間が真値（0.5）を含まない、「不運」な研究者は、5人 / 100人（5％）\n  - 95％の研究者は真の値を拾える、という意味\n- 実際には自分が「不運」な研究者かもしれないし、信頼区間の端ギリギリで真値を拾っているだけかもしれない\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# 図示\ndata2 |> \n  ggplot(aes(mean, researcher_ID, xmin = lower, xmax = upper, color = flg))+\n  geom_vline(xintercept = 0.5, linetype = 'dashed')+\n  geom_pointrange()+\n  theme_bw()+\n  theme(legend.position = 'bottom')\n```\n\n::: {.cell-output-display}\n![](信頼区間を理解したい_files/figure-html/unnamed-chunk-4-1.png){width=768}\n:::\n:::\n",
+    "supporting": [
+      "信頼区間を理解したい_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -3,7 +3,7 @@ title: "Profile"
 other-links:
   - text: 日本語
     icon: globe
-    href: ./00_profile.html
+    href: ./profile.html
 ---
 
 ## Position

@@ -1,0 +1,201 @@
+---
+title: "PIAAC、PISAの標準誤差"
+date: 2024-09-21
+categories: [Statistics]
+---
+
+## 前準備
+
+### パッケージ読み込み
+
+```{r}
+
+library(tidyverse)
+library(haven)
+library(survey)
+library(srvyr)
+library(kamaken)
+
+kable <- partial(knitr::kable, digits = 3)
+
+```
+
+### データ読み込み
+
+- PIAAC 1st cycleの日本データ（SPSS形式）
+  - <https://webfs.oecd.org/piaac/puf-data/SPSS/prgjpnp1.sav>
+- 変数の名前を適宜変更しておく
+
+```{r}
+
+data <- read_sav('data/prgjpnp1.sav')
+# 直接読み込むこともできるが多少時間がかかる
+# data <- read_sav('https://webfs.oecd.org/piaac/puf-data/SPSS/prgjpnp1.sav')
+
+df <- 
+  data |> 
+  # 変数を絞る
+  select(
+    country = CNTRYID, 
+    id = SEQID,
+    age = AGE_R, 
+    gender = GENDER_R, 
+    region = REG_TL2, 
+    edu = B_Q01a, 
+    medu = J_Q06b, 
+    fedu = J_Q07b, 
+    numbooks = J_Q08,
+    sampling_weight = SPFWT0, 
+    # 読解力、数的思考力、ITスキルのスコア
+    matches('^PV'), 
+    # Replicate weights
+    matches(str_c('SPFWT', 1:80)),
+    VEMETHOD
+  ) |> 
+  # 変数名を小文字に変換
+  rename_with(str_to_lower) |> 
+  as_factor() |> 
+  mutate(
+    # 年齢をカテゴリ化
+    agegroup = cut(
+      as.character(age) |> parse_double(), 
+      breaks = c(15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65),
+      labels = c('16-20', '21-25', '26-30', '31-35', '36-40', '41-45', '46-50', '51-55', '56-60', '61-65')
+    )
+  )
+
+  
+```
+
+## 分析
+
+- 点推定値
+- jackknife法による標準誤差
+
+の二つを推定する
+
+### packageによる推定
+
+- `survey`パッケージ（のラッパーの`srvyr`パッケージ）を用いる
+- `type`: 標準誤差の推定方法
+  - PIAACでは`JK1`の国と`JK2`の国が混在（変数`VEMETHOD`にどちらを使用すれば良いかが書かれている）
+  - 日本は`JK2`で推定する
+
+```{r}
+
+df_design <- 
+  df |> 
+  # 調査デザインの設定
+  as_survey_rep(
+    weights = sampling_weight, 
+    repweights = matches('spfwt'), 
+    type = 'JK2',
+    mse = TRUE
+  )
+
+result_literacy <- 
+  df_design |> 
+  # 読解力の各PVごとに平均値と標準誤差を計算
+  summarise(
+    across(matches('pvlit'), \(x) survey_mean(x, na.rm = TRUE))
+  ) 
+  
+# 結果の整理
+package <- 
+  result_literacy |>
+  rename_with(\(x) str_replace(x, '(\\d)$', '\\1_estimate')) |>
+  # 縦持ちに変換
+  pivot_longer(
+    cols = matches('pvlit'),
+    names_to = c('literacy', '.value'),
+    names_pattern = '(pvlit\\d{1,2})_(.+)',
+  ) 
+
+kable(package)
+
+```
+
+### 手作業による推定
+
+```{r}
+
+point_estimate <-
+  df |> 
+  select(sampling_weight, matches('(pvlit|spfwt)')) |> 
+  summarise(
+    across(
+      matches('pvlit'), 
+      \(x) weighted.mean(x, w = sampling_weight, na.rm = TRUE), 
+      .names = '{.col}_estimate'
+    )
+  ) |> 
+  pivot_longer(
+    cols = matches('pvlit'),
+    names_to = c('literacy', '.value'),
+    names_pattern = '(pvlit\\d{1,2})_(.+)',
+  )
+  
+# jackknife法に用いるウェイト（80個）
+jackweight <- select(df, matches('spfwt'))
+
+jack_estimate <-
+  # 各ウェイトを用いて、それぞれのPVの平均値を計算
+  map(
+    jackweight, \(weight) 
+    df |> 
+      summarise(
+        across(
+          matches('pvlit'),
+          \(x) weighted.mean(x, w = weight, na.rm = TRUE),
+          .names = '{.col}_jack'
+        )
+      )
+  ) |> 
+  bind_rows(.id = 'replicate') |> 
+  pivot_longer(
+    cols = matches('pvlit'),
+    names_to = c('literacy', '.value'),
+    names_pattern = '(pvlit\\d{1,2})_(.+)',
+  )
+
+handmade <- 
+  # 点推定値にジャックナイフウェイトを用いた推定値を結合
+  left_join(
+    point_estimate, 
+    jack_estimate, 
+    by = join_by(literacy)
+  ) |> 
+  # 標準誤差の計算
+  summarise(
+    estimate = mean(estimate),
+    se = sqrt(sum((estimate - jack)^2)),
+    .by = literacy
+  )
+
+kable(handmade)
+
+```
+
+### 結果の比較
+
+- 結果は一致する
+
+```{r}
+
+left_join(
+  package, 
+  handmade, 
+  by = join_by(literacy),
+  suffix = c('_package', '_handmade')
+) |> 
+  select(literacy, estimate_package, estimate_handmade, se_package, se_handmade) |>
+  mutate(
+    diff_estimate = estimate_package - estimate_handmade,
+    diff_se = se_package - se_handmade
+  ) |> 
+  kable()
+
+```
+
+
+

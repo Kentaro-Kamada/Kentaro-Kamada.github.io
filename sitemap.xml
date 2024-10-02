@@ -1,107 +1,107 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://Kentaro-Kamada.github.io/01_research.html</loc>
-    <lastmod>2024-09-28T08:28:30.883Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/profile.en.html</loc>
+    <lastmod>2024-10-02T11:46:23.134Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/00_profile.en.html</loc>
-    <lastmod>2024-09-28T08:28:30.883Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/TMLE.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/移動平均のかゆいところに.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/multi_answer.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/Multilevel.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/Causal_Decomposition.html</loc>
+    <lastmod>2024-10-02T11:46:23.048Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/multi_answer.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/r_installation_with_rig.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/rlang学習.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/Sudharsanan_Bijlsma_2021.html</loc>
+    <lastmod>2024-10-02T11:46:23.048Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/Rでロジットモデル.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/how_to_change_BLAS.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/複利計算.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/Borusyak_2024.html</loc>
+    <lastmod>2024-10-02T11:46:23.048Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/学生生活実態調査の文字コード.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/tensorflow_with_Rstudio.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/Zoteroの設定備忘録.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/信頼区間を理解したい.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/新しいパソコンを買ったらやること.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/RとPython書き比べ（ユークリッドの互除法）.html</loc>
+    <lastmod>2024-10-02T11:46:23.048Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/L-TMLE.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/度数から対数尤度を計算.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/index.html</loc>
-    <lastmod>2024-09-28T08:28:30.883Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/RとPython書き比べ（ユークリッドの互除法）.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/信頼区間を理解したい.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/tensorflow_with_Rstudio.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/Borusyak_2024.html</loc>
-    <lastmod>2024-09-28T08:28:30.883Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/how_to_change_BLAS.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/Sudharsanan_Bijlsma_2021.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/r_installation_with_rig.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/Causal_Decomposition.html</loc>
-    <lastmod>2024-09-28T08:28:30.883Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/PIAAC_replicate.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Kentaro-Kamada.github.io/02_Blog/posts/TMLE.html</loc>
-    <lastmod>2024-09-28T08:28:30.884Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/blog/index.html</loc>
+    <lastmod>2024-10-02T11:46:23.048Z</lastmod>
   </url>
   <url>
     <loc>https://Kentaro-Kamada.github.io/index.html</loc>
-    <lastmod>2024-09-28T08:28:30.906Z</lastmod>
+    <lastmod>2024-10-02T11:46:23.134Z</lastmod>
   </url>
   <url>
-    <loc>https://Kentaro-Kamada.github.io/00_profile.html</loc>
-    <lastmod>2024-09-28T08:28:30.883Z</lastmod>
+    <loc>https://Kentaro-Kamada.github.io/profile.html</loc>
+    <lastmod>2024-10-02T11:46:23.134Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/research.html</loc>
+    <lastmod>2024-10-02T11:46:23.136Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/度数から対数尤度を計算.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/L-TMLE.html</loc>
+    <lastmod>2024-10-02T11:46:23.048Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/新しいパソコンを買ったらやること.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/Zoteroの設定備忘録.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/学生生活実態調査の文字コード.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/複利計算.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/Rでロジットモデル.html</loc>
+    <lastmod>2024-10-02T11:46:23.048Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/rlang学習.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/Standard_Errors_in_PIAAC.html</loc>
+    <lastmod>2024-10-02T11:46:23.048Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/Multilevel.html</loc>
+    <lastmod>2024-10-02T11:46:23.048Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Kentaro-Kamada.github.io/blog/posts/移動平均のかゆいところに.html</loc>
+    <lastmod>2024-10-02T11:46:23.049Z</lastmod>
   </url>
 </urlset>

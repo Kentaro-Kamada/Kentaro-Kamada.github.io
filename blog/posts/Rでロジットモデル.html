@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kentaro Kamada">
-<meta name="dcterms.date" content="2022-06-25">
+<meta name="dcterms.date" content="2021-04-29">
 
-<title>学生生活実態調査の文字コード – Kentaro Kamada</title>
+<title>Rでロジットモデル – Kentaro Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -95,15 +129,15 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../00_profile.html"> 
+    <a class="nav-link" href="../../profile.html"> 
 <span class="menu-text">Profile</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../01_research.html"> 
+    <a class="nav-link" href="../../research.html"> 
 <span class="menu-text">Research</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../02_Blog/index.html"> 
+    <a class="nav-link" href="../../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -118,9 +152,10 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">学生生活実態調査の文字コード</h1>
+      <h1 class="title">Rでロジットモデル</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">Others</div>
+                <div class="quarto-category">Statistics</div>
+                <div class="quarto-category">R</div>
               </div>
                   </div>
   </div>
@@ -138,7 +173,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">June 25, 2022</p>
+        <p class="date">April 29, 2021</p>
       </div>
     </div>
     
@@ -149,8 +184,17 @@ ul.task-list li input[type="checkbox"] {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#二項ロジット" id="toc-二項ロジット" class="nav-link active" data-scroll-target="#二項ロジット">二項ロジット</a></li>
+  <li><a href="#多項ロジット" id="toc-多項ロジット" class="nav-link" data-scroll-target="#多項ロジット">多項ロジット</a></li>
+  <li><a href="#順序ロジット" id="toc-順序ロジット" class="nav-link" data-scroll-target="#順序ロジット">順序ロジット</a></li>
+  <li><a href="#一般化順序ロジット" id="toc-一般化順序ロジット" class="nav-link" data-scroll-target="#一般化順序ロジット">一般化順序ロジット</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -159,209 +203,41 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>文字コードがカオスで調べるのが大変だったのでメモ</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 5%">
-<col style="width: 12%">
-<col style="width: 12%">
-<col style="width: 68%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">年次</th>
-<th style="text-align: left;">当該データ</th>
-<th style="text-align: left;">文字コード</th>
-<th style="text-align: left;">URL</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">1991</td>
-<td style="text-align: left;">0078.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0078</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">1992</td>
-<td style="text-align: left;">0079.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0079</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">1993</td>
-<td style="text-align: left;">0053.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0053</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">1994</td>
-<td style="text-align: left;">0080.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0080</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">1995</td>
-<td style="text-align: left;">0125.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0125</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">1996</td>
-<td style="text-align: left;">0126.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0126</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">1997</td>
-<td style="text-align: left;">0127.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0127</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">1998</td>
-<td style="text-align: left;">0128.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0128</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">1999</td>
-<td style="text-align: left;">0157.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0157</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2000</td>
-<td style="text-align: left;">0201.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0201</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2001</td>
-<td style="text-align: left;">0267.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0267</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2002</td>
-<td style="text-align: left;">0292.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0292</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2003</td>
-<td style="text-align: left;">0345.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0345</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2004</td>
-<td style="text-align: left;">0399.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0399</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2005</td>
-<td style="text-align: left;">0519.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0519</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2006</td>
-<td style="text-align: left;">0562.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0562</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2007</td>
-<td style="text-align: left;">0605.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0605</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2008</td>
-<td style="text-align: left;">0664.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0664</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2009</td>
-<td style="text-align: left;">0753.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0753</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2010</td>
-<td style="text-align: left;">0812.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0812</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2011</td>
-<td style="text-align: left;">0841.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0841</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2012</td>
-<td style="text-align: left;">0879.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0879</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2013</td>
-<td style="text-align: left;">0955.sav</td>
-<td style="text-align: left;">utf8</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=0955</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2014</td>
-<td style="text-align: left;">1057.sav</td>
-<td style="text-align: left;">utf8</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1057</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2015</td>
-<td style="text-align: left;">1099.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1099</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2016</td>
-<td style="text-align: left;">1163.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1163</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2017</td>
-<td style="text-align: left;">1232.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1232</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2018</td>
-<td style="text-align: left;">1295.sav</td>
-<td style="text-align: left;">utf8</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1295</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2019</td>
-<td style="text-align: left;">1384.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1384</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2020</td>
-<td style="text-align: left;">1442.sav</td>
-<td style="text-align: left;">cp932</td>
-<td style="text-align: left;">https://ssjda.iss.u-tokyo.ac.jp/Direct/gaiyo.php?eid=1442</td>
-</tr>
-</tbody>
-</table>
+<section id="二項ロジット" class="level2">
+<h2 class="anchored" data-anchor-id="二項ロジット">二項ロジット</h2>
+<p>これは簡単で，2値のfactorを従属変数，リンク関数を<code>glm(family = binomial('logit'))</code>のように指定してやればOK</p>
+<p>ちなみに<code>binomial('probit')</code>にしてやればプロビット回帰になる</p>
+</section>
+<section id="多項ロジット" class="level2">
+<h2 class="anchored" data-anchor-id="多項ロジット">多項ロジット</h2>
+<p><code>nnet::multinom</code>は検定とかやってくれないし，かといって<code>mlogit::mlogit</code>は独自のデータ形式を要求してくるので面倒くさい．ただ，<code>nnet</code>は<code>broom</code>に対応しているので，検定部分は<code>broom</code>に任せることでこの問題は解決．</p>
+<p>ということでこれからは<code>nnet</code>で推定→<code>broom</code>に放り込んで検定というのを使っていきたい</p>
+</section>
+<section id="順序ロジット" class="level2">
+<h2 class="anchored" data-anchor-id="順序ロジット">順序ロジット</h2>
+<p><code>MASS::polr</code>が最有力か？ただし，data.frame形式しか受け付けていないのでtibbleのままデータを入れるとエラーになるのが難点．以前<code>LMest</code>で潜在移行モデルを動かした時にも似たようなことがあった．なんとかならんものか…</p>
+<p>ちなみにpolrってなんだろうと思ったら，proportional odds logistic regression（比例オッズロジスティック回帰）の略でした．</p>
+</section>
+<section id="一般化順序ロジット" class="level2">
+<h2 class="anchored" data-anchor-id="一般化順序ロジット">一般化順序ロジット</h2>
+<p>平行性の仮定を一部緩めた部分比例オッズモデル（partial proportional odds model）<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>とかをやりたいときは，<code>VGAM::vglm</code>が使える．</p>
+<p>x1，x2，x3のうち，x1だけ平行性の仮定を緩めたいときは，以下のように書く</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>VGAM<span class="sc">::</span><span class="fu">vglm</span>(<span class="at">formula =</span> y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3, </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">family =</span> VGAM<span class="sc">::</span><span class="fu">cumulative</span>(<span class="at">parallel =</span> <span class="cn">FALSE</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> x1, <span class="at">reverse =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> data) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>parallel</code>の書き方がミソで，<code>parallel = FALSE</code>のあとに等値制約を緩めたいパラメタをformulaで記述する．今回の場合は切片（閾値）とx1の係数だけは各段階で異なるので<code>~ 1 + x1</code>と記述する．また，<code>parallel = TRUE</code>とすると通常の順序ロジットモデルになる．</p>
+<p><code>reverse</code>は係数の符号を反転させるオプションで，<code>reverse = TRUE</code>を入れるとStataのgologit2を用いた時の結果と同じになる．</p>
 
 
+</section>
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>教育社会学での使用例は<a href="https://www.jstage.jst.go.jp/article/jsr/59/4/59_4_682/_article/-char/ja">近藤・古田（2009）</a>とか．<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

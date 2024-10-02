@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kentaro Kamada">
-<meta name="dcterms.date" content="2024-03-10">
+<meta name="dcterms.date" content="2022-02-14">
 
-<title>BLASの変更によるRの高速化 – Kentaro Kamada</title>
+<title>新しいパソコンを買ったらやること – Kentaro Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -129,15 +129,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../00_profile.html"> 
+    <a class="nav-link" href="../../profile.html"> 
 <span class="menu-text">Profile</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../01_research.html"> 
+    <a class="nav-link" href="../../research.html"> 
 <span class="menu-text">Research</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../02_Blog/index.html"> 
+    <a class="nav-link" href="../../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -152,9 +152,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">BLASの変更によるRの高速化</h1>
+      <h1 class="title">新しいパソコンを買ったらやること</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">R Tips</div>
+                <div class="quarto-category">Setup</div>
               </div>
                   </div>
   </div>
@@ -172,7 +172,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">March 10, 2024</p>
+        <p class="date">February 14, 2022</p>
       </div>
     </div>
     
@@ -188,10 +188,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#参考" id="toc-参考" class="nav-link active" data-scroll-target="#参考">参考</a></li>
-  <li><a href="#概要" id="toc-概要" class="nav-link" data-scroll-target="#概要">概要</a></li>
-  <li><a href="#blasとは" id="toc-blasとは" class="nav-link" data-scroll-target="#blasとは">BLASとは</a></li>
-  <li><a href="#blasの変更" id="toc-blasの変更" class="nav-link" data-scroll-target="#blasの変更">BLASの変更</a></li>
+  <li><a href="#新しいパソコンの初期設定" id="toc-新しいパソコンの初期設定" class="nav-link active" data-scroll-target="#新しいパソコンの初期設定">新しいパソコンの初期設定</a>
+  <ul class="collapse">
+  <li><a href="#google-chromeのインストール" id="toc-google-chromeのインストール" class="nav-link" data-scroll-target="#google-chromeのインストール">Google Chromeのインストール</a></li>
+  <li><a href="#office関連のインストール" id="toc-office関連のインストール" class="nav-link" data-scroll-target="#office関連のインストール">Office関連のインストール</a></li>
+  <li><a href="#homebrewのインストールmac" id="toc-homebrewのインストールmac" class="nav-link" data-scroll-target="#homebrewのインストールmac">Homebrewのインストール（Mac）</a></li>
+  <li><a href="#r関連のインストール" id="toc-r関連のインストール" class="nav-link" data-scroll-target="#r関連のインストール">R関連のインストール</a></li>
+  <li><a href="#gitのインストール" id="toc-gitのインストール" class="nav-link" data-scroll-target="#gitのインストール">gitのインストール</a></li>
+  <li><a href="#rmarkdown関連のインストール" id="toc-rmarkdown関連のインストール" class="nav-link" data-scroll-target="#rmarkdown関連のインストール">Rmarkdown関連のインストール</a></li>
+  <li><a href="#zoteroのインストール" id="toc-zoteroのインストール" class="nav-link" data-scroll-target="#zoteroのインストール">Zoteroのインストール</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -202,76 +208,91 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="参考" class="level2">
-<h2 class="anchored" data-anchor-id="参考">参考</h2>
-<ul>
-<li><a href="https://www.inwt-statistics.com/blog/basic-linear-algebra-subprograms-in-r">Do GPU-based Basic Linear Algebra Subprograms (BLAS) improve the performance of standard modeling techniques in R?</a></li>
-<li><a href="https://mpopov.com/blog/2021/10/10/even-faster-matrix-math-in-r-on-macos-with-m1/">Even faster matrix math in R on macOS with M1</a></li>
-<li><a href="https://www.nttpc.co.jp/gpu/article/benchmark05.html">NVBLASを使って「R」の並列演算処理を高速化</a></li>
-</ul>
+<section id="新しいパソコンの初期設定" class="level1">
+<h1>新しいパソコンの初期設定</h1>
+<section id="google-chromeのインストール" class="level2">
+<h2 class="anchored" data-anchor-id="google-chromeのインストール">Google Chromeのインストール</h2>
 </section>
-<section id="概要" class="level2">
-<h2 class="anchored" data-anchor-id="概要">概要</h2>
-<p>R言語の計算速度はそれほど速くはないが、いくつか工夫することで高速化が可能。</p>
+<section id="office関連のインストール" class="level2">
+<h2 class="anchored" data-anchor-id="office関連のインストール">Office関連のインストール</h2>
 <ul>
-<li>ベクトル演算の駆使</li>
-<li>並列化（paralell, future, furrrなど）</li>
-<li>BLAS (Basic Linear Algebra Subprograms) の変更</li>
+<li>Office365のインストール</li>
+<li>Onedriveのインストール</li>
 </ul>
-<p>今回はBLASの変更による高速化について。</p>
+<p>特に問題なくできた</p>
 </section>
-<section id="blasとは" class="level2">
-<h2 class="anchored" data-anchor-id="blasとは">BLASとは</h2>
-<p>BLASは、行列演算を高速に行うためのライブラリ。たとえば分散や共分散を計算するときは、行列の掛け算をする必要がある。機械学習やニューラルネットワークでは行列の掛け算が多用されるため、BLASの高速化は全体としての計算速度の向上に大きく貢献する。</p>
-<p>BLASはオープンソースのものもあるが、各CPU、GPUメーカーがそれぞれのチップに適したライブラリを提供している。</p>
+<section id="homebrewのインストールmac" class="level2">
+<h2 class="anchored" data-anchor-id="homebrewのインストールmac">Homebrewのインストール（Mac）</h2>
 <ul>
-<li>RについてるBLAS
+<li>定番のパッケージマネージャー</li>
+</ul>
+<p>[https://brew.sh/index_ja:embed:cite]</p>
+</section>
+<section id="r関連のインストール" class="level2">
+<h2 class="anchored" data-anchor-id="r関連のインストール">R関連のインストール</h2>
 <ul>
-<li>RにデフォルトでついてくるBLAS</li>
+<li>R本体のインストール</li>
+</ul>
+<p>rigというツールを使う。<a href="../../blog/posts/r_installation_with_rig.html">参考</a></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> tap r-lib/rig</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install <span class="at">--cask</span> rig </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">rig</span> add 4.3.3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Rstudioのインストール</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install <span class="at">--cask</span> rstudio</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>自作したRstudioテーマを持ってくる（あとでgithubにでも置いておく）</li>
+<li>エディタで使用するフォントを選択
+<ul>
+<li>myricaを使いたかったが，なぜかMacだとうまくいっていない（調査中）</li>
 </ul></li>
-<li>OpenBLAS
+<li>Rtools（Windows）or Xcode（Mac）のインストール
 <ul>
-<li>オープンソースのBLASで、homebrewでインストール可能</li>
-<li>pythonのnumpyで使われているらしい</li>
+<li>github産のパッケージのビルドなどに必要</li>
 </ul></li>
-<li>ATLAS
+<li>（Macのみ）Xquartzのインストール
 <ul>
-<li>こちらもオープンソース</li>
-</ul></li>
-<li>MKL
-<ul>
-<li>Intelが提供するBLAS</li>
-<li>Macだと使えない</li>
-</ul></li>
-<li>NVBLAS
-<ul>
-<li>NVIDIAが提供するBLAS</li>
-<li>GPUを使用するのでめちゃくちゃ速いらしい</li>
-<li>NVIDIAのGPUじゃないと使えない…</li>
-</ul></li>
-<li><strong>Accelerate</strong>
-<ul>
-<li>Appleが提供</li>
-<li>今回使用するやつ</li>
+<li>詳しくはわからないが，入れないとRmarkdownがちゃんと動かなかった</li>
 </ul></li>
 </ul>
 </section>
-<section id="blasの変更" class="level2">
-<h2 class="anchored" data-anchor-id="blasの変更">BLASの変更</h2>
-<p>以下、homebrewでRをインストールしていることを前提とする。</p>
-<p>terminalで以下のコマンドを実行する。</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Library/Frameworks/R.framework/Resources/lib</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-sf</span> libRblas.veclib.dylib libRblas.dylib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>意味としては、Rは<code>libRblas.dylib</code>をBLASとして認識するので、<code>libRblas.veclib.dylib</code>を<code>libRblas.dylib</code>にリンクすることで、<code>libRblas.veclib.dylib</code>をBLASとして使うようにする。</p>
-<p>もどすときは<code>libRblas.veclib.dylib</code>の代わりに、<code>libRblas.0.dylib</code>（デフォルトのBLAS）をリンクすればよい。</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Library/Frameworks/R.framework/Resources/lib</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-sf</span> libRblas.0.dylib libRblas.dylib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<section id="gitのインストール" class="level2">
+<h2 class="anchored" data-anchor-id="gitのインストール">gitのインストール</h2>
+<ul>
+<li>（winのみ）gitをインストール
+<ul>
+<li>macだとgit自体がすでにインストールされていた</li>
+</ul></li>
+<li>ssh keyの作成→githubへ登録</li>
+<li>git clone で適宜必要なプロジェクトをダウンロード</li>
+</ul>
+</section>
+<section id="rmarkdown関連のインストール" class="level2">
+<h2 class="anchored" data-anchor-id="rmarkdown関連のインストール">Rmarkdown関連のインストール</h2>
+<ul>
+<li>tinytexのインストール</li>
+<li><code>tinytex::install_tinytex()</code>でtex本体をインストール</li>
+<li><code>latex_engine: lualatex</code>の文章を作成し，エラーを見ながら適宜<code>tinytex::tlmgr_install()</code>で足りないパッケージを追加
+<ul>
+<li>（Mac）haranoajiで引っかかった</li>
+</ul></li>
+</ul>
+</section>
+<section id="zoteroのインストール" class="level2">
+<h2 class="anchored" data-anchor-id="zoteroのインストール">Zoteroのインストール</h2>
+<ul>
+<li>同期の開始
+<ul>
+<li>「環境設定」の「同期」からユーザー名，パスワードを打ち込んで同期を開始</li>
+<li>「詳細」→「ファイルとフォルダ」から，基本ディレクトリを正しく設定する→pdfファイルと文献情報が紐づいた形で設定が引き継がれる</li>
+</ul></li>
+</ul>
+<p>あとは以下を参考に設定する</p>
+<p>[https://sickle-sword.hatenablog.com/entry/2021/06/05/160818?_ga=2.261856205.1735845236.1644808541-16137706.1644808541:embed:cite]</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Kentaro Kamada">
-<meta name="dcterms.date" content="2020-10-25">
 
-<title>移動平均のかゆいところに，partial = TRUE – Kentaro Kamada</title>
+<title>Research – Kentaro Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,59 +20,25 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<script src="../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -104,17 +68,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Kentaro Kamada</span>
     </a>
   </div>
@@ -125,19 +89,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../00_profile.html"> 
+    <a class="nav-link" href="./profile.html"> 
 <span class="menu-text">Profile</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../01_research.html"> 
+    <a class="nav-link active" href="./research.html" aria-current="page"> 
 <span class="menu-text">Research</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../02_Blog/index.html"> 
+    <a class="nav-link" href="./blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -149,38 +113,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">移動平均のかゆいところに，partial = TRUE</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">R</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Kentaro Kamada </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">October 25, 2020</p>
-      </div>
-    </div>
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
@@ -188,210 +121,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#はじめに" id="toc-はじめに" class="nav-link active" data-scroll-target="#はじめに">はじめに</a></li>
-  <li><a href="#移動平均の基本" id="toc-移動平均の基本" class="nav-link" data-scroll-target="#移動平均の基本">移動平均の基本</a></li>
-  <li><a href="#移動平均のかゆいところ" id="toc-移動平均のかゆいところ" class="nav-link" data-scroll-target="#移動平均のかゆいところ">移動平均のかゆいところ</a></li>
-  <li><a href="#zoorollapplyを用いた実装" id="toc-zoorollapplyを用いた実装" class="nav-link" data-scroll-target="#zoorollapplyを用いた実装"><code>zoo::rollapply</code>を用いた実装</a></li>
-  <li><a href="#rcpprollにもpartialがあるが" id="toc-rcpprollにもpartialがあるが" class="nav-link" data-scroll-target="#rcpprollにもpartialがあるが"><code>RcppRoll</code>にも<code>partial</code>があるが…</a></li>
-  <li><a href="#まとめ" id="toc-まとめ" class="nav-link" data-scroll-target="#まとめ">まとめ</a></li>
+  <li><a href="#査読付き論文" id="toc-査読付き論文" class="nav-link active" data-scroll-target="#査読付き論文">査読付き論文</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Research</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
 
 
-<section id="はじめに" class="level2">
-<h2 class="anchored" data-anchor-id="はじめに">はじめに</h2>
-<p>『前処理大全』の4章で移動平均の計算が出てきたのでメモ。</p>
-<p>移動平均の基本的な算出方法は<a href="https://qiita.com/matsuou1/items/db6e8c48fcfd791dd876">「dplyrを使いこなす！Window関数編」</a>などが詳しい。</p>
-</section>
-<section id="移動平均の基本" class="level2">
-<h2 class="anchored" data-anchor-id="移動平均の基本">移動平均の基本</h2>
-<p>xにこんな感じでデータ入っているとき，移動平均は以下のように計算される。</p>
-<p>（以下ではすべて，3つずつ計算，右詰め，の前提で書く）</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: right;">x</th>
-<th style="text-align: left;">rollsum</th>
-<th style="text-align: left;">rollmean</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">1+2+3</td>
-<td style="text-align: left;">(1+2+3)/3</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">4</td>
-<td style="text-align: left;">2+3+4</td>
-<td style="text-align: left;">(2+3+4)/3</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">5</td>
-<td style="text-align: left;">3+4+5</td>
-<td style="text-align: left;">(3+4+5)/3</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">6</td>
-<td style="text-align: left;">4+5+6</td>
-<td style="text-align: left;">(4+5+6)/3</td>
-</tr>
-</tbody>
-</table>
-<p>Rで実装するとこんな感じになる</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">rollsum =</span> RcppRoll<span class="sc">::</span><span class="fu">roll_sum</span>(x, <span class="at">n =</span> <span class="dv">3</span>L, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">rollmean =</span> RcppRoll<span class="sc">::</span><span class="fu">roll_mean</span>(x, <span class="at">n =</span> <span class="dv">3</span>L, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">fill =</span> <span class="cn">NA</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 3
-      x rollsum rollmean
-  &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;
-1     1      NA       NA
-2     2      NA       NA
-3     3       6        2
-4     4       9        3
-5     5      12        4
-6     6      15        5</code></pre>
-</div>
-</div>
-</section>
-<section id="移動平均のかゆいところ" class="level2">
-<h2 class="anchored" data-anchor-id="移動平均のかゆいところ">移動平均のかゆいところ</h2>
-<p>ここまでの移動平均は，値が3つ揃っているところだけ計算し，3つに満たない端っこのケースに関しては欠損で埋める，というルールで計算している。</p>
-<p>ただし，場合によっては<strong>3件に満たない場合でも欠損値扱いにせずに平均値を計算したい</strong>，という場合もあるだろう。</p>
-<p>（イメージ）</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: right;">x</th>
-<th style="text-align: left;">rollsum</th>
-<th style="text-align: left;">rollmean</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">1/1</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">1+2</td>
-<td style="text-align: left;">(1+2)/2</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">1+2+3</td>
-<td style="text-align: left;">(1+2+3)/3</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">4</td>
-<td style="text-align: left;">2+3+4</td>
-<td style="text-align: left;">(2+3+4)/3</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">5</td>
-<td style="text-align: left;">3+4+5</td>
-<td style="text-align: left;">(3+4+5)/3</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">6</td>
-<td style="text-align: left;">4+5+6</td>
-<td style="text-align: left;">(4+5+6)/3</td>
-</tr>
-</tbody>
-</table>
-<p>『前処理大全』でもこのようなケースが扱われており，Rのサンプルコードでは<code>lag</code>と条件式の組み合わせで突破していたが，あんまりきれいじゃない。</p>
-</section>
-<section id="zoorollapplyを用いた実装" class="level2">
-<h2 class="anchored" data-anchor-id="zoorollapplyを用いた実装"><code>zoo::rollapply</code>を用いた実装</h2>
-<p>以上の問題を解決するには<code>zoo::rollapply()</code>が有効である。</p>
-<p>この関数の引数で，<code>partial = TRUE</code>とすると，以上の問題に対処できる。</p>
-<p>詳しくは<a href="https://cran.r-project.org/web/packages/zoo/zoo.pdf">vignette</a>を参照。</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rollsum =</span> zoo<span class="sc">::</span><span class="fu">rollapply</span>(x, <span class="at">width =</span> <span class="dv">3</span>L, <span class="at">FUN =</span> sum, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">partial =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rollmean =</span> zoo<span class="sc">::</span><span class="fu">rollapply</span>(x, <span class="at">width =</span> <span class="dv">3</span>L, <span class="at">FUN =</span> mean, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">partial =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 3
-      x rollsum rollmean
-  &lt;int&gt;   &lt;int&gt;    &lt;dbl&gt;
-1     1       1      1  
-2     2       3      1.5
-3     3       6      2  
-4     4       9      3  
-5     5      12      4  
-6     6      15      5  </code></pre>
-</div>
-</div>
-<p>この場合1行目の値は和でも平均でも，元のデータがダイレクトに反映されることになる。</p>
-<p><strong>最低でも2つ以上の値の場合だけ計算したい！</strong>という時は，<code>partial = 2L</code>のように，引数に整数を入れればよい。</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rollsum =</span> zoo<span class="sc">::</span><span class="fu">rollapply</span>(x, <span class="at">width =</span> <span class="dv">3</span>L, <span class="at">FUN =</span> sum, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">partial =</span> <span class="dv">2</span>L),</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rollmean =</span> zoo<span class="sc">::</span><span class="fu">rollapply</span>(x, <span class="at">width =</span> <span class="dv">3</span>L, <span class="at">FUN =</span> mean, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">partial =</span> <span class="dv">2</span>L)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 3
-      x rollsum rollmean
-  &lt;int&gt;   &lt;int&gt;    &lt;dbl&gt;
-1     1      NA     NA  
-2     2       3      1.5
-3     3       6      2  
-4     4       9      3  
-5     5      12      4  
-6     6      15      5  </code></pre>
-</div>
-</div>
-<p>また，なぜか<code>zoo::rollsum</code>や<code>zoo::rollmean</code>で<code>partial = TRUE</code>としても上手くいかない。なぜ…？</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>zoo<span class="sc">::</span><span class="fu">rollapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">width =</span> <span class="dv">3</span>L, <span class="at">FUN =</span> mean, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">partial =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.0 1.5 2.0 3.0 4.0 5.0</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>zoo<span class="sc">::</span><span class="fu">rollmean</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">k =</span> <span class="dv">3</span>L, <span class="at">align =</span> <span class="st">'right'</span>, <span class="at">partial =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2 3 4 5</code></pre>
-</div>
-</div>
-</section>
-<section id="rcpprollにもpartialがあるが" class="level2">
-<h2 class="anchored" data-anchor-id="rcpprollにもpartialがあるが"><code>RcppRoll</code>にも<code>partial</code>があるが…</h2>
-<p>移動平均といえば<code>RcppRoll</code>を使う人が多いはず。速度もzooより断然速いので基本的にはこちらを使うべきと筆者も思っている。</p>
-<p>実は<code>RcppRoll</code>の関数にも<code>partial</code>引数が入っている。</p>
-<p>これを見た時に「これで行けるやん」と思ったのだが…</p>
-<blockquote class="blockquote">
-<p>partial Partial application? Currently unimplemented. <a href="https://cran.r-project.org/web/packages/RcppRoll/RcppRoll.pdf" class="uri">https://cran.r-project.org/web/packages/RcppRoll/RcppRoll.pdf</a></p>
-</blockquote>
-<p>実装されてませんでした…</p>
-</section>
-<section id="まとめ" class="level2">
-<h2 class="anchored" data-anchor-id="まとめ">まとめ</h2>
-<p>というわけで，移動平均の計算は通常時は<code>RcppRoll</code>を使いつつ，ああいった特殊な場合には<code>zoo</code>を使えばよいということがわかった。<code>RcppRoll</code>は早く<code>partial</code>を実装してほしいところ。</p>
+</header>
+
+
+<section id="査読付き論文" class="level2">
+<h2 class="anchored" data-anchor-id="査読付き論文">査読付き論文</h2>
+<ul>
+<li>鎌田健太郎，2024，「<a href="https://doi.org/10.11555/kyoiku.91.1_1">初年次教育の導入・改革は学生の学習を促進したか——国立総合大学における因果効果の検討</a>」『教育学研究』91(1): 1–12．
+<ul>
+<li><a href="https://researchmap.jp/kamaken/published_papers/44513554/attachment_file.pdf" class="btn btn-outline-primary btn-sm">Appendix</a> <a href="https://github.com/Kentaro-Kamada/Replic-2024-JJER" class="btn btn-outline-primary btn-sm">再現コード</a></li>
+</ul></li>
+<li>鎌田健太郎，2022，「<a href="https://doi.org/10.32116/jaher.25.0_257">高等教育再拡大期における学生活動の変化——Typological Approach による学生下位集団の時代比較</a>」『高等教育研究』25: 257–74．</li>
+</ul>
 
 
 </section>

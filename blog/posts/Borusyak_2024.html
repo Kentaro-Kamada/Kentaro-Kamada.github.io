@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kentaro Kamada">
-<meta name="dcterms.date" content="2024-09-21">
+<meta name="dcterms.date" content="2024-08-19">
 
-<title>信頼区間を理解したい – Kentaro Kamada</title>
+<title>Borusyak et al.&nbsp;(2024) – Kentaro Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -103,6 +103,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -129,15 +158,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../00_profile.html"> 
+    <a class="nav-link" href="../../profile.html"> 
 <span class="menu-text">Profile</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../01_research.html"> 
+    <a class="nav-link" href="../../research.html"> 
 <span class="menu-text">Research</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../02_Blog/index.html"> 
+    <a class="nav-link" href="../../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -152,9 +181,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">信頼区間を理解したい</h1>
+      <h1 class="title">Borusyak et al.&nbsp;(2024)</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">Others</div>
+                <div class="quarto-category">Causal Inference</div>
               </div>
                   </div>
   </div>
@@ -172,7 +201,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">September 21, 2024</p>
+        <p class="date">August 19, 2024</p>
       </div>
     </div>
     
@@ -188,10 +217,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#パッケージの読み込み" id="toc-パッケージの読み込み" class="nav-link active" data-scroll-target="#パッケージの読み込み">パッケージの読み込み</a></li>
-  <li><a href="#設定" id="toc-設定" class="nav-link" data-scroll-target="#設定">設定</a></li>
-  <li><a href="#データから信頼区間を計算" id="toc-データから信頼区間を計算" class="nav-link" data-scroll-target="#データから信頼区間を計算">データから信頼区間を計算</a></li>
-  <li><a href="#各研究者の信頼区間を図示" id="toc-各研究者の信頼区間を図示" class="nav-link" data-scroll-target="#各研究者の信頼区間を図示">各研究者の信頼区間を図示</a></li>
+  <li><a href="#文献" id="toc-文献" class="nav-link active" data-scroll-target="#文献">文献</a></li>
+  <li><a href="#ざっくりとした要約" id="toc-ざっくりとした要約" class="nav-link" data-scroll-target="#ざっくりとした要約">ざっくりとした要約</a></li>
+  <li><a href="#estimand" id="toc-estimand" class="nav-link" data-scroll-target="#estimand">Estimand</a></li>
+  <li><a href="#識別" id="toc-識別" class="nav-link" data-scroll-target="#識別">識別</a></li>
+  <li><a href="#推定" id="toc-推定" class="nav-link" data-scroll-target="#推定">推定</a></li>
+  <li><a href="#分析例" id="toc-分析例" class="nav-link" data-scroll-target="#分析例">分析例</a></li>
+  <li><a href="#パッケージの結果" id="toc-パッケージの結果" class="nav-link" data-scroll-target="#パッケージの結果">パッケージの結果</a></li>
+  <li><a href="#手計算" id="toc-手計算" class="nav-link" data-scroll-target="#手計算">手計算</a></li>
+  <li><a href="#集団による異質性" id="toc-集団による異質性" class="nav-link" data-scroll-target="#集団による異質性">集団による異質性</a></li>
   </ul>
 </nav>
     </div>
@@ -202,119 +236,242 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>信頼区間の意味がわかりやすいシミュレーション</p>
-<section id="パッケージの読み込み" class="level2">
-<h2 class="anchored" data-anchor-id="パッケージの読み込み">パッケージの読み込み</h2>
+<section id="文献" class="level2">
+<h2 class="anchored" data-anchor-id="文献">文献</h2>
+<p>Borusyak, Kirill, Xavier Jaravel &amp; Jann Spiess, 2024, “Revisiting Event-Study Designs: Robust and Efficient Estimation,” <em>The Review of Economic Studies</em>, (<a href="https://doi.org/10.1093/restud/rdae007">10.1093/restud/rdae007</a>).</p>
+</section>
+<section id="ざっくりとした要約" class="level2">
+<h2 class="anchored" data-anchor-id="ざっくりとした要約">ざっくりとした要約</h2>
+<p>DiD推定をg-computationのようなアイデアで行う手法を提案した論文です。従来のTwo-way fixed effectによる推定では問題が生じることが指摘されてきた、処置のタイミングによる効果の異質性（staggerd DiD design）の問題などに対処しています。通常g-computationによる推定量の標準誤差はBootstrapで計算することが多いと思うのですが、この論文では推定量の漸近正規性などを示しつつ、Bootstrapを使わずに標準誤差を計算する方法を提案している点が興味深いです。</p>
+</section>
+<section id="estimand" class="level2">
+<h2 class="anchored" data-anchor-id="estimand">Estimand</h2>
+<ul>
+<li><span class="math inline">\(Y_{it}(1), Y_{it}(0)\)</span>：個人<span class="math inline">\(i\)</span>、時点<span class="math inline">\(t\)</span>における介入を受けた場合と受けていない場合のpotential outcome</li>
+<li><span class="math inline">\(D_{it}\)</span>：介入を受けたかどうかのバイナリ変数</li>
+</ul>
+<p>個人レベルの因果効果</p>
+<p><span class="math display">\[\begin{align*}
+\tau_{it} = Y_{it}(1) - Y_{it}(0) = Y_{it} - Y_{it}(0)
+\end{align*}\]</span></p>
+<p>これを関心のある集団について平均する</p>
+<ul>
+<li>ATT：<span class="math inline">\(\mathrm{E}[\tau_{it}|D_{it} = 1] = \mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1]\)</span></li>
+<li>event study：<span class="math inline">\(\mathrm{E}[\tau_{it}|D_{it} = 1, T = t] = \mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1, T = t]\)</span></li>
+<li>特定の集団におけるATT：<span class="math inline">\(\mathrm{E}[\tau_{it}|D_{it} = 1, Gender] = \mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1, Gender]\)</span></li>
+</ul>
+<p>論文ではウェイトを使った書き方をしているのでややこしいが、おそらくはこういうことだと思われる。</p>
+</section>
+<section id="識別" class="level2">
+<h2 class="anchored" data-anchor-id="識別">識別</h2>
+<p>因果効果を識別するための仮定は以下の通り</p>
+<ol type="1">
+<li>General moodel of <span class="math inline">\(Y(0)\)</span>：<span class="math inline">\(\mathrm{E}[Y_{it}(0)] = A'_{it}\lambda_i + X'_{it}\delta\)</span>の形で書けること</li>
+</ol>
+<ul>
+<li><span class="math inline">\(A'_{it}\lambda_i\)</span>：個体の固定効果＋固定効果と共変量の交互作用</li>
+<li><span class="math inline">\(X'_{it}\delta\)</span>：時点の固定効果＋時変の共変量</li>
+<li>要するに<span class="math inline">\(\mathrm{E}[Y_{it}(0)]\)</span>が適切のモデル化できていること</li>
+</ul>
+<ol start="2" type="1">
+<li>No-anticipation effects：<span class="math inline">\(Y_{it} = Y_{it}(0) \ if \ D_{it} = 0\)</span></li>
+</ol>
+<ul>
+<li>Consistencyと同じ？</li>
+</ul>
+<ol start="3" type="1">
+<li>Model of causal effects</li>
+</ol>
+<ul>
+<li>効果の異質性がパラメトリックモデルで書けること（？）</li>
+<li>複雑すぎるとダメということ？このあたりちょっとわからなかったです</li>
+</ul>
+</section>
+<section id="推定" class="level2">
+<h2 class="anchored" data-anchor-id="推定">推定</h2>
+<ol type="1">
+<li><span class="math inline">\(\mathrm{E}[Y_{it}(0)]\)</span>の推定</li>
+</ol>
+<ul>
+<li>処置を受けていないサンプル（<span class="math inline">\(D_{it} = 0\)</span>）を用いて、以下のモデルをOLSで推定</li>
+</ul>
+<p><span class="math display">\[
+Y_{it} = A'_{it}\lambda_i + X'_{it}\delta + \varepsilon_{it}
+\]</span></p>
+<ol start="2" type="1">
+<li><span class="math inline">\(\hat{Y}_{it}(0) | D_{it} = 1\)</span> の推定</li>
+</ol>
+<ul>
+<li>推定したモデルに、処置を受けたサンプル（<span class="math inline">\(D_{it} = 1\)</span>）を代入し、処置を受けたサンプルにおいて、処置を受けていなかった場合のpotential outcomeを予測</li>
+</ul>
+<ol start="3" type="1">
+<li><span class="math inline">\(\hat{\tau}_{it}\)</span>の推定</li>
+</ol>
+<ul>
+<li>処置を受けたサンプルの、観察データ<span class="math inline">\(Y_{it}\)</span>と予測したpotential outcome<span class="math inline">\(\hat{Y}_{it}(0)\)</span>の差を取る</li>
+</ul>
+<ol start="4" type="1">
+<li>関心のある集団について平均値をとる</li>
+</ol>
+<p><span class="math display">\[
+\mathrm{ATT} = \mathrm{E}[\hat{\tau}_{it}|D_{it} = 1]
+\]</span></p>
+<p>標準誤差の推定も説明があるが、理解できなかった…</p>
+</section>
+<section id="分析例" class="level2">
+<h2 class="anchored" data-anchor-id="分析例">分析例</h2>
+<p>著者によるStataパッケージの他、RではKyle Buttsによる<a href="https://github.com/kylebutts/didimputation"><code>didimputation</code></a>パッケージがある。</p>
+<p>ここでは<code>didimputation</code>パッケージのトイデータを用いて、パッケージによる結果と、手計算による結果を比較する。</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># remotes::install_github('kylebutts/didimputation')</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(didimputation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="設定" class="level2">
-<h2 class="anchored" data-anchor-id="設定">設定</h2>
-<ul>
-<li>100人の研究者がいる</li>
-<li>各研究者がそれぞれデータをとる。N=500の調査を行う</li>
-<li>データは平均0.5、標準偏差0.1の正規分布に従うと仮定</li>
-</ul>
+<section id="パッケージの結果" class="level2">
+<h2 class="anchored" data-anchor-id="パッケージの結果">パッケージの結果</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 100人の研究者がいる</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">researcher_ID =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 各研究者がそれぞれデータをとる。N=500の調査を行う。</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">map</span>(researcher_ID, \(researcher_ID) <span class="fu">rnorm</span>(<span class="dv">500</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>))</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 100 × 2
-   researcher_ID data       
-           &lt;int&gt; &lt;list&gt;     
- 1             1 &lt;dbl [500]&gt;
- 2             2 &lt;dbl [500]&gt;
- 3             3 &lt;dbl [500]&gt;
- 4             4 &lt;dbl [500]&gt;
- 5             5 &lt;dbl [500]&gt;
- 6             6 &lt;dbl [500]&gt;
- 7             7 &lt;dbl [500]&gt;
- 8             8 &lt;dbl [500]&gt;
- 9             9 &lt;dbl [500]&gt;
-10            10 &lt;dbl [500]&gt;
-# ℹ 90 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="データから信頼区間を計算" class="level2">
-<h2 class="anchored" data-anchor-id="データから信頼区間を計算">データから信頼区間を計算</h2>
-<ul>
-<li>各研究者のデータの平均値、標準誤差、信頼区間を計算</li>
-<li>信頼区間が真値（0.5）を含むかどうかを判定</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 各研究者のデータの平均値、標準誤差、信頼区間を計算</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="fu">map_dbl</span>(data, \(data) <span class="fu">mean</span>(data)),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">map_dbl</span>(data, \(data) <span class="fu">sd</span>(data) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(data))),</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower =</span> mean <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper =</span> mean <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span>  </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 信頼区間が0.5を含むかどうかを判定</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">flg =</span> <span class="fu">case_when</span>(</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="fl">0.5</span> <span class="sc">&lt;</span> lower <span class="sc">|</span> upper <span class="sc">&lt;</span> <span class="fl">0.5</span>  <span class="sc">~</span> <span class="st">'Error'</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> <span class="st">'Not Error'</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>data2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 100 × 7
-   researcher_ID data         mean      se lower upper flg      
-           &lt;int&gt; &lt;list&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    
- 1             1 &lt;dbl [500]&gt; 0.502 0.00453 0.493 0.511 Not Error
- 2             2 &lt;dbl [500]&gt; 0.495 0.00473 0.486 0.505 Not Error
- 3             3 &lt;dbl [500]&gt; 0.500 0.00452 0.491 0.509 Not Error
- 4             4 &lt;dbl [500]&gt; 0.497 0.00479 0.488 0.506 Not Error
- 5             5 &lt;dbl [500]&gt; 0.501 0.00464 0.492 0.510 Not Error
- 6             6 &lt;dbl [500]&gt; 0.502 0.00459 0.493 0.511 Not Error
- 7             7 &lt;dbl [500]&gt; 0.509 0.00476 0.500 0.518 Not Error
- 8             8 &lt;dbl [500]&gt; 0.494 0.00451 0.486 0.503 Not Error
- 9             9 &lt;dbl [500]&gt; 0.499 0.00440 0.491 0.508 Not Error
-10            10 &lt;dbl [500]&gt; 0.497 0.00446 0.488 0.505 Not Error
-# ℹ 90 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="各研究者の信頼区間を図示" class="level2">
-<h2 class="anchored" data-anchor-id="各研究者の信頼区間を図示">各研究者の信頼区間を図示</h2>
-<ul>
-<li>点推定値は0.5に近いのもあれば、遠いのもある</li>
-<li>信頼区間が真値（0.5）を含まない、「不運」な研究者は、5人 / 100人（5％）
-<ul>
-<li>95％の研究者は真の値を拾える、という意味</li>
-</ul></li>
-<li>実際には自分が「不運」な研究者かもしれないし、信頼区間の端ギリギリで真値を拾っているだけかもしれない</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 図示</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>data2 <span class="sc">|&gt;</span> </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(mean, researcher_ID, <span class="at">xmin =</span> lower, <span class="at">xmax =</span> upper, <span class="at">color =</span> flg))<span class="sc">+</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="st">'dashed'</span>)<span class="sc">+</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>()<span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'bottom'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">did_imputation</span>(<span class="at">data =</span> df_het, <span class="at">yname =</span> <span class="st">"dep_var"</span>, <span class="at">gname =</span> <span class="st">"g"</span>, <span class="at">tname =</span> <span class="st">"year"</span>, <span class="at">idname =</span> <span class="st">"unit"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="信頼区間を理解したい_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">conf.low</th>
+<th style="text-align: right;">conf.high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">treat</td>
+<td style="text-align: right;">2.262952</td>
+<td style="text-align: right;">0.0313968</td>
+<td style="text-align: right;">2.201414</td>
+<td style="text-align: right;">2.32449</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
+</section>
+<section id="手計算" class="level2">
+<h2 class="anchored" data-anchor-id="手計算">手計算</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OLSで処置を受けていないサンプルにおけるモデルを推定</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">feols</span>(dep_var <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> year <span class="sc">+</span> unit, <span class="at">data =</span> df_het <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span>treat), <span class="at">combine.quick =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>prediction <span class="ot">&lt;-</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 処置を受けた集団の予測値（potential outcome）を計算</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">augment</span>(model, <span class="at">newdata =</span> df_het <span class="sc">|&gt;</span> <span class="fu">filter</span>(treat)) <span class="sc">|&gt;</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 差分を計算</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tau =</span> dep_var <span class="sc">-</span> .fitted) </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 集計</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>prediction <span class="sc">|&gt;</span> </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">ATT =</span> <span class="fu">mean</span>(tau)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">ATT</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">2.262952</td>
+</tr>
+</tbody>
+</table>
 </div>
+</div>
+<p>ATTの点推定値は一致する。</p>
+</section>
+<section id="集団による異質性" class="level2">
+<h2 class="anchored" data-anchor-id="集団による異質性">集団による異質性</h2>
+<p>次に、処置のタイミングにより効果が異なる場合の分析を考える。</p>
+<p>パッケージでは以下のように、処置のタイミングが同じグループごとにウェイトを作成してやることで、集団ごとの効果を推定できる。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df_het <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">group1 =</span> <span class="fu">case_when</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>      group <span class="sc">==</span> <span class="st">'Group 1'</span> <span class="sc">&amp;</span> treat <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> <span class="dv">0</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">group2 =</span> <span class="fu">case_when</span>(</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      group <span class="sc">==</span> <span class="st">'Group 2'</span> <span class="sc">&amp;</span> treat <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> <span class="dv">0</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">did_imputation</span>(<span class="at">yname =</span> <span class="st">"dep_var"</span>, <span class="at">gname =</span> <span class="st">"g"</span>, <span class="at">tname =</span> <span class="st">"year"</span>, <span class="at">idname =</span> <span class="st">"unit"</span>, <span class="at">wtr =</span> <span class="fu">c</span>(<span class="st">'group1'</span>, <span class="st">'group2'</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">conf.low</th>
+<th style="text-align: right;">conf.high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">group1</td>
+<td style="text-align: right;">2.513439</td>
+<td style="text-align: right;">0.0381686</td>
+<td style="text-align: right;">2.438629</td>
+<td style="text-align: right;">2.588249</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">group2</td>
+<td style="text-align: right;">1.795048</td>
+<td style="text-align: right;">0.0389609</td>
+<td style="text-align: right;">1.718685</td>
+<td style="text-align: right;">1.871412</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>手計算では、集計をグループごとに行えばよい。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 集計</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>prediction <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">ATT =</span> <span class="fu">mean</span>(tau),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(group)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">group</th>
+<th style="text-align: right;">ATT</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Group 1</td>
+<td style="text-align: right;">2.513439</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group 2</td>
+<td style="text-align: right;">1.795048</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>こちらも点推定値は一致する。</p>
 
 
 </section>

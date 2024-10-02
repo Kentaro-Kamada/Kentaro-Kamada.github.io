@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kentaro Kamada">
-<meta name="dcterms.date" content="2024-02-22">
+<meta name="dcterms.date" content="2024-08-15">
 
-<title>観測度数・期待度数から対数尤度を計算する方法 – Kentaro Kamada</title>
+<title>複利計算 – Kentaro Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,27 +22,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
 }
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -144,15 +158,15 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../00_profile.html"> 
+    <a class="nav-link" href="../../profile.html"> 
 <span class="menu-text">Profile</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../01_research.html"> 
+    <a class="nav-link" href="../../research.html"> 
 <span class="menu-text">Research</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../02_Blog/index.html"> 
+    <a class="nav-link" href="../../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -167,7 +181,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">観測度数・期待度数から対数尤度を計算する方法</h1>
+      <h1 class="title">複利計算</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Others</div>
               </div>
@@ -187,7 +201,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">February 22, 2024</p>
+        <p class="date">August 15, 2024</p>
       </div>
     </div>
     
@@ -203,8 +217,9 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#観測度数とセル確率から対数尤度を計算" id="toc-観測度数とセル確率から対数尤度を計算" class="nav-link active" data-scroll-target="#観測度数とセル確率から対数尤度を計算">観測度数とセル確率から対数尤度を計算</a></li>
-  <li><a href="#尤度比カイ2乗値との関係" id="toc-尤度比カイ2乗値との関係" class="nav-link" data-scroll-target="#尤度比カイ2乗値との関係">尤度比カイ2乗値との関係</a></li>
+  <li><a href="#複利計算" id="toc-複利計算" class="nav-link active" data-scroll-target="#複利計算">複利計算</a></li>
+  <li><a href="#利率が年度ごとに変動する場合" id="toc-利率が年度ごとに変動する場合" class="nav-link" data-scroll-target="#利率が年度ごとに変動する場合">利率が年度ごとに変動する場合</a></li>
+  <li><a href="#利率がランダムウォークする場合" id="toc-利率がランダムウォークする場合" class="nav-link" data-scroll-target="#利率がランダムウォークする場合">利率がランダムウォークする場合</a></li>
   </ul>
 </nav>
     </div>
@@ -215,115 +230,135 @@ window.Quarto = {
 
 
 
-<section id="観測度数とセル確率から対数尤度を計算" class="level2">
-<h2 class="anchored" data-anchor-id="観測度数とセル確率から対数尤度を計算">観測度数とセル確率から対数尤度を計算</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="複利計算" class="level2">
+<h2 class="anchored" data-anchor-id="複利計算">複利計算</h2>
 <ul>
-<li><span class="math inline">\(f_{ij}\)</span>：観測度数</li>
+<li>年間<span class="math inline">\(a\)</span>万円ずつ積み立てることを考える</li>
+<li>年利は<span class="math inline">\(r\)</span>とする</li>
 </ul>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th></th>
-<th>B</th>
-<th>B’</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>A</td>
-<td><span class="math inline">\(f_{11}\)</span></td>
-<td><span class="math inline">\(f_{12}\)</span></td>
-</tr>
-<tr class="even">
-<td>A’</td>
-<td><span class="math inline">\(f_{21}\)</span></td>
-<td><span class="math inline">\(f_{22}\)</span></td>
-</tr>
-</tbody>
-</table>
+<p><span class="math display">\[\begin{align*}
+&amp; 1年目:ar^1 \\
+&amp; 2年目:ar^1 + ar^2 \\
+&amp; 3年目:ar^1 + ar^2 + ar^3 \\
+&amp; n年目:\sum_{i=1}^{n} ar^i = \frac{ar(1 - r^n)}{1 - r}
+\end{align*}\]</span></p>
 <ul>
-<li><span class="math inline">\(p_{ij}\)</span>：セル確率
+<li>等比級数の和の導出</li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+S =&amp; ar + ar^2 + ar^3 + ... + ar^n \\
+rS =&amp; \qquad\; ar^2 + ar^3 + ... + ar^n + ar^{n+1} \\
+S - rS =&amp; ar - ar^{n+1} \\
+S(1 - r) =&amp; ar(1 - r^n) \\
+S =&amp; \frac{ar(1 - r^n)}{1 - r}
+\end{align*}\]</span></p>
 <ul>
-<li>モデルから計算されたセルの確率</li>
-<li>AとBに関連がないモデルにおいては、期待度数をサンプルサイズで割ったもの</li>
+<li>シミュレーション
+<ul>
+<li><span class="math inline">\(n\)</span>：30年積み立てる</li>
+<li><span class="math inline">\(a\)</span>：年間40万円ずつ（月あたり3.3333万円）</li>
+<li><span class="math inline">\(r\)</span>：年利は5％と仮定</li>
 </ul></li>
 </ul>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th></th>
-<th>B</th>
-<th>B’</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>A</td>
-<td><span class="math inline">\(p_{11}\)</span></td>
-<td><span class="math inline">\(p_{12}\)</span></td>
-</tr>
-<tr class="even">
-<td>A’</td>
-<td><span class="math inline">\(p_{21}\)</span></td>
-<td><span class="math inline">\(p_{22}\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>尤度関数を<span class="math inline">\(L\)</span>とすると</p>
-<p><span class="math display">\[
-L = \prod_i \prod_j p_{ij}^{f_{ij}} =  p_{11}^{f_{11}} \times p_{12}^{f_{12}} \times p_{21}^{f_{21}} \times p_{22}^{f_{22}}
-\]</span></p>
-<p>各セルの確率を(観測度数)乗したものを全部掛け算</p>
-<p>対数尤度はこれの対数を取ったもの</p>
-<p><span class="math display">\[
-\log L = \sum_i \sum_j f_{ij} \log p_{ij} = f_{11} \log p_{11} + f_{12} \log p_{12} + f_{21} \log p_{21} + f_{22} \log p_{22}
-\]</span></p>
-<p>掛け算が足し算になるので計算しやすい</p>
-</section>
-<section id="尤度比カイ2乗値との関係" class="level2">
-<h2 class="anchored" data-anchor-id="尤度比カイ2乗値との関係">尤度比カイ2乗値との関係</h2>
-<p>尤度比カイ2乗値（<span class="math inline">\(G^2\)</span>）と観測度数（<span class="math inline">\(f\)</span>）・期待度数（<span class="math inline">\(F\)</span>）の関係は以下の式で表される<span class="citation" data-cites="Hout1983 McCutcheon1987">(<a href="#ref-Hout1983" role="doc-biblioref">Hout 1983</a>; <a href="#ref-McCutcheon1987" role="doc-biblioref">McCutcheon 1987</a>)</span></p>
-<p><span class="math display">\[
-G^2 = 2 \sum_i \sum_j f_{ij} \log \frac{f_{ij}}{F_{ij}}
-\]</span></p>
-<p>なぜこうなるのか？対数尤度の比から考えてみる。</p>
-<p>まず、AとBに関連がないというモデル（独立モデル）のもとで対数尤度を計算する。この条件ではセル確率<span class="math inline">\(p_{ij}\)</span>は期待度数<span class="math inline">\(F_{ij}\)</span>をサンプルサイズ<span class="math inline">\(N\)</span>で割ったものになる。</p>
-<p><span class="math display">\[
-\log L_1 = \sum_i \sum_j f_{ij} \log p_{ij} = \sum_i \sum_j f_{ij} \log \frac{F_{ij}}{N} = \sum_i \sum_j f_{ij} \log F_{ij} - \sum_i \sum_j f_{ij} \log N
-\]</span></p>
-<p>次に、AとBに関連があるというモデル（飽和モデル）のもとで対数尤度を計算する。この条件ではセル確率<span class="math inline">\(p_{ij}\)</span>は観測度数<span class="math inline">\(f_{ij}\)</span>をサンプルサイズ<span class="math inline">\(N\)</span>で割ったものになる。</p>
-<p><span class="math display">\[
-\log L_2 = \sum_i \sum_j f_{ij} \log p_{ij} = \sum_i \sum_j f_{ij} \log \frac{f_{ij}}{N} = \sum_i \sum_j f_{ij} \log f_{ij} - \sum_i \sum_j f_{ij} \log N
-\]</span></p>
-<p>対数尤度の差（＝尤度の比）を計算すると</p>
-<p><span class="math display">\[\begin{align}
-\log L_2 - \log L_1 &amp;= \sum_i \sum_j f_{ij} \log f_{ij} - \sum_i \sum_j f_{ij} \log F_{ij} \\
-\log \frac{L_2}{L_1} &amp;= \sum_i \sum_j (f_{ij} \log f_{ij} - f_{ij} \log F_{ij}) \\
-\log \frac{L_2}{L_1} &amp;= \sum_i \sum_j f_{ij} \log \frac{f_{ij}}{F_{ij}} \\
-\end{align}\]</span></p>
-<p>それっぽい形になった。</p>
-<p>さらに両辺を2倍すると</p>
-<p><span class="math display">\[
-2 \log \frac{L_2}{L_1} = \log (\frac{L_2}{L_1})^2 = 2 \sum_i \sum_j f_{ij} \log \frac{f_{ij}}{F_{ij}}
-\]</span></p>
-<p>したがって尤度比カイ二乗値は、尤度比の2乗の対数をとったものである。</p>
-<p>あるいは、以下のように変形すればdeviance（-2対数尤度）の差としても表現できる。</p>
-<p><span class="math display">\[
-2 \log \frac{L_2}{L_1} = (-2 \log L_1) - (- 2 \log L_2)
-\]</span></p>
-
-
-
-</section>
-
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-Hout1983" class="csl-entry" role="listitem">
-Hout, Michael. 1983. <em>Mobility <span>Tables</span></em>. <span>Thousand Oaks</span>: <span>SAGE Publications, Inc.</span> <a href="https://doi.org/10.4135/9781412985086">https://doi.org/10.4135/9781412985086</a>.
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="dv">40</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fl">1.05</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost =</span> a<span class="sc">*</span>year,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">gain =</span> a<span class="sc">*</span>r<span class="sc">^</span>year,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">return =</span> a<span class="sc">*</span>r<span class="sc">*</span>(<span class="dv">1</span> <span class="sc">-</span> r<span class="sc">^</span>year)<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> r),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> return), <span class="at">color =</span> <span class="st">'red'</span>)<span class="sc">+</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cost), <span class="at">alpha =</span> .<span class="dv">7</span>)<span class="sc">+</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cost), <span class="at">color =</span> <span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="複利計算_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-<div id="ref-McCutcheon1987" class="csl-entry" role="listitem">
-McCutcheon, Allan L. 1987. <em>Latent <span>Class Analysis</span></em>. <span>Oaks</span>: <span>Sage</span>.
 </div>
-</div></section></div></main> <!-- /main -->
+</div>
+</section>
+<section id="利率が年度ごとに変動する場合" class="level2">
+<h2 class="anchored" data-anchor-id="利率が年度ごとに変動する場合">利率が年度ごとに変動する場合</h2>
+<ul>
+<li>年利は確率的に変動する値
+<ul>
+<li>定数（<span class="math inline">\(r\)</span>）ではなく、変数（<span class="math inline">\(r_i\)</span>）として考える</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+&amp; 1年目:ar_1 \\
+&amp; 2年目:ar_1 + ar_1r_2\\
+&amp; 3年目:ar_1 + ar_1r_2 + ar_1r_2r_3 = a(r_1 + r_1r_2 + r_1r_2r_3)\\
+&amp; n年目:ar_1 + ar_1r_2 + ar_1r_2r_3 + ... + ar_1r_2r_3...r_n = a\sum_{i=1}^{n} \prod_{i=1}^{n}r_i
+\end{align*}\]</span></p>
+<p>ここで、<span class="math inline">\(r_i \sim \mathrm{Normal}(1.05, 0.1)\)</span>とする</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">rate =</span> <span class="fu">rnorm</span>(n, r, .<span class="dv">1</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost =</span> a<span class="sc">*</span>year,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">return =</span> a<span class="sc">*</span>(<span class="fu">accumulate</span>(rate, \(x, y) x<span class="sc">*</span>y) <span class="sc">|&gt;</span> <span class="fu">accumulate</span>(\(x, y) x <span class="sc">+</span> y)),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> return), <span class="at">color =</span> <span class="st">'red'</span>)<span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cost), <span class="at">alpha =</span> .<span class="dv">7</span>)<span class="sc">+</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cost), <span class="at">color =</span> <span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="複利計算_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="利率がランダムウォークする場合" class="level2">
+<h2 class="anchored" data-anchor-id="利率がランダムウォークする場合">利率がランダムウォークする場合</h2>
+<ul>
+<li>景気は各時点でランダムに発生するわけではない</li>
+<li>むしろ1時点前の状況を強く反映する</li>
+<li>年利がランダムウォークすると仮定する</li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+&amp; r_1 \sim \mathrm{Normal}(1.05, 0.1) \\
+&amp; r_{i + 1} = r_i + e_i, \; e_i \sim \mathrm{Normal}(0, 0.01)
+\end{align*}\]</span></p>
+<p>パラメータの設定が難しい…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">error =</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="fl">0.01</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">rate =</span> <span class="fu">accumulate</span>(error, \(x, y) x <span class="sc">+</span> y, <span class="at">.init =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, r, .<span class="dv">1</span>))[<span class="sc">-</span>n],</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost =</span> a<span class="sc">*</span>year,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">return =</span> a<span class="sc">*</span>(<span class="fu">accumulate</span>(rate, \(x, y) x<span class="sc">*</span>y) <span class="sc">|&gt;</span> <span class="fu">accumulate</span>(\(x, y) x <span class="sc">+</span> y)),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> return), <span class="at">color =</span> <span class="st">'red'</span>)<span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cost), <span class="at">alpha =</span> .<span class="dv">7</span>)<span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cost), <span class="at">color =</span> <span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="複利計算_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

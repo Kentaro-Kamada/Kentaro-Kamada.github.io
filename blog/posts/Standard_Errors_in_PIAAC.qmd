@@ -56,16 +56,49 @@ df <-
   rename_with(str_to_lower) |> 
   as_factor() |> 
   mutate(
+    age = as.character(age) |> parse_double(),
     # 年齢をカテゴリ化
     agegroup = cut(
-      as.character(age) |> parse_double(), 
+      age,
       breaks = c(15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65),
       labels = c('16-20', '21-25', '26-30', '31-35', '36-40', '41-45', '46-50', '51-55', '56-60', '61-65')
+    ),
+    # 大学卒業ダミー
+    univ = case_match(
+      edu,
+      'No formal qualification or below ISCED 1' ~ 0,
+      'ISCED 2' ~ 0,
+      'ISCED 3C shorter than 2 years' ~ 0,
+      'ISCED 3C 2 years or more' ~ 0,
+      'ISCED 3A-B' ~ 0,
+      'ISCED 3 (without distinction A-B-C, 2y+)' ~ 0,
+      'ISCED 4 (without distinction A-B-C)' ~ 0,
+      'ISCED 5B' ~ 0,
+      'ISCED 5A, bachelor degree' ~ 1,
+      'ISCED 5A, master degree' ~ 1,
+      'ISCED 6' ~ 1,
+      'Foreign qualification' ~ NA,
+      NA ~ NA
     )
   )
 
   
 ```
+
+## 標準誤差の推定式
+
+- jackknife法による標準誤差
+
+$$
+\mathrm{SE}_\theta = \sqrt{h\sum_{r=1}^{R} (\hat{\theta}_{(r)} - \hat{\theta})^2}
+$$
+
+- $R$：反復回数、replicate weightの数（PIAACは80）
+- $\hat{\theta}_{(r)}$：$r$番目のreplicate weightを用いた推定値
+- $\hat{\theta}$：全体の推定値（サンプリングウェイトを用いた推定値）
+- $h$：乗数、 Jackknife法のバリエーションによって異なる
+  - JK1の場合は$h = \frac{R-1}{R}$
+  - JK2の場合は$h = 1$
 
 ## 分析
 
@@ -197,5 +230,272 @@ left_join(
 
 ```
 
+### PVの統合
+
+- 読解力、数的思考力などは複数のPV（Plausible Values）という形で測定
+- PVを用いた分析の結果は、多重代入法の要領で統合が可能
+- 詳しくは @vanBuuren2018 などを参照
+
+- 平均値
+
+$$
+\hat{\theta} = \frac{1}{M} \sum_{m=1}^{M} \hat{\theta}_{(m)}
+$$
+
+- 各PVにおいて生じる分散の平均（分散の平均値）
+
+$$
+\bar{U} = \frac{1}{M} \sum_{m=1}^{M} \hat{U}_{(m)}
+$$
+
+- PV間で生じる分散（平均値の分散）
+
+$$
+B = \frac{1}{M-1} \sum_{m=1}^{M} (\hat{\theta}_{(m)} - \hat{\theta})^2
+$$
+
+- 統合された推定値の標準誤差
+
+$$
+\hat{SE} = \sqrt{\bar{U} + \left(1 + \frac{1}{M}\right)B}
+$$
+
+```{r}
+
+pool_rubin <- function(.tibble, term = NULL) {
+  .tibble |> 
+    mutate(variance = std.error^2) |>
+    summarise(
+      M = n(),
+      estimate.combined = mean(estimate),
+      Vw = sum(variance) / M,
+      Vb = sum((estimate - mean(estimate)) ^ 2) / (M - 1),
+      Vt = Vw + (1 + 1 / M) * Vb,
+      SE.combined = sqrt(Vt), 
+      .by = {{term}}
+    ) |> 
+    # 信頼区間計算
+    mutate(
+      conf.low = estimate.combined - qnorm(1 - .025)*SE.combined,
+      conf.high = estimate.combined + qnorm(1 - .025)*SE.combined
+    ) |> 
+    select({{term}}, M, estimate = estimate.combined, std.error = SE.combined, conf.low, conf.high)
+} 
+
+```
+
+- 結果の統合
+
+```{r}
+
+handmade |> 
+  rename(std.error = se) |> 
+  pool_rubin() |> 
+  kable()
+
+```
 
 
+## より複雑なケース
+
+### 因果効果の推定
+
+- 高等教育進学が読解力に与える因果効果の推定
+- G-computation[@Hernan2020; @Robins1986]によるATEの推定
+- 関数定義
+  - `.outcome`：アウトカム変数
+  - `.treatment`：0-1の二値変数
+  - `.formula_rhs`：回帰式の右辺を指定
+    - ` ~ treatment + covariate1 + covariate2 + ...`のような形
+    - 固定効果も指定可能：` ~ 1 | treatment + fixed_effect1 + fixed_effect2 + ...`
+    - `fixest`パッケージでの`formula`に準拠
+  - `.estimand`：推定対象
+    - `cfmean`：$\mathrm{E}[Y^1]$と$\mathrm{E}[Y^0]$
+    - `ATE`：平均処置効果
+  - `.weights`：サンプリングウェイト
+  - `.repweights`：ジャックナイフ法に用いるreplicate weights
+  - `.type`：ジャックナイフ法のタイプ
+  - `.by`：効果の異質性を見たい変数を指定（`NULL`なら集団全体）
+
+```{r}
+
+# ATEをjackknife推定する関数
+piaac_ATE_jack <- 
+  function(.data, .outcome, .treatment, .formula_rhs, .estimand = c('cfmean', 'ATE'), .weights, .repweights, .type = c('JK1', 'JK2'), .by = NULL) {
+  .treatment <- enquo(.treatment)
+  .weights <- enquo(.weights)
+  .repweights <- select(.data, {{.repweights}}) |> names()
+  .by <- enquo(.by)
+  # scale parameterの設定
+  scale <- case_when(
+    .type == 'JK1' ~ (length(.repweights) - 1) / length(.repweights), 
+    .type == 'JK2' ~ 1
+  )
+  # formulaの左辺に.outcomeを追加
+  .formula <- rlang::`f_lhs<-`(.formula_rhs, ensym(.outcome))
+  
+  # OLS推定
+  fit <-
+    fixest::feols(
+      .formula,
+      data = .data,
+      combine.quick = FALSE,
+      weights = str_c('~', rlang::as_name(.weights)) |> as.formula()
+    )
+  # 点推定値
+  res_point_estimate <-
+    bind_rows(
+      broom::augment(fit, newdata = .data |> mutate(!!.treatment := 0)),
+      broom::augment(fit, newdata = .data |> mutate(!!.treatment := 1)),
+    ) |>
+    group_by(pick(!!.treatment, !!.by)) |>
+    summarise(
+      estimate = weighted.mean(.fitted, !!.weights),
+      .groups = 'drop'
+    ) |> 
+    mutate(estimand = 'cfmean')
+  if (.estimand == 'ATE') {
+    res_point_estimate <-
+      res_point_estimate |>
+      mutate(estimand = 'ATE') |> 
+      pivot_wider(names_from = !!.treatment, values_from = estimate) |>
+      mutate(estimate = `1` - `0`) |>
+      select(!c(`0`, `1`))
+  }
+
+  # 各replicate weightを使ってOLS推定し、jackknifeサンプルにおける点推定値を計算する
+  fit_jack <-
+    furrr::future_map(
+      .repweights, .progress = TRUE, .options = furrr::furrr_options(seed = TRUE), \(w) {
+        gc()
+        # weightが0のデータを削除
+        df_jack <- .data |> filter(!!ensym(w) != 0)
+        # OLSで推定
+        fit <-
+          fixest::feols(
+            .formula,
+            data = df_jack,
+            weights = str_c('~', w) |> as.formula(),
+            combine.quick = FALSE
+          )
+        # Y^1とY^0を計算
+        res_point_estimate_jack <-
+          bind_rows(
+            broom::augment(fit, newdata = df_jack |> mutate(!!.treatment := 0)),
+            broom::augment(fit, newdata = df_jack |> mutate(!!.treatment := 1)),
+          ) |>
+          group_by(pick(!!.treatment, !!.by)) |>
+          summarise(
+            estimate = weighted.mean(.fitted, !!ensym(w)),
+            .groups = 'drop'
+          ) |> 
+          mutate(estimand = 'cfmean')
+        if (.estimand == 'ATE') {
+          res_point_estimate_jack <-
+            res_point_estimate_jack |>
+            mutate(estimand = 'ATE') |>
+            pivot_wider(names_from = !!.treatment, values_from = estimate) |>
+            mutate(estimate = `1` - `0`) |>
+            select(!c(`0`, `1`))
+        }
+        res_point_estimate_jack
+      }
+    )
+  # 結果の統合
+  results <-
+    fit_jack |>
+    bind_rows(.id = 'no') |>
+    rename(estimate_jack = estimate) |>
+    # 点推定値をくっつける
+    left_join(res_point_estimate |> rename(estimate_all = estimate))
+
+  # jackknife標準誤差の計算
+  if (.estimand == 'cfmean') {
+    results <-
+      results |>
+      group_by(pick(estimand, !!.treatment, !!.by)) |>
+      summarise(
+        estimate = mean(estimate_all),
+        std.error = sqrt(scale * sum((estimate_all - estimate_jack)^2, na.rm = TRUE)),
+        .groups = 'drop'
+      )
+  }
+  else if (.estimand == 'ATE') {
+    results <-
+      results |>
+      group_by(pick(estimand, !!.by)) |>
+      summarise(
+        estimate = mean(estimate_all),
+        std.error = sqrt(scale * sum((estimate_all - estimate_jack)^2, na.rm = TRUE)),
+        .groups = 'drop'
+      )
+  }
+  results
+}
+
+```
+
+### 推定結果
+
+```{r}
+# 並列化
+future::plan('multisession')
+
+df |> 
+  filter(age >= 26) |> 
+  piaac_ATE_jack(
+    .outcome = pvlit1,
+    .treatment = univ,
+    .formula_rhs = ~ 1 | univ^gender^agegroup,
+    .estimand = 'ATE',
+    .weights = sampling_weight,
+    .repweights = matches('spfwt'),
+    .type = 'JK2',
+    .by = c(gender, agegroup)
+  ) |> 
+  kable()
+
+```
+
+### 10個のPVに対して一括で推定
+
+```{r}
+# 読解力PVの変数名を取得
+pvs <- df |> select(matches('pvlit')) |> names()
+
+result <- 
+  map(
+    pvs,
+    \(x) piaac_ATE_jack(
+      .data = df |> filter(age >= 26),
+      # mapで回すときは`!!`を使う
+      .outcome = !!x,
+      .treatment = univ,
+      .formula_rhs = ~ 1 | univ^gender^agegroup,
+      .estimand = 'ATE',
+      .weights = sampling_weight,
+      .repweights = matches('spfwt'),
+      .type = 'JK2',
+      .by = gender
+    )) |> 
+  bind_rows(.id = 'pv')
+
+result
+
+```
+
+### 結果の統合
+
+```{r}
+
+result |> 
+  pool_rubin(term = c(estimand, gender)) |> 
+  kable()
+
+```
+
+
+
+## 参考文献
+
+Jakubowski, Maciej & Artur Pokropek, 2019, "piaactools: A program for data analysis with PIAAC data," _The Stata Journal_, 19(1): 112-128. <https://doi.org/10.1177/1536867X19830909>

@@ -165,6 +165,25 @@ window.Quarto = {
     <a class="nav-link" href="../../research.html"> 
 <span class="menu-text">Research</span></a>
   </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-works" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Works</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-works">    
+        <li>
+    <a class="dropdown-item" href="https://kentaro-kamada.github.io/kamaken/index.html" target="_blank">
+ <span class="dropdown-text">R Package: kamaken</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://kentaro-kamada.github.io/jisshutools/index.html" target="_blank">
+ <span class="dropdown-text">R Package: jisshutools</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://github.com/Kentaro-Kamada/hyoron-style" target="_blank">
+ <span class="dropdown-text">Latex Package: hyoron-style</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="../../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
@@ -583,6 +602,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         if (link.dataset.originalHref !== undefined) {
           link.href = link.dataset.originalHref;
         }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
       }
     }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {

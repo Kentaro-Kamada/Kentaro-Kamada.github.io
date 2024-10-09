@@ -78,7 +78,7 @@ mean(fit_cfdecomp$out_nc_y[,4] - fit_cfdecomp$out_cf_y[,4])
 
 ## `causal.decomp`
 
-- @Park2023a の方法。
+- @Park2023 の方法。
 
 ```{r}
 # smi 

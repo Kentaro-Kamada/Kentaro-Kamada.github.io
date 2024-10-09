@@ -7,9 +7,11 @@ about:
     - icon: github
       text: Github
       href: https://github.com/Kentaro-Kamada
+      target: _blank
     - icon: book
       text: Researchmap
       href: https://researchmap.jp/kamaken
+      target: _blank
     - icon: envelope
       text: "kamaken0705[at]g.ecc.u-tokyo.ac.jp"
       href: "javascript:void(0)"

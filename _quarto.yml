@@ -12,6 +12,17 @@ website:
         text: "Profile"
       - href: research.qmd
         text: "Research"
+      - text: "Works"
+        menu: 
+          - href: https://kentaro-kamada.github.io/kamaken/index.html
+            text: "R Package: kamaken"
+            target: _blank
+          - href: https://kentaro-kamada.github.io/jisshutools/index.html
+            text: "R Package: jisshutools"
+            target: _blank
+          - href: https://github.com/Kentaro-Kamada/hyoron-style
+            text: "Latex Package: hyoron-style"
+            target: _blank
       - href: blog/index.qmd
         text: "Blog"
     tools:
@@ -23,6 +34,7 @@ format:
     theme: yeti
     css: styles.css
     toc: true
+    link-external-newwindow: true
 
 
 bibliography: reference.bib

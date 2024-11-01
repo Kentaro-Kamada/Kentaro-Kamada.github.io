@@ -1079,6 +1079,22 @@
       ],
       "Hash": "5b2ef64995e87f97cbd893d469165311"
     },
+    "estatapi": {
+      "Package": "estatapi",
+      "Version": "0.4.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "dplyr",
+        "httr",
+        "purrr",
+        "readr",
+        "rlang",
+        "tibble"
+      ],
+      "Hash": "8bf9505c8a9cc1b18e005b55e034da3b"
+    },
     "evaluate": {
       "Package": "evaluate",
       "Version": "1.0.0",
@@ -2820,13 +2836,18 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "1.0.9",
-      "Source": "Repository",
-      "Repository": "CRAN",
+      "Version": "1.0.10",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "rstudio",
+      "RemoteRepo": "renv",
+      "RemoteRef": "v1.0.10",
+      "RemoteSha": "0687c7881719267466dbe7034959f6ef0647844e",
       "Requirements": [
         "utils"
       ],
-      "Hash": "ef233f0e9064fc88c898b340c9add5c2"
+      "Hash": "17d8adc17297d6fa8d13a718e7d5a874"
     },
     "reprex": {
       "Package": "reprex",
@@ -2918,6 +2939,16 @@
         "yaml"
       ],
       "Hash": "062470668513dcda416927085ee9bdc7"
+    },
+    "rmutil": {
+      "Package": "rmutil",
+      "Version": "1.1.10",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R"
+      ],
+      "Hash": "79c22a87416140a5c2252be2f89938dd"
     },
     "rpart": {
       "Package": "rpart",

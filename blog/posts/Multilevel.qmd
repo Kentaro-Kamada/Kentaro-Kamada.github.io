@@ -2,8 +2,6 @@
 title: "マルチレベルモデルは点推定値に影響を及ぼすか？"
 date: 2024-02-22
 categories: [Others]
-execute: 
-  cache: true
 ---
 
 ```{r}

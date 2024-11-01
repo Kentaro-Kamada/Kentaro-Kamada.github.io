@@ -1,0 +1,100 @@
+---
+title: 学校外教育の参加率
+date: 2024-11-01
+categories: [Others]
+---
+
+## パッケージ読み込み
+
+```{r}
+library(tidyverse)
+library(estatapi)
+```
+
+## 準備
+
+- あらかじめE-Stat APIの申請を行い、アプリケーションIDを取得しておく必要がある
+- `.Renviron`や`.Rprofile`あたりで、環境変数`ESTAT_APPID`にアプリケーションIDを設定しておくと便利
+
+
+```{r}
+# E-Stat APIのアプリケーションIDを環境変数から取得
+appid <- Sys.getenv('ESTAT_APPID')
+```
+
+
+## メタデータ取得
+
+使用するデータは以下の3つ
+
+1. 「子供の学習費調査、3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 小学校」<https://e-stat.go.jp/stat-search/database?page=1&statdisp_id=0003368820>
+1. 「子供の学習費調査、3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 中学校」<https://e-stat.go.jp/stat-search/database?page=1&statdisp_id=0003368821>
+1. 「子供の学習費調査、3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 高等学校（全日制）」<https://e-stat.go.jp/stat-search/database?page=1&statdisp_id=0003368822>
+
+```{r}
+#| eval: false
+
+# 以下のコードでメタデータが取得できる
+estat_getMetaInfo(appid, '0003368820')
+estat_getMetaInfo(appid, '0003368821')
+estat_getMetaInfo(appid, '0003368822')
+```
+
+## データ取得
+
+- メタデータを参照しつつ必要な情報のみを取得
+
+```{r}
+
+elementary <- 
+  estat_getStatsData(
+    appid, 
+    '0003368820',
+    cdTab = '110', 
+    cdCat01 = '160,170,180,190,200,210', 
+    cdCat02 = '320'
+  )
+
+jhigh <- 
+  estat_getStatsData(
+    appid, 
+    '0003368821',
+    cdTab = '110', 
+    cdCat01 = '160,170,180', 
+    cdCat02 = '320'
+  )
+
+high <- 
+  estat_getStatsData(
+    appid, 
+    '0003368822',
+    cdTab = '110', 
+    cdCat01 = '160,170,180', 
+    cdCat02 = '320'
+  )
+
+```
+
+## データ整形＆プロット
+
+```{r}
+
+bind_rows(
+  小学校 = elementary,
+  中学校 = jhigh,
+  高校 = high,
+  .id = '学校段階'
+) |> 
+  filter(`時間軸（年度次）` == '2016年度') |> 
+  filter(!(学校段階 == '小学校' & `学年(年齢)・所在市町村人口規模(学科)` %in% c('第1学年', '第2学年', '第3学年'))) |> 
+  
+  ggplot(aes(`学年(年齢)・所在市町村人口規模(学科)`, value))+
+  geom_bar(stat = 'identity')+
+  geom_label(aes(label = value), size = 3)+
+  facet_grid(rows = vars(公私立区分), cols = vars(学校段階), scales = 'free_x')+
+  labs(x = '学年', y = '学習塾利用率')+
+  theme_bw(base_family = 'Noto Sans JP')
+
+
+```
+

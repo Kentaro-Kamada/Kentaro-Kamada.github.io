@@ -1,0 +1,223 @@
+---
+title: 手動でSuperlearner
+date: 2024-11-01
+categories: [Others]
+---
+
+## 文献
+
+Naimi, Ashley I. & Laura B. Balzer, 2018, "Stacked Generalization: An Introduction to Super Learning," _European Journal of Epidemiology_, 33(5): 459–64, (<https://doi.org/10.1007/s10654-018-0390-z>).
+
+## パッケージ読み込み
+
+```{r}
+library(tidyverse)
+library(rsample)
+library(sl3)
+library(future)
+library(earth)
+
+theme_set(theme_bw(base_family = 'Noto Sans JP'))
+
+# 並列化
+plan(multisession(workers = 5))
+
+```
+
+
+## データ生成
+
+\begin{align}
+Y = 5 + 4\sqrt{9x} \times I(x<2) + I(x\geq2) \times (|x-6|^{2}) + \epsilon
+\end{align}
+
+- $I()$：Indicator function（TRUEなら1、FALSEなら0となる）
+- $\epsilon \sim \mathrm{Labpace}(0, 1)$
+
+```{r}
+set.seed(12345)
+
+data <- tibble(
+  x = runif(1000, 0, 8),
+  epsilon = rmutil::rlaplace(1000, 0, 1)
+) |> 
+  mutate(
+    y_truth = 5 + 4*sqrt(9 * x)*as.numeric(x<2) + as.numeric(x>=2)*(abs(x-6)^(2)),
+    y = y_truth + epsilon
+  )
+
+```
+
+- データの確認（gamが優秀）
+
+```{r}
+data |> 
+  ggplot(aes(x, y)) +
+  geom_point(alpha = 0.3)+
+  geom_line(
+    data = tibble(
+      x = seq(0, 8, 0.1), 
+      y = 5 + 4*sqrt(9 * x)*as.numeric(x<2) + as.numeric(x>=2)*(abs(x-6)^(2))
+    ), 
+    aes(x, y), 
+    color = "black"
+  )+
+  geom_smooth(method = 'gam', formula = y ~ s(x, bs = 'cs'), se = FALSE)
+
+```
+
+- cross-fitの準備
+- データを5分割
+
+```{r}
+df <- 
+  vfold_cv(data, v = 5) |> 
+  mutate(
+    train = map(splits, analysis),
+    test = map(splits, assessment)
+  )
+
+df
+```
+
+## 手動でSuper learner
+
+- Cross-fitで各モデルの予測値を計算
+
+```{r}
+res <- 
+  df |> 
+  mutate(
+    model_earth = map(
+      train, \(data) 
+      earth(y ~ x, degree = 2, penalty = 3, nk = 21, pmethod = "backward", data = data)
+    ),
+    model_lm = map(
+      train, \(data) 
+      lm(y ~ poly(x, degree = 4), data = data)
+    ),
+    pred_earth = map2(model_earth, test, \(x, y) predict(x, newdata = y)[,1]),
+    pred_lm = map2(model_lm, test, \(x, y) predict(x, newdata = y))
+  )
+
+```
+
+- 各モデルの予測値を独立変数、アウトカムを目的変数とした回帰モデルを、Non-negative least squaresにより推定
+- パフォーマンスの良いモデルにより大きい重みがつくように、重みを推定
+
+```{r}
+weight <-
+  nnls::nnls(
+    A = 
+      res |> 
+      select(pred_earth, pred_lm) |> 
+      unnest(cols = c(pred_earth, pred_lm)) |> 
+      as.matrix(), 
+    b = data$y
+  ) |> 
+  pluck('x')
+
+weight
+
+# weightを、足して1になるように基準化
+weight_normalized <- weight / sum(weight)
+weight_normalized
+```
+
+## 予測値の計算
+
+1. 全データを用いて、各モデルの予測値を計算
+1. 先ほど推定した重みを用いて、各モデルの予測値を組み合わせた予測値を計算
+
+```{r}
+# サンプル全体での予測値を計算
+model1 <- earth(y ~ x, degree = 2, penalty = 3, nk = 21, pmethod = "backward", data = data)
+model2 <- lm(y ~ poly(x, degree = 4), data = data)
+
+result <- 
+  data |> 
+  mutate(
+    pred1 = predict(model1)[,1],
+    pred2 = predict(model2)
+  ) |> 
+  mutate(
+    pred_sl = weight_normalized[1]*pred1 + weight_normalized[2]*pred2
+  )
+
+result
+```
+
+- 結果のプロット
+
+```{r}
+result |> 
+  pivot_longer(
+    cols = c(pred1, pred2, pred_sl), 
+    names_to = 'model', 
+    values_to = 'prediction'
+  ) |> 
+  ggplot(aes(x, y)) +
+  geom_point(alpha = 0.05)+
+  geom_line(aes(x, prediction, color = model))+
+  geom_line(
+    data = tibble(
+      x = seq(0, 8, 0.1), 
+      y = 5 + 4*sqrt(9 * x)*as.numeric(x<2) + as.numeric(x>=2)*(abs(x-6)^(2))
+    ), 
+    aes(x, y), 
+    color = "black"
+  )
+```
+
+## `sl3`でSuper learner
+
+```{r}
+task <- sl3_Task$new(
+  data = data, outcome = "y", covariates = "x", outcome_type = 'continuous', folds = 5
+)
+
+sl_lib <- 
+  Lrnr_sl$new(
+    learners = Stack$new(
+      Lrnr_earth$new(degree = 4), 
+      Lrnr_gam$new(),
+      Lrnr_mean$new(),
+      Lrnr_xgboost$new(nrounds = 100, max_depth = 3, eta = 0.3),
+      Lrnr_bartMachine$new(serialize = TRUE)
+    ),
+    metalearner = Lrnr_nnls$new(convex = TRUE)
+  )
+
+fit <- sl_lib$train(task)
+
+fit
+```
+
+
+```{r}
+
+result |> 
+  mutate(
+    pred_sl3 = fit$predict(task = task)
+  ) |> 
+  pivot_longer(
+    cols = c(pred1, pred2, pred_sl, pred_sl3), 
+    names_to = 'model', 
+    values_to = 'prediction'
+  ) |> 
+  ggplot(aes(x, y)) +
+  geom_point(alpha = 0.05)+
+  geom_line(
+    data = tibble(
+      x = seq(0, 8, 0.1), 
+      y = 5 + 4*sqrt(9 * x)*as.numeric(x<2) + as.numeric(x>=2)*(abs(x-6)^(2))
+    ), 
+    aes(x, y), 
+    color = "black"
+  )+
+  geom_line(aes(x, prediction, color = model))
+
+
+```
+
+

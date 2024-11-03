@@ -4,6 +4,11 @@ date: 2024-11-01
 categories: [Others]
 ---
 
+## モチベーション
+
+- 学校外教育の参加率にについて、政府統計などを用いて示したい
+
+
 ## パッケージ読み込み
 
 ```{r}
@@ -27,9 +32,9 @@ appid <- Sys.getenv('ESTAT_APPID')
 
 使用するデータは以下の3つ
 
-1. 「子供の学習費調査、3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 小学校」<https://e-stat.go.jp/stat-search/database?page=1&statdisp_id=0003368820>
-1. 「子供の学習費調査、3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 中学校」<https://e-stat.go.jp/stat-search/database?page=1&statdisp_id=0003368821>
-1. 「子供の学習費調査、3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 高等学校（全日制）」<https://e-stat.go.jp/stat-search/database?page=1&statdisp_id=0003368822>
+1. 文部科学省「子供の学習費調査」3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 小学校 <https://www.e-stat.go.jp/stat-search/database?statdisp_id=0003368820>
+1. 文部科学省「子供の学習費調査」3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 中学校 <https://e-stat.go.jp/stat-search/database?statdisp_id=0003368821>
+1. 文部科学省「子供の学習費調査」3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 高等学校（全日制） <https://e-stat.go.jp/stat-search/database?statdisp_id=0003368822>
 
 ```{r}
 #| eval: false
@@ -75,26 +80,45 @@ high <-
 
 ```
 
-## データ整形＆プロット
+## データ整形
 
 ```{r}
 
-bind_rows(
-  小学校 = elementary,
-  中学校 = jhigh,
-  高校 = high,
-  .id = '学校段階'
-) |> 
-  filter(`時間軸（年度次）` == '2016年度') |> 
-  filter(!(学校段階 == '小学校' & `学年(年齢)・所在市町村人口規模(学科)` %in% c('第1学年', '第2学年', '第3学年'))) |> 
-  
-  ggplot(aes(`学年(年齢)・所在市町村人口規模(学科)`, value))+
-  geom_bar(stat = 'identity')+
-  geom_label(aes(label = value), size = 3)+
-  facet_grid(rows = vars(公私立区分), cols = vars(学校段階), scales = 'free_x')+
-  labs(x = '学年', y = '学習塾利用率')+
-  theme_bw(base_family = 'Noto Sans JP')
-
+df <- 
+  bind_rows(
+    小学校 = elementary,
+    中学校 = jhigh,
+    高校 = high,
+    .id = '学校段階'
+  ) |> 
+  select(学校段階, 学年 = `学年(年齢)・所在市町村人口規模(学科)`, 公私立 = 公私立区分, 年度 = `時間軸（年度次）`, 塾利用率 = value) |> 
+  mutate(
+    年度 = parse_number(年度),
+    学校段階 = fct_relevel(学校段階, '小学校', '中学校', '高校'),
+    公私立 = fct_relevel(公私立, '公立', '私立'),
+    学年 = fct_relevel(学年, '第1学年', '第2学年', '第3学年', '第4学年', '第5学年', '第6学年')
+  )
 
 ```
+
+
+## プロット
+
+```{r}
+#| fig-width: 16
+#| fig-height: 10
+
+df |> 
+  ggplot(aes(学年, 塾利用率, fill = 公私立))+
+  geom_col(position = position_dodge(), color = 'black')+
+  geom_text(aes(label = 塾利用率), position = position_dodge(width = 0.9), vjust = 1.5)+
+  facet_grid(rows = vars(学校段階), cols = vars(年度))+
+  labs(y = '塾利用率（％）')+
+  theme_bw(base_family = 'Noto Sans JP')+
+  theme(legend.position = 'bottom')
+
+```
+
+
+
 

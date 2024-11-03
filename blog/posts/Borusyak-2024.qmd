@@ -6,7 +6,7 @@ categories: [Causal Inference]
 
 ## 文献
 
-Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, "Revisiting Event-Study Designs: Robust and Efficient Estimation," _The Review of Economic Studies_, ([10.1093/restud/rdae007](https://doi.org/10.1093/restud/rdae007)).
+Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, "Revisiting Event-Study Designs: Robust and Efficient Estimation," _The Review of Economic Studies_, (<https://doi.org/10.1093/restud/rdae007>).
 
 ## ざっくりとした要約
 
@@ -38,7 +38,7 @@ DiD推定をg-computationのようなアイデアで行う手法を提案した�
 1. General moodel of $Y(0)$：$\mathrm{E}[Y_{it}(0)] = A'_{it}\lambda_i + X'_{it}\delta$の形で書けること
   - $A'_{it}\lambda_i$：個体の固定効果＋固定効果と共変量の交互作用
   - $X'_{it}\delta$：時点の固定効果＋時変の共変量
-  - 要するに$\mathrm{E}[Y_{it}(0)]$が適切のモデル化できていること
+  - 要するに$\mathrm{E}[Y_{it}(0)]$が適切にモデル化できていること
 2. No-anticipation effects：$Y_{it} = Y_{it}(0) \ if \ D_{it} = 0$
   - Consistencyと同じ？
 3. Model of causal effects
@@ -55,7 +55,7 @@ $$
 Y_{it} = A'_{it}\lambda_i + X'_{it}\delta + \varepsilon_{it}
 $$
 
-2. $\hat{Y}_{it}(0) | D_{it} = 1$ の推定
+2. $\hat{Y}_{it}(0) | D_{it} = 1$ の予測
 
 - 推定したモデルに、処置を受けたサンプル（$D_{it} = 1$）を代入し、処置を受けたサンプルにおいて、処置を受けていなかった場合のpotential outcomeを予測
 

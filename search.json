@@ -287,424 +287,46 @@
     "text": "BLASの変更\n以下、homebrewでRをインストールしていることを前提とする。\nterminalで以下のコマンドを実行する。\ncd /Library/Frameworks/R.framework/Resources/lib\nln -sf libRblas.veclib.dylib libRblas.dylib\n意味としては、RはlibRblas.dylibをBLASとして認識するので、libRblas.veclib.dylibをlibRblas.dylibにリンクすることで、libRblas.veclib.dylibをBLASとして使うようにする。\nもどすときはlibRblas.veclib.dylibの代わりに、libRblas.0.dylib（デフォルトのBLAS）をリンクすればよい。\ncd /Library/Frameworks/R.framework/Resources/lib\nln -sf libRblas.0.dylib libRblas.dylib"
   },
   {
-    "objectID": "blog/posts/複利計算.html",
-    "href": "blog/posts/複利計算.html",
-    "title": "複利計算",
+    "objectID": "blog/posts/Rでロジットモデル.html",
+    "href": "blog/posts/Rでロジットモデル.html",
+    "title": "Rでロジットモデル",
     "section": "",
-    "text": "library(tidyverse)"
+    "text": "これは簡単で，2値のfactorを従属変数，リンク関数をglm(family = binomial('logit'))のように指定してやればOK\nちなみにbinomial('probit')にしてやればプロビット回帰になる"
   },
   {
-    "objectID": "blog/posts/複利計算.html#複利計算",
-    "href": "blog/posts/複利計算.html#複利計算",
-    "title": "複利計算",
-    "section": "複利計算",
-    "text": "複利計算\n\n年間\\(a\\)万円ずつ積み立てることを考える\n年利は\\(r\\)とする\n\n\\[\\begin{align*}\n& 1年目:ar^1 \\\\\n& 2年目:ar^1 + ar^2 \\\\\n& 3年目:ar^1 + ar^2 + ar^3 \\\\\n& n年目:\\sum_{i=1}^{n} ar^i = \\frac{ar(1 - r^n)}{1 - r}\n\\end{align*}\\]\n\n等比級数の和の導出\n\n\\[\\begin{align*}\nS =& ar + ar^2 + ar^3 + ... + ar^n \\\\\nrS =& \\qquad\\; ar^2 + ar^3 + ... + ar^n + ar^{n+1} \\\\\nS - rS =& ar - ar^{n+1} \\\\\nS(1 - r) =& ar(1 - r^n) \\\\\nS =& \\frac{ar(1 - r^n)}{1 - r}\n\\end{align*}\\]\n\nシミュレーション\n\n\\(n\\)：30年積み立てる\n\\(a\\)：年間40万円ずつ（月あたり3.3333万円）\n\\(r\\)：年利は5％と仮定\n\n\n\nn &lt;- 30\na &lt;- 40\nr &lt;- 1.05\n\ntibble(\n  year = 1:n,\n  cost = a*year,\n  gain = a*r^year,\n  return = a*r*(1 - r^year)/(1 - r),\n) |&gt; \n  ggplot()+\n  geom_line(aes(x = year, y = return), color = 'red')+\n  geom_col(aes(x = year, y = cost), alpha = .7)+\n  geom_line(aes(x = year, y = cost), color = 'blue')"
-  },
-  {
-    "objectID": "blog/posts/複利計算.html#利率が年度ごとに変動する場合",
-    "href": "blog/posts/複利計算.html#利率が年度ごとに変動する場合",
-    "title": "複利計算",
-    "section": "利率が年度ごとに変動する場合",
-    "text": "利率が年度ごとに変動する場合\n\n年利は確率的に変動する値\n\n定数（\\(r\\)）ではなく、変数（\\(r_i\\)）として考える\n\n\n\\[\\begin{align*}\n& 1年目:ar_1 \\\\\n& 2年目:ar_1 + ar_1r_2\\\\\n& 3年目:ar_1 + ar_1r_2 + ar_1r_2r_3 = a(r_1 + r_1r_2 + r_1r_2r_3)\\\\\n& n年目:ar_1 + ar_1r_2 + ar_1r_2r_3 + ... + ar_1r_2r_3...r_n = a\\sum_{i=1}^{n} \\prod_{i=1}^{n}r_i\n\\end{align*}\\]\nここで、\\(r_i \\sim \\mathrm{Normal}(1.05, 0.1)\\)とする\n\ntibble(\n  year = 1:n,\n  rate = rnorm(n, r, .1),\n  cost = a*year,\n  return = a*(accumulate(rate, \\(x, y) x*y) |&gt; accumulate(\\(x, y) x + y)),\n) |&gt; \n  ggplot()+\n  geom_line(aes(x = year, y = return), color = 'red')+\n  geom_col(aes(x = year, y = cost), alpha = .7)+\n  geom_line(aes(x = year, y = cost), color = 'blue')"
-  },
-  {
-    "objectID": "blog/posts/複利計算.html#利率がランダムウォークする場合",
-    "href": "blog/posts/複利計算.html#利率がランダムウォークする場合",
-    "title": "複利計算",
-    "section": "利率がランダムウォークする場合",
-    "text": "利率がランダムウォークする場合\n\n景気は各時点でランダムに発生するわけではない\nむしろ1時点前の状況を強く反映する\n年利がランダムウォークすると仮定する\n\n\\[\\begin{align*}\n& r_1 \\sim \\mathrm{Normal}(1.05, 0.1) \\\\\n& r_{i + 1} = r_i + e_i, \\; e_i \\sim \\mathrm{Normal}(0, 0.01)\n\\end{align*}\\]\nパラメータの設定が難しい…\n\ntibble(\n  year = 1:n,\n  error = rnorm(n, 0, 0.01),\n  rate = accumulate(error, \\(x, y) x + y, .init = rnorm(1, r, .1))[-n],\n  cost = a*year,\n  return = a*(accumulate(rate, \\(x, y) x*y) |&gt; accumulate(\\(x, y) x + y)),\n) |&gt; \n  ggplot()+\n  geom_line(aes(x = year, y = return), color = 'red')+\n  geom_col(aes(x = year, y = cost), alpha = .7)+\n  geom_line(aes(x = year, y = cost), color = 'blue')"
-  },
-  {
-    "objectID": "blog/posts/新しいパソコンを買ったらやること.html",
-    "href": "blog/posts/新しいパソコンを買ったらやること.html",
-    "title": "新しいパソコンを買ったらやること",
+    "objectID": "blog/posts/Rでロジットモデル.html#二項ロジット",
+    "href": "blog/posts/Rでロジットモデル.html#二項ロジット",
+    "title": "Rでロジットモデル",
     "section": "",
-    "text": "Office365のインストール\nOnedriveのインストール\n\n特に問題なくできた\n\n\n\n\n定番のパッケージマネージャー\n\n[https://brew.sh/index_ja:embed:cite]\n\n\n\n\nR本体のインストール\n\nrigというツールを使う。参考\nbrew tap r-lib/rig\nbrew install --cask rig \nrig add 4.3.3\n\nRstudioのインストール\n\nbrew install --cask rstudio\n\n自作したRstudioテーマを持ってくる（あとでgithubにでも置いておく）\nエディタで使用するフォントを選択\n\nmyricaを使いたかったが，なぜかMacだとうまくいっていない（調査中）\n\nRtools（Windows）or Xcode（Mac）のインストール\n\ngithub産のパッケージのビルドなどに必要\n\n（Macのみ）Xquartzのインストール\n\n詳しくはわからないが，入れないとRmarkdownがちゃんと動かなかった\n\n\n\n\n\n\n（winのみ）gitをインストール\n\nmacだとgit自体がすでにインストールされていた\n\nssh keyの作成→githubへ登録\ngit clone で適宜必要なプロジェクトをダウンロード\n\n\n\n\n\ntinytexのインストール\ntinytex::install_tinytex()でtex本体をインストール\nlatex_engine: lualatexの文章を作成し，エラーを見ながら適宜tinytex::tlmgr_install()で足りないパッケージを追加\n\n（Mac）haranoajiで引っかかった\n\n\n\n\n\n\n同期の開始\n\n「環境設定」の「同期」からユーザー名，パスワードを打ち込んで同期を開始\n「詳細」→「ファイルとフォルダ」から，基本ディレクトリを正しく設定する→pdfファイルと文献情報が紐づいた形で設定が引き継がれる\n\n\nあとは以下を参考に設定する\n[https://sickle-sword.hatenablog.com/entry/2021/06/05/160818?_ga=2.261856205.1735845236.1644808541-16137706.1644808541:embed:cite]"
+    "text": "これは簡単で，2値のfactorを従属変数，リンク関数をglm(family = binomial('logit'))のように指定してやればOK\nちなみにbinomial('probit')にしてやればプロビット回帰になる"
   },
   {
-    "objectID": "blog/posts/新しいパソコンを買ったらやること.html#office関連のインストール",
-    "href": "blog/posts/新しいパソコンを買ったらやること.html#office関連のインストール",
-    "title": "新しいパソコンを買ったらやること",
-    "section": "",
-    "text": "Office365のインストール\nOnedriveのインストール\n\n特に問題なくできた"
+    "objectID": "blog/posts/Rでロジットモデル.html#多項ロジット",
+    "href": "blog/posts/Rでロジットモデル.html#多項ロジット",
+    "title": "Rでロジットモデル",
+    "section": "多項ロジット",
+    "text": "多項ロジット\nnnet::multinomは検定とかやってくれないし，かといってmlogit::mlogitは独自のデータ形式を要求してくるので面倒くさい．ただ，nnetはbroomに対応しているので，検定部分はbroomに任せることでこの問題は解決．\nということでこれからはnnetで推定→broomに放り込んで検定というのを使っていきたい"
   },
   {
-    "objectID": "blog/posts/新しいパソコンを買ったらやること.html#homebrewのインストールmac",
-    "href": "blog/posts/新しいパソコンを買ったらやること.html#homebrewのインストールmac",
-    "title": "新しいパソコンを買ったらやること",
-    "section": "",
-    "text": "定番のパッケージマネージャー\n\n[https://brew.sh/index_ja:embed:cite]"
+    "objectID": "blog/posts/Rでロジットモデル.html#順序ロジット",
+    "href": "blog/posts/Rでロジットモデル.html#順序ロジット",
+    "title": "Rでロジットモデル",
+    "section": "順序ロジット",
+    "text": "順序ロジット\nMASS::polrが最有力か？ただし，data.frame形式しか受け付けていないのでtibbleのままデータを入れるとエラーになるのが難点．以前LMestで潜在移行モデルを動かした時にも似たようなことがあった．なんとかならんものか…\nちなみにpolrってなんだろうと思ったら，proportional odds logistic regression（比例オッズロジスティック回帰）の略でした．"
   },
   {
-    "objectID": "blog/posts/新しいパソコンを買ったらやること.html#r関連のインストール",
-    "href": "blog/posts/新しいパソコンを買ったらやること.html#r関連のインストール",
-    "title": "新しいパソコンを買ったらやること",
-    "section": "",
-    "text": "R本体のインストール\n\nrigというツールを使う。参考\nbrew tap r-lib/rig\nbrew install --cask rig \nrig add 4.3.3\n\nRstudioのインストール\n\nbrew install --cask rstudio\n\n自作したRstudioテーマを持ってくる（あとでgithubにでも置いておく）\nエディタで使用するフォントを選択\n\nmyricaを使いたかったが，なぜかMacだとうまくいっていない（調査中）\n\nRtools（Windows）or Xcode（Mac）のインストール\n\ngithub産のパッケージのビルドなどに必要\n\n（Macのみ）Xquartzのインストール\n\n詳しくはわからないが，入れないとRmarkdownがちゃんと動かなかった"
+    "objectID": "blog/posts/Rでロジットモデル.html#一般化順序ロジット",
+    "href": "blog/posts/Rでロジットモデル.html#一般化順序ロジット",
+    "title": "Rでロジットモデル",
+    "section": "一般化順序ロジット",
+    "text": "一般化順序ロジット\n平行性の仮定を一部緩めた部分比例オッズモデル（partial proportional odds model）1とかをやりたいときは，VGAM::vglmが使える．\nx1，x2，x3のうち，x1だけ平行性の仮定を緩めたいときは，以下のように書く\nVGAM::vglm(formula = y ~ x1 + x2 + x3, \n           family = VGAM::cumulative(parallel = FALSE ~ 1 + x1, reverse = TRUE),\n           data = data) \nparallelの書き方がミソで，parallel = FALSEのあとに等値制約を緩めたいパラメタをformulaで記述する．今回の場合は切片（閾値）とx1の係数だけは各段階で異なるので~ 1 + x1と記述する．また，parallel = TRUEとすると通常の順序ロジットモデルになる．\nreverseは係数の符号を反転させるオプションで，reverse = TRUEを入れるとStataのgologit2を用いた時の結果と同じになる．"
   },
   {
-    "objectID": "blog/posts/新しいパソコンを買ったらやること.html#gitのインストール",
-    "href": "blog/posts/新しいパソコンを買ったらやること.html#gitのインストール",
-    "title": "新しいパソコンを買ったらやること",
-    "section": "",
-    "text": "（winのみ）gitをインストール\n\nmacだとgit自体がすでにインストールされていた\n\nssh keyの作成→githubへ登録\ngit clone で適宜必要なプロジェクトをダウンロード"
-  },
-  {
-    "objectID": "blog/posts/新しいパソコンを買ったらやること.html#rmarkdown関連のインストール",
-    "href": "blog/posts/新しいパソコンを買ったらやること.html#rmarkdown関連のインストール",
-    "title": "新しいパソコンを買ったらやること",
-    "section": "",
-    "text": "tinytexのインストール\ntinytex::install_tinytex()でtex本体をインストール\nlatex_engine: lualatexの文章を作成し，エラーを見ながら適宜tinytex::tlmgr_install()で足りないパッケージを追加\n\n（Mac）haranoajiで引っかかった"
-  },
-  {
-    "objectID": "blog/posts/新しいパソコンを買ったらやること.html#zoteroのインストール",
-    "href": "blog/posts/新しいパソコンを買ったらやること.html#zoteroのインストール",
-    "title": "新しいパソコンを買ったらやること",
-    "section": "",
-    "text": "同期の開始\n\n「環境設定」の「同期」からユーザー名，パスワードを打ち込んで同期を開始\n「詳細」→「ファイルとフォルダ」から，基本ディレクトリを正しく設定する→pdfファイルと文献情報が紐づいた形で設定が引き継がれる\n\n\nあとは以下を参考に設定する\n[https://sickle-sword.hatenablog.com/entry/2021/06/05/160818?_ga=2.261856205.1735845236.1644808541-16137706.1644808541:embed:cite]"
-  },
-  {
-    "objectID": "blog/posts/tensorflow_with_Rstudio.html",
-    "href": "blog/posts/tensorflow_with_Rstudio.html",
-    "title": "tensorflowをRstudioで",
-    "section": "",
-    "text": "pythonをRStudioで使うのはreticulateパッケージによりだいぶ楽になった。\nただpythonにおけるdeep learningの代表的パッケージであるtensorflowをRStudioで使う際に少しつまづいたのでメモです。"
-  },
-  {
-    "objectID": "blog/posts/tensorflow_with_Rstudio.html#pythonの環境をどうやって構築するか",
-    "href": "blog/posts/tensorflow_with_Rstudio.html#pythonの環境をどうやって構築するか",
-    "title": "tensorflowをRstudioで",
-    "section": "pythonの環境をどうやって構築するか？",
-    "text": "pythonの環境をどうやって構築するか？\nRではrenvパッケージを使っている。ではpythonでは？\npythonはRよりも環境が複雑で変化も早そうなので、環境構築は重要。\n今回はpython公式が推奨しているっぽいvenvを使う。\n\n\n\n\n\n\nNote\n\n\n\n最初global環境でそのままやろうとしたが上手くいかず挫折。Dockerとかも有力だと思う。"
-  },
-  {
-    "objectID": "blog/posts/tensorflow_with_Rstudio.html#venvを使って仮想環境を用意",
-    "href": "blog/posts/tensorflow_with_Rstudio.html#venvを使って仮想環境を用意",
-    "title": "tensorflowをRstudioで",
-    "section": "venvを使って仮想環境を用意",
-    "text": "venvを使って仮想環境を用意\n\npythonがインストールされているか確認\n\nhomebrewなりでインストールしておく\nPATHを通しておく\n\n作業ディレクトリにて、terminalで以下のコマンドを実行し.venvフォルダを作成\n\n\n\n\nterminal\n\npython3 -m venv .venv"
-  },
-  {
-    "objectID": "blog/posts/tensorflow_with_Rstudio.html#pythonライブラリをインストール",
-    "href": "blog/posts/tensorflow_with_Rstudio.html#pythonライブラリをインストール",
-    "title": "tensorflowをRstudioで",
-    "section": "pythonライブラリをインストール",
-    "text": "pythonライブラリをインストール\n\n以下のコマンドを実行し、仮想環境を起動\n\npythonの場所が.venv内のフォルダになる\n\n\n\n\n\nterminal\n\nsource .venv/bin/activate\n\n\n\n\n\n\n\n\nNote\n\n\n\nsource .venv/bin/activateは、ライブラリをインストールするときは毎回実行する必要があります！\nまちがってglobal環境を汚さないように！\n\n\n\nライブラリをインストール\n\ntensorflowのほか、numpyも必須（tensorflowをインストールしたときに入る）\nM1 macでGPUを使いたい場合はtensorflow-metalもインストールする\n\n\n\n\n\nterminal\n\npip install tensorflow-macos\npip install tensorflow-metal\n\n\n\n仮想環境を抜けるときは以下のコマンドを実行\n\n\n\n\nterminal\n\ndeactivate"
-  },
-  {
-    "objectID": "blog/posts/tensorflow_with_Rstudio.html#rstudioでpythonを使う",
-    "href": "blog/posts/tensorflow_with_Rstudio.html#rstudioでpythonを使う",
-    "title": "tensorflowをRstudioで",
-    "section": "RStudioでpythonを使う",
-    "text": "RStudioでpythonを使う\n\npythonの場所を指定\n\nRStudioでpythonを使うには、RStudioにpythonの場所を教えてやる必要がある\n\n今回は.venv内のpythonを使いたいので、作業ディレクトリに.Rprofileを作成し、以下のコードを書く\nrenvを使っている場合は、.Rprofileが既に作成されていると思うので、その中に追記する\n\n\n\n\n\n.Rprofile\n\n# renv起動\nsource(\"renv/activate.R\")\n# pythonの場所を指定\nSys.setenv(RETICULATE_PYTHON = \".venv/bin/python3\")\n\n\n\n\n\n\n\n\nNote\n\n\n\npythonの場所の指定はrenvの起動より後に行う必要がある。もし先にpythonの場所を指定してしまうと、renvを起動したときにpythonの場所が上書きされてしまい、上手くいかなくなる。\n\n\n\n\npythonを起動\n\nRStudioでpythonのコードを実行すると、reticulate::repl_python()が走ってコンソールがpythonになる\n\n\n\n\npython\n\nimport sys\nprint(sys.version)\n\n\n3.11.10 (main, Sep  7 2024, 01:03:31) [Clang 15.0.0 (clang-1500.3.9.4)]\n\n\n\ntensorflowを起動して、GPUが使えるかを確認\nphysical_deviceでCPUとGPUの両方が表示されてればOK\n\n\n\n\npython\n\nimport tensorflow as tf\ntf.config.list_physical_devices()\n\n\n[PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU'), PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]"
-  },
-  {
-    "objectID": "blog/posts/tensorflow_with_Rstudio.html#ニューラルネットをやってみる",
-    "href": "blog/posts/tensorflow_with_Rstudio.html#ニューラルネットをやってみる",
-    "title": "tensorflowをRstudioで",
-    "section": "ニューラルネットをやってみる",
-    "text": "ニューラルネットをやってみる\n\nチュートリアルとして、手書きのアルファベットを分類するモデルを作成してみる\nRでデータを読み込んで、pythonに渡してtensorflowで分析\n参考\n\n\n\n\nR\n\nlibrary(tidyverse)\nlibrary(rsample)\nlibrary(reticulate)\n\n\n\nデータのダウンロード\n\n\n\nR\n\n# データのダウンロード\nif (!dir.exists('data')) dir.create('data')\ndownload.file('https://ai.stanford.edu/~btaskar/ocr/letter.data.gz', destfile = 'data/letter.data')\n\n\n\n\nデータの読み込み\n\n列名はhttps://ai.stanford.edu/~btaskar/ocr/letter.namesより取得できる\n詳細は以下の通り\n\nid: each letter is assigned a unique integer id\nletter: a-z\nnext_id: id for next letter in the word, -1 if last letter\nword_id: each word is assigned a unique integer id (not used)\nposition: position of letter in the word (not used)\nfold: 0-9 – cross-validation fold\np_i_j: 0/1 – value of pixel in row i, column j\n\nletterとp_i_j（pixel）のみ使うのでそれ以外は削除\n\n\n\n\nR\n\ncolname &lt;- read_lines('https://ai.stanford.edu/~btaskar/ocr/letter.names')\ndata &lt;- \n  read_tsv('data/letter.data', col_names = colname) |&gt; \n  # letterとpixelだけ残す\n  select(id, letter, matches('p_\\\\d+_\\\\d+'))\n\n\n\n\nデータの前処理\n\nletterを数値に変換\n\n\n\n\nR\n\ndf &lt;- \n  data |&gt; \n  mutate(\n    letter = factor(letter),\n    # pythonは0からはじまるので-1する（Rは1から）\n    letter_num = as.numeric(letter) - 1\n  )\n\n\n\n訓練データとテストデータに分割\n\n\n\n\nR\n\nsplit &lt;- rsample::initial_split(df, prop = 0.9)\ntrain &lt;- rsample::training(split)\ntest &lt;- rsample::testing(split)\n\n\n\npythonに渡せる形にデータを変換\n\nreticulate::np_array()であらかじめndarrayにしておくと便利\n\n\n\n\n\nR\n\ntrain_x &lt;- \n  train |&gt; \n  select(!c(id, letter, letter_num)) |&gt;\n  as.matrix() |&gt; \n  np_array()\n\ntrain_y &lt;-\n  train |&gt;\n  pull(letter_num) |&gt;\n  np_array()\n\ntest_x &lt;-\n  test |&gt; \n  select(!c(id, letter, letter_num)) |&gt;\n  as.matrix() |&gt; \n  np_array()\n\ntest_y &lt;-\n  test |&gt;\n  pull(letter_num) |&gt;\n  np_array()\n\n\n\n\nニューラルネットで学習\n\n中間層が1つのニューラルネットを作成\n\n入力層は16x8=128（ピクセル）\n中間層は64次元\n出力層はa-zの26分類\n\n\n\n\n\npython\n\nimport tensorflow as tf\nimport numpy as np\n\n# モデルの作成\nmodel = tf.keras.Sequential([\n  tf.keras.layers.Dense(64, activation='relu'),\n  tf.keras.layers.Dense(26, activation='softmax')\n])\n\nmodel.compile(\n  optimizer='adam',\n  loss='sparse_categorical_crossentropy',\n  metrics=['accuracy']\n)\n\n\n\nrで作成したデータをpythonに渡して学習\nr.train_xでRのtrain_xを参照できる\npythonのオブジェクトを渡すときはpy$train_x\n\n\n\n\npython\n\n# モデルの学習\nmodel.fit(r.train_x, r.train_y, epochs=10, verbose=2)\n\n\nEpoch 1/10\n1467/1467 - 5s - loss: 1.3436 - accuracy: 0.6342 - 5s/epoch - 4ms/step\nEpoch 2/10\n1467/1467 - 5s - loss: 0.9296 - accuracy: 0.7519 - 5s/epoch - 3ms/step\nEpoch 3/10\n1467/1467 - 5s - loss: 0.8666 - accuracy: 0.7679 - 5s/epoch - 3ms/step\nEpoch 4/10\n1467/1467 - 5s - loss: 0.8371 - accuracy: 0.7766 - 5s/epoch - 3ms/step\nEpoch 5/10\n1467/1467 - 5s - loss: 0.8229 - accuracy: 0.7802 - 5s/epoch - 3ms/step\nEpoch 6/10\n1467/1467 - 5s - loss: 0.8151 - accuracy: 0.7819 - 5s/epoch - 3ms/step\nEpoch 7/10\n1467/1467 - 5s - loss: 0.8121 - accuracy: 0.7816 - 5s/epoch - 3ms/step\nEpoch 8/10\n1467/1467 - 5s - loss: 0.8105 - accuracy: 0.7812 - 5s/epoch - 3ms/step\nEpoch 9/10\n1467/1467 - 5s - loss: 0.8127 - accuracy: 0.7813 - 5s/epoch - 3ms/step\nEpoch 10/10\n1467/1467 - 5s - loss: 0.8137 - accuracy: 0.7803 - 5s/epoch - 3ms/step\n&lt;keras.src.callbacks.History object at 0x30efc0f90&gt;\n\n\n\n\nテストデータで評価\n\nテストデータでの正答率は77%くらい\n\n\n\n\npython\n\n# モデルの評価\nmodel.evaluate(r.test_x, r.test_y, verbose=2)\n\n\n163/163 - 0s - loss: 0.8884 - accuracy: 0.7651 - 475ms/epoch - 3ms/step\n[0.8884354829788208, 0.7651457190513611]"
-  },
-  {
-    "objectID": "blog/posts/TMLE.html",
-    "href": "blog/posts/TMLE.html",
-    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
-    "section": "",
-    "text": "参考ページ：https://www.khstats.com/blog/tmle/tutorial-pt2\n\n\n\n\n\nlibrary(tidyverse)\nlibrary(sl3)\nlibrary(tmle3)\nlibrary(future)\n\nkable &lt;- partial(\n  knitr::kable,\n  digits = 3\n)\n\nplan(multisession, workers = 8)\n\nset.seed(7)\n\n\n\n\n\n元のサイトでは\\(Y\\)が2値変数になっていて、推定が真値と一致しているかどうかの評価が難しいので、ここでは\\(Y\\)を連続変数としている。\nATEの真値は0.3に設定\n\n\ngenerate_data &lt;- function(n){ \n    W1 &lt;- rbinom(n, size=1, prob=0.2) # binary confounder\n    W2 &lt;- rbinom(n, size=1, prob=0.5) # binary confounder\n    W3 &lt;- round(runif(n, min=2, max=7)) # continuous confounder\n    W4 &lt;- round(runif(n, min=0, max=4)) # continuous confounder\n    A  &lt;- rbinom(n, size=1, prob= plogis(-0.2 + 0.2*W2 + log(0.1*W3) + 0.3*W4 + 0.2*W1*W4)) # binary treatment depends on confounders\n    Y &lt;- -1 + 0.3*A - 0.1*W1 + 0.2*W2 + 0.3*W3 - 0.1*W4 + sin(0.1*W2*W4) # continuous outcome depends on confounders\n    return(tibble(Y, W1, W2, W3, W4, A))\n}\n\nn &lt;- 1000\ndat_obs &lt;- generate_data(n) # generate a data set with n observations\n\n\ndat_obs |&gt; \n  summarise(samplemean = mean(Y), .by = A)\n\n# A tibble: 2 × 2\n      A samplemean\n  &lt;int&gt;      &lt;dbl&gt;\n1     1      0.686\n2     0      0.237\n\n\n\n\n\n\nglm、Lasso、Random forest、Multivariate adaptive regression splineをスタッキング\n\n\nsl_libs &lt;-\n  Lrnr_sl$new(\n    learners = Stack$new(\n      Lrnr_glm$new(), \n      Lrnr_glmnet$new(alpha = 1), \n      Lrnr_ranger$new(num.trees = 2000, max.depth = 3), \n      Lrnr_earth$new()\n    )\n  )\n\n\n\n\n\n\n\n\\[\n{\\mathrm E}[Y | A, W]\n\\]\n\ntask &lt;- \n  sl3_Task$new(\n    dat_obs, \n    covariates = select(dat_obs, !Y) |&gt; names(), \n    outcome = 'Y', \n    outcome_type = 'continuous', \n    folds = 8L\n  )\n\ntask_A1 &lt;- \n  sl3_Task$new(\n    dat_obs |&gt; mutate(A = 1), \n    covariates = select(dat_obs, !Y) |&gt; names(), \n    outcome = 'Y', \n    outcome_type = 'continuous', \n    folds = 8L\n  )\n\ntask_A0 &lt;- \n  sl3_Task$new(\n    dat_obs |&gt; mutate(A = 0), \n    covariates = select(dat_obs, !Y) |&gt; names(), \n    outcome = 'Y', \n    outcome_type = 'continuous', \n    folds = 8L\n  )\n\n# 全サンプルで学習\nsl_fit &lt;- sl_libs$train(task)\n\n\n以下の3つの予測値を算出\n\\(A := 1\\)は全サンプルでAを1にする（\\(A = 1\\)はサンプルのうちのAが1となる部分集団）\n\n\\[\\begin{align}\n&{\\mathrm E}[Y | A, W] \\\\\n&{\\mathrm E}[Y | A := 1, W] \\\\\n&{\\mathrm E}[Y | A := 0, W]\n\\end{align}\\]\n\ndat_tmle1 &lt;- \n  dat_obs |&gt; \n  mutate(\n    # 観測サンプルについての予測値\n    Q_A = sl_fit$predict(task),\n    # 全てのサンプルでA = 1に固定したときの予測値\n    Q_A1 = sl_fit$predict(task_A1),\n    # 全てのサンプルでA = 0に固定した時の予測値\n    Q_A0 = sl_fit$predict(task_A0)\n  )\n\n\nstandardization（g-computation）によるATE\n\n\\[\nATE_{g \\mathrm{-}comp} = {\\mathrm E}[ {\\mathrm E}[Y | A := 1, W] - {\\mathrm E}[Y | A := 0, W]]\n\\]\n\ndat_tmle1 |&gt; \n  summarise(ATE = mean(Q_A1 - Q_A0))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.300\n\n\n\n\n\n\n\n傾向スコアを機械学習モデルにより予測\n\n\\[\n\\mathrm{Pr}(A = 1 | W)\n\\]\n\ntask_g &lt;- \n  sl3_Task$new(\n    data = dat_obs, \n    covariates = select(dat_obs, !c(Y, A)) |&gt; names(), \n    outcome = 'A', \n    outcome_type = 'binomial', \n    folds = 8\n  )\n\nsl_fit_g &lt;- sl_libs$train(task_g)\n\n\n\n\n傾向スコアからClever Covariateと呼ばれる情報を作成（IPWに似ている）\n\n\\[\\begin{align}\n&H(A,W) &= \\frac{A}{\\mathrm{Pr}(A = 1 | W)} - \\frac{1 - A}{1 - \\mathrm{Pr}(A = 1 | W)} \\\\\n&H(1,W) &= \\frac{A}{\\mathrm{Pr}(A = 1 | W)} \\\\\n&H(0,W) &= - \\frac{1 - A}{1 - \\mathrm{Pr}(A = 1 | W)}\n\\end{align}\\]\n\ndat_tmle2 &lt;- \n  dat_tmle1 |&gt; \n  mutate(\n    # Propensity Scoreの予測\n    ps = sl_fit_g$predict(task_g),\n    # ipw (Inverse Probability Weight)\n    ipw = case_when(\n      A == 1 ~ 1 / ps, \n      A == 0 ~ 1 / (1 - ps)\n    ),\n    # Clever Covariates\n    H_A = case_when(\n      A == 1 ~ 1 / ps,\n      A == 0 ~ -1 / (1 - ps)\n    ),\n    H_A1 = case_when(\n      A == 1 ~ H_A,\n      A == 0 ~ 0\n    ),\n    H_A0 = case_when(\n      A == 1 ~ 0,\n      A == 0 ~ H_A\n    )\n  )\n\n\nIPWによるATE\n\n\\[\nATE_{ipw} = {\\mathrm E}[\\frac{A}{\\mathrm{Pr}(A = 1 | W)}Y - \\frac{1 - A}{1 - \\mathrm{Pr}(A = 1 | W)}Y]\n\\]\n\ndat_tmle2 |&gt; \n  summarise(CFmean = sum(Y*ipw) / sum(ipw), .by = A) |&gt; \n  arrange(A) |&gt; \n  summarise(ATE = diff(CFmean))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.298\n\n\n\nAugumented IPWによるATE\n\n（ほんとは関数推定時にcross-fitをする）\n\n\n\\[\nATE_{aipw} = \\mathrm E[\\mathrm E[Y | A := 1, W] - \\mathrm E[Y | A := 0, W] + \\frac{A}{\\mathrm Pr(A = 1 | W)}(Y - {\\mathrm E}[Y | A := 1, W]) - \\frac{1 - A}{1 - \\mathrm Pr(A = 1 | W)}(Y - \\mathrm E[Y | A := 0, W])]\n\\]\n\ndat_tmle2 |&gt; \n  summarise(ATE = mean(Q_A1 - Q_A0 + ipw*A*(Y - Q_A1) - ipw*(1 - A)*(Y - Q_A0)))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.300\n\n\n\n\n\n\n\nAIPWの問題点：統計的最適化がターゲットのパラメータ（ATE）に対してではなく、母平均関数\\({\\mathrm E}[Y | A,W]\\)および傾向スコア関数\\(\\mathrm{Pr}(A = 1 | W)\\)のパラメータについて最適化されている点\n推定したいパラメータ（ATE）のEIF（Efficient Influence Function）を解くことがこのステップのポイントらしい\n具体的には、Step1で推定した\\(\\mathrm{E}[Y | A, W]\\)と、Step2で推定したClever Covariate\\(H(A, W)\\)を用いて、以下の回帰式の\\(\\epsilon\\)（変動パラメータ）を推定する\n\n\\[\nY = \\mathrm{E}[Y | A, W] + \\epsilon H(A,W)\n\\]\n\n切片が0で、Step1の推定値の係数を1に固定するために、-1とoffsetを利用する\n\n\nfit &lt;- glm(Y ~ -1 + offset(Q_A) + H_A, data = dat_tmle2, family = gaussian())\n\n\n変動パラメータの推定値\n\n\nepsilon &lt;- coef(fit)\n\nepsilon\n\n        H_A \n6.40031e-07 \n\n\n\n\n\n\n推定したepsilonと\\(Y\\)の予測値をもとに、\\(Y\\)の予測値を更新\n\n\ndat_tmle3 &lt;- \n  dat_tmle2 |&gt; \n  mutate(\n    Q_A_update = Q_A + epsilon*H_A,\n    Q_A1_update = Q_A1 + epsilon*H_A1,\n    Q_A0_update = Q_A0 + epsilon*H_A0,\n  )\n\n\n\n\n\n更新されたアウトカムの予測値を用いて、Standardizationの要領でATEを推定\n\n\ndat_tmle3 |&gt; \n  summarise(ATE = mean(Q_A1_update - Q_A0_update))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.300\n\nATE &lt;- mean(dat_tmle3$Q_A1_update - dat_tmle3$Q_A0_update)\n\n\n\n\n\nTMLEではbootstrapによらずとも標準誤差を算出できる（！）\nまずは、Influence Functionを推定する\nInfluence Function：各サンプルがどれだけATEに影響をあたえるか？\n\n\ndat_tmle4 &lt;- \n  dat_tmle3 |&gt; \n  mutate(\n    IF = (Y - Q_A_update)*H_A + Q_A1_update - Q_A0_update - ATE\n  )\n\nATEの標準誤差はIFを用いて\n\\[\nSE = \\sqrt{\\frac{\\mathrm{var}(IF)}{N}}\n\\]\n\ndat_tmle4 |&gt; \n  summarise(SE = sqrt(var(IF) / 1000))\n\n# A tibble: 1 × 1\n         SE\n      &lt;dbl&gt;\n1 0.0000217"
-  },
-  {
-    "objectID": "blog/posts/TMLE.html#下準備",
-    "href": "blog/posts/TMLE.html#下準備",
-    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
-    "section": "",
-    "text": "library(tidyverse)\nlibrary(sl3)\nlibrary(tmle3)\nlibrary(future)\n\nkable &lt;- partial(\n  knitr::kable,\n  digits = 3\n)\n\nplan(multisession, workers = 8)\n\nset.seed(7)\n\n\n\n\n\n元のサイトでは\\(Y\\)が2値変数になっていて、推定が真値と一致しているかどうかの評価が難しいので、ここでは\\(Y\\)を連続変数としている。\nATEの真値は0.3に設定\n\n\ngenerate_data &lt;- function(n){ \n    W1 &lt;- rbinom(n, size=1, prob=0.2) # binary confounder\n    W2 &lt;- rbinom(n, size=1, prob=0.5) # binary confounder\n    W3 &lt;- round(runif(n, min=2, max=7)) # continuous confounder\n    W4 &lt;- round(runif(n, min=0, max=4)) # continuous confounder\n    A  &lt;- rbinom(n, size=1, prob= plogis(-0.2 + 0.2*W2 + log(0.1*W3) + 0.3*W4 + 0.2*W1*W4)) # binary treatment depends on confounders\n    Y &lt;- -1 + 0.3*A - 0.1*W1 + 0.2*W2 + 0.3*W3 - 0.1*W4 + sin(0.1*W2*W4) # continuous outcome depends on confounders\n    return(tibble(Y, W1, W2, W3, W4, A))\n}\n\nn &lt;- 1000\ndat_obs &lt;- generate_data(n) # generate a data set with n observations\n\n\ndat_obs |&gt; \n  summarise(samplemean = mean(Y), .by = A)\n\n# A tibble: 2 × 2\n      A samplemean\n  &lt;int&gt;      &lt;dbl&gt;\n1     1      0.686\n2     0      0.237\n\n\n\n\n\n\nglm、Lasso、Random forest、Multivariate adaptive regression splineをスタッキング\n\n\nsl_libs &lt;-\n  Lrnr_sl$new(\n    learners = Stack$new(\n      Lrnr_glm$new(), \n      Lrnr_glmnet$new(alpha = 1), \n      Lrnr_ranger$new(num.trees = 2000, max.depth = 3), \n      Lrnr_earth$new()\n    )\n  )"
-  },
-  {
-    "objectID": "blog/posts/TMLE.html#step1アウトカムの予測",
-    "href": "blog/posts/TMLE.html#step1アウトカムの予測",
-    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
-    "section": "",
-    "text": "\\[\n{\\mathrm E}[Y | A, W]\n\\]\n\ntask &lt;- \n  sl3_Task$new(\n    dat_obs, \n    covariates = select(dat_obs, !Y) |&gt; names(), \n    outcome = 'Y', \n    outcome_type = 'continuous', \n    folds = 8L\n  )\n\ntask_A1 &lt;- \n  sl3_Task$new(\n    dat_obs |&gt; mutate(A = 1), \n    covariates = select(dat_obs, !Y) |&gt; names(), \n    outcome = 'Y', \n    outcome_type = 'continuous', \n    folds = 8L\n  )\n\ntask_A0 &lt;- \n  sl3_Task$new(\n    dat_obs |&gt; mutate(A = 0), \n    covariates = select(dat_obs, !Y) |&gt; names(), \n    outcome = 'Y', \n    outcome_type = 'continuous', \n    folds = 8L\n  )\n\n# 全サンプルで学習\nsl_fit &lt;- sl_libs$train(task)\n\n\n以下の3つの予測値を算出\n\\(A := 1\\)は全サンプルでAを1にする（\\(A = 1\\)はサンプルのうちのAが1となる部分集団）\n\n\\[\\begin{align}\n&{\\mathrm E}[Y | A, W] \\\\\n&{\\mathrm E}[Y | A := 1, W] \\\\\n&{\\mathrm E}[Y | A := 0, W]\n\\end{align}\\]\n\ndat_tmle1 &lt;- \n  dat_obs |&gt; \n  mutate(\n    # 観測サンプルについての予測値\n    Q_A = sl_fit$predict(task),\n    # 全てのサンプルでA = 1に固定したときの予測値\n    Q_A1 = sl_fit$predict(task_A1),\n    # 全てのサンプルでA = 0に固定した時の予測値\n    Q_A0 = sl_fit$predict(task_A0)\n  )\n\n\nstandardization（g-computation）によるATE\n\n\\[\nATE_{g \\mathrm{-}comp} = {\\mathrm E}[ {\\mathrm E}[Y | A := 1, W] - {\\mathrm E}[Y | A := 0, W]]\n\\]\n\ndat_tmle1 |&gt; \n  summarise(ATE = mean(Q_A1 - Q_A0))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.300"
-  },
-  {
-    "objectID": "blog/posts/TMLE.html#step2処置確率傾向スコアの予測",
-    "href": "blog/posts/TMLE.html#step2処置確率傾向スコアの予測",
-    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
-    "section": "",
-    "text": "傾向スコアを機械学習モデルにより予測\n\n\\[\n\\mathrm{Pr}(A = 1 | W)\n\\]\n\ntask_g &lt;- \n  sl3_Task$new(\n    data = dat_obs, \n    covariates = select(dat_obs, !c(Y, A)) |&gt; names(), \n    outcome = 'A', \n    outcome_type = 'binomial', \n    folds = 8\n  )\n\nsl_fit_g &lt;- sl_libs$train(task_g)\n\n\n\n\n傾向スコアからClever Covariateと呼ばれる情報を作成（IPWに似ている）\n\n\\[\\begin{align}\n&H(A,W) &= \\frac{A}{\\mathrm{Pr}(A = 1 | W)} - \\frac{1 - A}{1 - \\mathrm{Pr}(A = 1 | W)} \\\\\n&H(1,W) &= \\frac{A}{\\mathrm{Pr}(A = 1 | W)} \\\\\n&H(0,W) &= - \\frac{1 - A}{1 - \\mathrm{Pr}(A = 1 | W)}\n\\end{align}\\]\n\ndat_tmle2 &lt;- \n  dat_tmle1 |&gt; \n  mutate(\n    # Propensity Scoreの予測\n    ps = sl_fit_g$predict(task_g),\n    # ipw (Inverse Probability Weight)\n    ipw = case_when(\n      A == 1 ~ 1 / ps, \n      A == 0 ~ 1 / (1 - ps)\n    ),\n    # Clever Covariates\n    H_A = case_when(\n      A == 1 ~ 1 / ps,\n      A == 0 ~ -1 / (1 - ps)\n    ),\n    H_A1 = case_when(\n      A == 1 ~ H_A,\n      A == 0 ~ 0\n    ),\n    H_A0 = case_when(\n      A == 1 ~ 0,\n      A == 0 ~ H_A\n    )\n  )\n\n\nIPWによるATE\n\n\\[\nATE_{ipw} = {\\mathrm E}[\\frac{A}{\\mathrm{Pr}(A = 1 | W)}Y - \\frac{1 - A}{1 - \\mathrm{Pr}(A = 1 | W)}Y]\n\\]\n\ndat_tmle2 |&gt; \n  summarise(CFmean = sum(Y*ipw) / sum(ipw), .by = A) |&gt; \n  arrange(A) |&gt; \n  summarise(ATE = diff(CFmean))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.298\n\n\n\nAugumented IPWによるATE\n\n（ほんとは関数推定時にcross-fitをする）\n\n\n\\[\nATE_{aipw} = \\mathrm E[\\mathrm E[Y | A := 1, W] - \\mathrm E[Y | A := 0, W] + \\frac{A}{\\mathrm Pr(A = 1 | W)}(Y - {\\mathrm E}[Y | A := 1, W]) - \\frac{1 - A}{1 - \\mathrm Pr(A = 1 | W)}(Y - \\mathrm E[Y | A := 0, W])]\n\\]\n\ndat_tmle2 |&gt; \n  summarise(ATE = mean(Q_A1 - Q_A0 + ipw*A*(Y - Q_A1) - ipw*(1 - A)*(Y - Q_A0)))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.300"
-  },
-  {
-    "objectID": "blog/posts/TMLE.html#step3変動パラメータの推定",
-    "href": "blog/posts/TMLE.html#step3変動パラメータの推定",
-    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
-    "section": "",
-    "text": "AIPWの問題点：統計的最適化がターゲットのパラメータ（ATE）に対してではなく、母平均関数\\({\\mathrm E}[Y | A,W]\\)および傾向スコア関数\\(\\mathrm{Pr}(A = 1 | W)\\)のパラメータについて最適化されている点\n推定したいパラメータ（ATE）のEIF（Efficient Influence Function）を解くことがこのステップのポイントらしい\n具体的には、Step1で推定した\\(\\mathrm{E}[Y | A, W]\\)と、Step2で推定したClever Covariate\\(H(A, W)\\)を用いて、以下の回帰式の\\(\\epsilon\\)（変動パラメータ）を推定する\n\n\\[\nY = \\mathrm{E}[Y | A, W] + \\epsilon H(A,W)\n\\]\n\n切片が0で、Step1の推定値の係数を1に固定するために、-1とoffsetを利用する\n\n\nfit &lt;- glm(Y ~ -1 + offset(Q_A) + H_A, data = dat_tmle2, family = gaussian())\n\n\n変動パラメータの推定値\n\n\nepsilon &lt;- coef(fit)\n\nepsilon\n\n        H_A \n6.40031e-07"
-  },
-  {
-    "objectID": "blog/posts/TMLE.html#step4アウトカムの予測値を更新",
-    "href": "blog/posts/TMLE.html#step4アウトカムの予測値を更新",
-    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
-    "section": "",
-    "text": "推定したepsilonと\\(Y\\)の予測値をもとに、\\(Y\\)の予測値を更新\n\n\ndat_tmle3 &lt;- \n  dat_tmle2 |&gt; \n  mutate(\n    Q_A_update = Q_A + epsilon*H_A,\n    Q_A1_update = Q_A1 + epsilon*H_A1,\n    Q_A0_update = Q_A0 + epsilon*H_A0,\n  )"
-  },
-  {
-    "objectID": "blog/posts/TMLE.html#step5推定したい統計量を推定",
-    "href": "blog/posts/TMLE.html#step5推定したい統計量を推定",
-    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
-    "section": "",
-    "text": "更新されたアウトカムの予測値を用いて、Standardizationの要領でATEを推定\n\n\ndat_tmle3 |&gt; \n  summarise(ATE = mean(Q_A1_update - Q_A0_update))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.300\n\nATE &lt;- mean(dat_tmle3$Q_A1_update - dat_tmle3$Q_A0_update)"
-  },
-  {
-    "objectID": "blog/posts/TMLE.html#step6標準誤差の推定",
-    "href": "blog/posts/TMLE.html#step6標準誤差の推定",
-    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
-    "section": "",
-    "text": "TMLEではbootstrapによらずとも標準誤差を算出できる（！）\nまずは、Influence Functionを推定する\nInfluence Function：各サンプルがどれだけATEに影響をあたえるか？\n\n\ndat_tmle4 &lt;- \n  dat_tmle3 |&gt; \n  mutate(\n    IF = (Y - Q_A_update)*H_A + Q_A1_update - Q_A0_update - ATE\n  )\n\nATEの標準誤差はIFを用いて\n\\[\nSE = \\sqrt{\\frac{\\mathrm{var}(IF)}{N}}\n\\]\n\ndat_tmle4 |&gt; \n  summarise(SE = sqrt(var(IF) / 1000))\n\n# A tibble: 1 × 1\n         SE\n      &lt;dbl&gt;\n1 0.0000217"
-  },
-  {
-    "objectID": "blog/posts/Borusyak_2024.html",
-    "href": "blog/posts/Borusyak_2024.html",
-    "title": "Borusyak et al. (2024)",
-    "section": "",
-    "text": "Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, “Revisiting Event-Study Designs: Robust and Efficient Estimation,” The Review of Economic Studies, (10.1093/restud/rdae007)."
-  },
-  {
-    "objectID": "blog/posts/Borusyak_2024.html#文献",
-    "href": "blog/posts/Borusyak_2024.html#文献",
-    "title": "Borusyak et al. (2024)",
-    "section": "",
-    "text": "Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, “Revisiting Event-Study Designs: Robust and Efficient Estimation,” The Review of Economic Studies, (10.1093/restud/rdae007)."
-  },
-  {
-    "objectID": "blog/posts/Borusyak_2024.html#ざっくりとした要約",
-    "href": "blog/posts/Borusyak_2024.html#ざっくりとした要約",
-    "title": "Borusyak et al. (2024)",
-    "section": "ざっくりとした要約",
-    "text": "ざっくりとした要約\nDiD推定をg-computationのようなアイデアで行う手法を提案した論文です。従来のTwo-way fixed effectによる推定では問題が生じることが指摘されてきた、処置のタイミングによる効果の異質性（staggerd DiD design）の問題などに対処しています。通常g-computationによる推定量の標準誤差はBootstrapで計算することが多いと思うのですが、この論文では推定量の漸近正規性などを示しつつ、Bootstrapを使わずに標準誤差を計算する方法を提案している点が興味深いです。"
-  },
-  {
-    "objectID": "blog/posts/Borusyak_2024.html#estimand",
-    "href": "blog/posts/Borusyak_2024.html#estimand",
-    "title": "Borusyak et al. (2024)",
-    "section": "Estimand",
-    "text": "Estimand\n\n\\(Y_{it}(1), Y_{it}(0)\\)：個人\\(i\\)、時点\\(t\\)における介入を受けた場合と受けていない場合のpotential outcome\n\\(D_{it}\\)：介入を受けたかどうかのバイナリ変数\n\n個人レベルの因果効果\n\\[\\begin{align*}\n\\tau_{it} = Y_{it}(1) - Y_{it}(0) = Y_{it} - Y_{it}(0)\n\\end{align*}\\]\nこれを関心のある集団について平均する\n\nATT：\\(\\mathrm{E}[\\tau_{it}|D_{it} = 1] = \\mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1]\\)\nevent study：\\(\\mathrm{E}[\\tau_{it}|D_{it} = 1, T = t] = \\mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1, T = t]\\)\n特定の集団におけるATT：\\(\\mathrm{E}[\\tau_{it}|D_{it} = 1, Gender] = \\mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1, Gender]\\)\n\n論文ではウェイトを使った書き方をしているのでややこしいが、おそらくはこういうことだと思われる。"
-  },
-  {
-    "objectID": "blog/posts/Borusyak_2024.html#識別",
-    "href": "blog/posts/Borusyak_2024.html#識別",
-    "title": "Borusyak et al. (2024)",
-    "section": "識別",
-    "text": "識別\n因果効果を識別するための仮定は以下の通り\n\nGeneral moodel of \\(Y(0)\\)：\\(\\mathrm{E}[Y_{it}(0)] = A'_{it}\\lambda_i + X'_{it}\\delta\\)の形で書けること\n\n\n\\(A'_{it}\\lambda_i\\)：個体の固定効果＋固定効果と共変量の交互作用\n\\(X'_{it}\\delta\\)：時点の固定効果＋時変の共変量\n要するに\\(\\mathrm{E}[Y_{it}(0)]\\)が適切のモデル化できていること\n\n\nNo-anticipation effects：\\(Y_{it} = Y_{it}(0) \\ if \\ D_{it} = 0\\)\n\n\nConsistencyと同じ？\n\n\nModel of causal effects\n\n\n効果の異質性がパラメトリックモデルで書けること（？）\n複雑すぎるとダメということ？このあたりちょっとわからなかったです"
-  },
-  {
-    "objectID": "blog/posts/Borusyak_2024.html#推定",
-    "href": "blog/posts/Borusyak_2024.html#推定",
-    "title": "Borusyak et al. (2024)",
-    "section": "推定",
-    "text": "推定\n\n\\(\\mathrm{E}[Y_{it}(0)]\\)の推定\n\n\n処置を受けていないサンプル（\\(D_{it} = 0\\)）を用いて、以下のモデルをOLSで推定\n\n\\[\nY_{it} = A'_{it}\\lambda_i + X'_{it}\\delta + \\varepsilon_{it}\n\\]\n\n\\(\\hat{Y}_{it}(0) | D_{it} = 1\\) の推定\n\n\n推定したモデルに、処置を受けたサンプル（\\(D_{it} = 1\\)）を代入し、処置を受けたサンプルにおいて、処置を受けていなかった場合のpotential outcomeを予測\n\n\n\\(\\hat{\\tau}_{it}\\)の推定\n\n\n処置を受けたサンプルの、観察データ\\(Y_{it}\\)と予測したpotential outcome\\(\\hat{Y}_{it}(0)\\)の差を取る\n\n\n関心のある集団について平均値をとる\n\n\\[\n\\mathrm{ATT} = \\mathrm{E}[\\hat{\\tau}_{it}|D_{it} = 1]\n\\]\n標準誤差の推定も説明があるが、理解できなかった…"
-  },
-  {
-    "objectID": "blog/posts/Borusyak_2024.html#分析例",
-    "href": "blog/posts/Borusyak_2024.html#分析例",
-    "title": "Borusyak et al. (2024)",
-    "section": "分析例",
-    "text": "分析例\n著者によるStataパッケージの他、RではKyle Buttsによるdidimputationパッケージがある。\nここではdidimputationパッケージのトイデータを用いて、パッケージによる結果と、手計算による結果を比較する。\n\n# remotes::install_github('kylebutts/didimputation')\nlibrary(tidyverse)\nlibrary(fixest)\nlibrary(didimputation)"
-  },
-  {
-    "objectID": "blog/posts/Borusyak_2024.html#パッケージの結果",
-    "href": "blog/posts/Borusyak_2024.html#パッケージの結果",
-    "title": "Borusyak et al. (2024)",
-    "section": "パッケージの結果",
-    "text": "パッケージの結果\n\ndid_imputation(data = df_het, yname = \"dep_var\", gname = \"g\", tname = \"year\", idname = \"unit\") |&gt; \n  knitr::kable()\n\n\n\n\nterm\nestimate\nstd.error\nconf.low\nconf.high\n\n\n\n\ntreat\n2.262952\n0.0313968\n2.201414\n2.32449"
-  },
-  {
-    "objectID": "blog/posts/Borusyak_2024.html#手計算",
-    "href": "blog/posts/Borusyak_2024.html#手計算",
-    "title": "Borusyak et al. (2024)",
-    "section": "手計算",
-    "text": "手計算\n\n# OLSで処置を受けていないサンプルにおけるモデルを推定\nmodel &lt;- feols(dep_var ~ 1 | year + unit, data = df_het |&gt; filter(!treat), combine.quick = TRUE)\n\nprediction &lt;- \n  # 処置を受けた集団の予測値（potential outcome）を計算\n  broom::augment(model, newdata = df_het |&gt; filter(treat)) |&gt; \n  # 差分を計算\n  mutate(tau = dep_var - .fitted) \n\n# 集計\nprediction |&gt; \n  summarise(\n    ATT = mean(tau)\n  ) |&gt; \n  knitr::kable()\n\n\n\n\nATT\n\n\n\n\n2.262952\n\n\n\n\n\nATTの点推定値は一致する。"
-  },
-  {
-    "objectID": "blog/posts/Borusyak_2024.html#集団による異質性",
-    "href": "blog/posts/Borusyak_2024.html#集団による異質性",
-    "title": "Borusyak et al. (2024)",
-    "section": "集団による異質性",
-    "text": "集団による異質性\n次に、処置のタイミングにより効果が異なる場合の分析を考える。\nパッケージでは以下のように、処置のタイミングが同じグループごとにウェイトを作成してやることで、集団ごとの効果を推定できる。\n\ndf_het |&gt; \n  mutate(\n    group1 = case_when(\n      group == 'Group 1' & treat ~ 1,\n      .default = 0\n    ),\n    group2 = case_when(\n      group == 'Group 2' & treat ~ 1,\n      .default = 0\n    )\n  ) |&gt; \n  did_imputation(yname = \"dep_var\", gname = \"g\", tname = \"year\", idname = \"unit\", wtr = c('group1', 'group2')) |&gt; \n  knitr::kable()\n\n\n\n\nterm\nestimate\nstd.error\nconf.low\nconf.high\n\n\n\n\ngroup1\n2.513439\n0.0381686\n2.438629\n2.588249\n\n\ngroup2\n1.795048\n0.0389609\n1.718685\n1.871412\n\n\n\n\n\n手計算では、集計をグループごとに行えばよい。\n\n# 集計\nprediction |&gt; \n  summarise(\n    ATT = mean(tau),\n    .by = c(group)\n  ) |&gt; \n  knitr::kable()\n\n\n\n\ngroup\nATT\n\n\n\n\nGroup 1\n2.513439\n\n\nGroup 2\n1.795048\n\n\n\n\n\nこちらも点推定値は一致する。"
-  },
-  {
-    "objectID": "research.html",
-    "href": "research.html",
-    "title": "Research",
-    "section": "",
-    "text": "鎌田健太郎，2024，「初年次教育の導入・改革は学生の学習を促進したか——国立総合大学における因果効果の検討」『教育学研究』91(1): 1–12．\n\n Appendix  再現コード\n\n鎌田健太郎，2022，「高等教育再拡大期における学生活動の変化——Typological Approach による学生下位集団の時代比較」『高等教育研究』25: 257–74．"
-  },
-  {
-    "objectID": "research.html#査読付き論文",
-    "href": "research.html#査読付き論文",
-    "title": "Research",
-    "section": "",
-    "text": "鎌田健太郎，2024，「初年次教育の導入・改革は学生の学習を促進したか——国立総合大学における因果効果の検討」『教育学研究』91(1): 1–12．\n\n Appendix  再現コード\n\n鎌田健太郎，2022，「高等教育再拡大期における学生活動の変化——Typological Approach による学生下位集団の時代比較」『高等教育研究』25: 257–74．"
-  },
-  {
-    "objectID": "profile.en.html",
-    "href": "profile.en.html",
-    "title": "Profile",
-    "section": "",
-    "text": "April 2023 - Present: Research Fellow (DC1), Japan Society for the Promotion of Science (JSPS)\nApril 2021 - Present: Project Academic Specialist, Center for Social Research and Data Archives, Institute of Social Science, The University of Tokyo"
-  },
-  {
-    "objectID": "profile.en.html#position",
-    "href": "profile.en.html#position",
-    "title": "Profile",
-    "section": "",
-    "text": "April 2023 - Present: Research Fellow (DC1), Japan Society for the Promotion of Science (JSPS)\nApril 2021 - Present: Project Academic Specialist, Center for Social Research and Data Archives, Institute of Social Science, The University of Tokyo"
-  },
-  {
-    "objectID": "profile.en.html#education",
-    "href": "profile.en.html#education",
-    "title": "Profile",
-    "section": "Education",
-    "text": "Education\n\nApril 2023 - Present: Ph.D. Student in Division of Social Sciences in Education, Graduate School of Education, The University of Tokyo\nApril 2021 - March 2023: M.A. in Division of Social Sciences in Education, Graduate School of Education, The University of Tokyo\nApril 2019 - March 2021: B.A. in Division of Social Sciences in Education, Faculty of Education, The University of Tokyo"
-  },
-  {
-    "objectID": "blog/index.html",
-    "href": "blog/index.html",
-    "title": "Blog",
-    "section": "",
-    "text": "学校外教育の参加率\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nNov 1, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n手動でSuperlearner\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nNov 1, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n信頼区間を理解したい\n\n\n\nStatistics\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nSep 21, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nPIAAC、PISAの標準誤差\n\n\n\nStatistics\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nSep 21, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nBorusyak et al. (2024)\n\n\n\nCausal Inference\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nAug 19, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n複利計算\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nAug 15, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nマルチアンサーの処理\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nJun 5, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nバージョンを指定したRのインストール\n\n\n\nR\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nApr 30, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nBLASの変更によるRの高速化\n\n\n\nR\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nMar 10, 2024\n\n\n\n\n\n\n\n\n\n\n\n\ntensorflowをRstudioで\n\n\n\nR Tips\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 23, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nCausal Decomposition Analysis\n\n\n\nCausal Inference\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nTargeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)\n\n\n\nCausal Inference\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nマルチレベルモデルは点推定値に影響を及ぼすか？\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nrlang学習\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nSudharsanan & Bijlsma (2021)\n\n\n\nCausal Inference\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nLongitudinal TMLE\n\n\n\nCausal Inference\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n観測度数・期待度数から対数尤度を計算する方法\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n学生生活実態調査の文字コード\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nJun 25, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n新しいパソコンを買ったらやること\n\n\n\nSetup\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 14, 2022\n\n\n\n\n\n\n\n\n\n\n\n\nZoteroの設定備忘録\n\n\n\nSetup\n\n\nZotero\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nJun 5, 2021\n\n\n\n\n\n\n\n\n\n\n\n\nRでロジットモデル\n\n\n\nStatistics\n\n\nR\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nApr 29, 2021\n\n\n\n\n\n\n\n\n\n\n\n\n移動平均のかゆいところに，partial = TRUE\n\n\n\nR\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nOct 25, 2020\n\n\n\n\n\n\n\n\n\n\n\n\nRとPython書き比べ（ユークリッドの互除法）\n\n\n\nR\n\n\nPython\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nJul 31, 2020\n\n\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "blog/posts/Causal_Decomposition.html",
-    "href": "blog/posts/Causal_Decomposition.html",
-    "title": "Causal Decomposition Analysis",
-    "section": "",
-    "text": "library(tidyverse)\nlibrary(cfdecomp)\nlibrary(gapclosing)\nlibrary(causal.decomp)\n\n\nd &lt;- \n  sMIDUS |&gt; \n  transmute(Y = health |&gt; as.numeric(),  # outcome\n            T = edu |&gt; as.numeric(),   # treatment (continuous)\n            T2 = edu |&gt; case_match(4:6 ~ 0,   # treatment (binary)\n                                   7:9 ~ 1,\n                                   .default = NA) |&gt; factor(),\n            X = racesex |&gt; factor(levels = c(\"1\", \"4\", \"2\", \"3\")),  # note!\n            L1 = lowchildSES |&gt; as.numeric(),\n            L2 = abuse |&gt; as.numeric(),\n            C1 = age |&gt; as.numeric(),\n            C2 = stroke |&gt; as.numeric(),\n            C3 = T2DM |&gt; as.numeric(),\n            C4 = heart |&gt; as.numeric()) |&gt; \n  mutate(across(L1:C4, \\(.x){.x - mean(.x, na.rm = TRUE)})) |&gt; \n  tibble()"
-  },
-  {
-    "objectID": "blog/posts/Causal_Decomposition.html#前準備",
-    "href": "blog/posts/Causal_Decomposition.html#前準備",
-    "title": "Causal Decomposition Analysis",
-    "section": "",
-    "text": "library(tidyverse)\nlibrary(cfdecomp)\nlibrary(gapclosing)\nlibrary(causal.decomp)\n\n\nd &lt;- \n  sMIDUS |&gt; \n  transmute(Y = health |&gt; as.numeric(),  # outcome\n            T = edu |&gt; as.numeric(),   # treatment (continuous)\n            T2 = edu |&gt; case_match(4:6 ~ 0,   # treatment (binary)\n                                   7:9 ~ 1,\n                                   .default = NA) |&gt; factor(),\n            X = racesex |&gt; factor(levels = c(\"1\", \"4\", \"2\", \"3\")),  # note!\n            L1 = lowchildSES |&gt; as.numeric(),\n            L2 = abuse |&gt; as.numeric(),\n            C1 = age |&gt; as.numeric(),\n            C2 = stroke |&gt; as.numeric(),\n            C3 = T2DM |&gt; as.numeric(),\n            C4 = heart |&gt; as.numeric()) |&gt; \n  mutate(across(L1:C4, \\(.x){.x - mean(.x, na.rm = TRUE)})) |&gt; \n  tibble()"
-  },
-  {
-    "objectID": "blog/posts/Causal_Decomposition.html#cfdecomp",
-    "href": "blog/posts/Causal_Decomposition.html#cfdecomp",
-    "title": "Causal Decomposition Analysis",
-    "section": "cfdecomp",
-    "text": "cfdecomp\n\nSudharsanan and Bijlsma (2021) の方法。mediatorの値をシミュレーションで複数生成するのが特徴\n\n\n# cfd.mean\nfit_cfdecomp &lt;-\n  cfdecomp::cfd.mean(\n    formula.y = 'Y ~ X + T + X:T + L1 + L2 + C1 + C2 + C3 + C4',\n    formula.m = 'T ~ X + C1 + C2 + C3 + C4',\n    mediator = 'T',\n    group = 'X',\n    data = d |&gt; data.frame(),\n    family.y = 'gaussian',\n    family.m = 'gaussian',\n    bs.size = 50,\n    mc.size = 10,\n    alpha = 0.05\n  )\n\n\nfit_cfdecomp\n\n$out_nc_m\n          1        4        2        3\n1  7.711633 5.888257 7.125844 6.352904\n2  7.711335 5.888175 7.067714 6.367545\n3  7.680955 5.879973 7.083105 6.290285\n4  7.731151 5.883833 7.054332 6.314513\n5  7.741197 5.919269 7.068209 6.411571\n6  7.679647 5.874477 7.071199 6.442494\n7  7.743790 5.900932 7.083522 6.434297\n8  7.718472 5.884156 7.099022 6.309715\n9  7.678637 5.804392 7.116342 6.344669\n10 7.707989 5.879045 7.084649 6.386724\n11 7.665000 5.854644 7.082168 6.404390\n12 7.687069 5.879753 7.062328 6.411204\n13 7.713308 5.892926 7.065359 6.375275\n14 7.705918 5.886559 7.081125 6.461115\n15 7.749694 5.860974 7.105595 6.348651\n16 7.738547 5.872752 7.087563 6.404910\n17 7.693606 5.850646 7.098890 6.459896\n18 7.713330 5.893088 7.091596 6.376642\n19 7.709143 5.823530 7.029086 6.413343\n20 7.733210 5.858471 7.087219 6.467162\n21 7.738161 5.911049 7.092461 6.335316\n22 7.746965 5.920713 7.089514 6.283847\n23 7.694358 5.888971 7.102488 6.363968\n24 7.693684 5.908104 7.052797 6.421523\n25 7.679553 5.875793 7.105435 6.411341\n26 7.659899 5.884256 7.051559 6.460068\n27 7.686961 5.894971 7.072704 6.403770\n28 7.710311 5.869419 7.055817 6.434180\n29 7.716763 5.903774 7.081851 6.455534\n30 7.693189 5.868528 7.081334 6.421027\n31 7.742753 5.925176 7.080192 6.333420\n32 7.751380 5.894483 7.097142 6.455502\n33 7.711411 5.809214 7.071902 6.437017\n34 7.740161 5.911441 7.105231 6.511967\n35 7.705447 5.909566 7.095954 6.380936\n36 7.702558 5.903924 7.081581 6.407733\n37 7.700893 5.881401 7.086621 6.461621\n38 7.738122 5.904513 7.063869 6.395699\n39 7.746447 5.870571 7.026998 6.484040\n40 7.759368 5.910303 7.092030 6.406555\n41 7.718450 5.831043 7.054374 6.358089\n42 7.695918 5.835081 7.075573 6.416062\n43 7.731954 5.813791 7.036193 6.421428\n44 7.712310 5.893671 7.025246 6.455531\n45 7.680701 5.846358 7.061539 6.407396\n46 7.694061 5.845573 7.072832 6.391219\n47 7.668851 5.817726 7.080903 6.406440\n48 7.711376 5.949511 7.053901 6.456014\n49 7.716736 5.826249 7.080758 6.422543\n50 7.654022 5.866163 7.131136 6.413449\n\n$out_cf_m\n          1        4        2        3\n1  7.710530 7.707118 7.729085 7.689582\n2  7.722146 7.715962 7.718530 7.694744\n3  7.685399 7.679285 7.699618 7.684752\n4  7.710964 7.722139 7.724466 7.721053\n5  7.730490 7.752241 7.751842 7.799405\n6  7.664568 7.663683 7.674068 7.663177\n7  7.724971 7.749857 7.752868 7.706792\n8  7.714129 7.716862 7.722281 7.723609\n9  7.683756 7.671424 7.702381 7.617404\n10 7.695261 7.735147 7.719256 7.703986\n11 7.670528 7.683359 7.689876 7.687277\n12 7.706871 7.707688 7.704846 7.672708\n13 7.704887 7.736651 7.703969 7.675736\n14 7.709934 7.709054 7.727723 7.682492\n15 7.740935 7.721385 7.747651 7.710687\n16 7.742387 7.735513 7.746277 7.728202\n17 7.691813 7.700624 7.705163 7.669490\n18 7.695803 7.723519 7.715414 7.705193\n19 7.714527 7.724800 7.728529 7.731613\n20 7.752440 7.731310 7.731205 7.740443\n21 7.747701 7.751927 7.746104 7.736706\n22 7.744353 7.753527 7.757974 7.699908\n23 7.698835 7.707310 7.733331 7.642548\n24 7.688320 7.678430 7.695832 7.700293\n25 7.678879 7.703020 7.682947 7.674868\n26 7.662760 7.686827 7.677796 7.669470\n27 7.667674 7.688950 7.702769 7.645594\n28 7.708490 7.720959 7.712414 7.715071\n29 7.717942 7.738635 7.736016 7.725968\n30 7.696543 7.693711 7.704273 7.674739\n31 7.732255 7.762128 7.749186 7.722042\n32 7.746046 7.742624 7.751110 7.730741\n33 7.713978 7.723498 7.716193 7.716831\n34 7.745275 7.731578 7.746356 7.749622\n35 7.705166 7.686891 7.714852 7.647096\n36 7.700198 7.701480 7.708816 7.661288\n37 7.711325 7.716404 7.731762 7.711473\n38 7.712923 7.725907 7.735120 7.730548\n39 7.750298 7.756705 7.764771 7.732673\n40 7.766789 7.768882 7.776410 7.764838\n41 7.717941 7.713504 7.723617 7.715233\n42 7.679975 7.704309 7.704923 7.687836\n43 7.737060 7.735301 7.739600 7.718730\n44 7.708164 7.721542 7.701967 7.645525\n45 7.682980 7.686698 7.681756 7.670019\n46 7.695651 7.713801 7.706790 7.662348\n47 7.665926 7.714450 7.687832 7.659873\n48 7.703820 7.719615 7.695535 7.688421\n49 7.726563 7.701374 7.736214 7.689662\n50 7.645600 7.695163 7.665097 7.640491\n\n$out_nc_quantile_m\n             1        4        2        3\n2.5%  7.661047 5.810243 7.027468 6.294657\n50%   7.711356 5.882617 7.081230 6.409468\n97.5% 7.751000 5.924172 7.123706 6.480242\n\n$out_cf_quantile_m\n             1        4        2        3\n2.5%  7.663167 7.673000 7.674907 7.640954\n50%   7.709212 7.716633 7.718893 7.697326\n97.5% 7.751958 7.760908 7.763242 7.761414\n\n$out_nc_y\n          1        4        2        3\n1  7.643030 6.732799 7.375613 6.910479\n2  7.607577 6.717165 7.346198 7.052359\n3  7.607693 6.599873 7.269480 6.873304\n4  7.610145 6.723795 7.289715 6.952498\n5  7.616292 6.678440 7.333097 7.001349\n6  7.557731 6.704395 7.250811 6.992294\n7  7.599877 6.719521 7.340502 7.077658\n8  7.628274 6.719762 7.296094 6.900450\n9  7.519645 6.578178 7.334936 6.963192\n10 7.636567 6.695734 7.262511 7.051596\n11 7.611775 6.700613 7.292579 7.049620\n12 7.631828 6.683791 7.331269 7.083689\n13 7.563892 6.674326 7.316754 6.908562\n14 7.603895 6.737479 7.327165 6.927612\n15 7.618607 6.670229 7.255864 6.985934\n16 7.622240 6.704231 7.320607 7.053559\n17 7.585641 6.734660 7.341138 6.945470\n18 7.604256 6.707089 7.302909 7.041279\n19 7.524772 6.703693 7.298052 7.103668\n20 7.553036 6.722339 7.308819 7.009432\n21 7.574128 6.759331 7.311300 6.899021\n22 7.609917 6.680900 7.350035 6.967131\n23 7.607101 6.731611 7.357399 6.922846\n24 7.620362 6.689117 7.271719 6.909727\n25 7.600291 6.721549 7.343278 7.091111\n26 7.580349 6.750467 7.322421 7.079178\n27 7.588436 6.694641 7.341734 6.990717\n28 7.573369 6.765644 7.320928 6.946950\n29 7.578826 6.691312 7.331328 6.974224\n30 7.601308 6.629131 7.267103 6.999810\n31 7.603843 6.783977 7.376238 6.952896\n32 7.603542 6.734427 7.370235 6.965581\n33 7.620574 6.695155 7.328574 6.988810\n34 7.631733 6.629085 7.316282 7.039475\n35 7.614603 6.723767 7.332842 6.990229\n36 7.587058 6.682920 7.313699 6.875552\n37 7.590790 6.698495 7.371529 7.092733\n38 7.599795 6.681993 7.317343 6.869174\n39 7.585488 6.704832 7.335817 7.077249\n40 7.609017 6.707175 7.327749 6.978417\n41 7.570631 6.681757 7.330553 6.931524\n42 7.622285 6.650356 7.320067 6.998195\n43 7.620196 6.697024 7.337561 6.933217\n44 7.625899 6.619717 7.265149 7.086506\n45 7.541506 6.675692 7.294960 6.897559\n46 7.634605 6.657319 7.288395 6.937194\n47 7.590675 6.667401 7.355573 6.968337\n48 7.640129 6.790121 7.279111 6.935163\n49 7.598317 6.712968 7.344339 7.088489\n50 7.609962 6.684222 7.339409 7.026853\n\n$out_cf_y\n          1        4        2        3\n1  7.642828 7.228655 7.472077 7.044363\n2  7.610666 7.217077 7.479253 7.210653\n3  7.608739 7.042916 7.414806 7.153437\n4  7.605145 7.217781 7.452585 7.336006\n5  7.613874 7.287004 7.518205 7.143872\n6  7.554566 7.294251 7.384723 7.342034\n7  7.595708 7.312383 7.507010 7.324459\n8  7.627264 7.353019 7.429607 7.023240\n9  7.520749 7.217301 7.498648 7.195415\n10 7.634141 7.158135 7.437276 7.380509\n11 7.613326 7.312547 7.438580 7.217391\n12 7.636896 7.233261 7.494746 7.434478\n13 7.561744 7.346572 7.457141 7.021547\n14 7.604743 7.324411 7.453311 7.211474\n15 7.616689 7.236342 7.432433 7.312738\n16 7.623216 7.294132 7.488400 7.301480\n17 7.585169 7.293564 7.492201 7.007174\n18 7.599991 7.097552 7.472330 7.256049\n19 7.525761 7.140974 7.451360 7.495060\n20 7.557790 7.315725 7.505289 7.214017\n21 7.576391 7.363599 7.451759 7.137034\n22 7.609120 7.228905 7.483233 7.328490\n23 7.608396 7.173141 7.499450 7.104582\n24 7.619150 7.134299 7.413481 7.102330\n25 7.600139 7.295098 7.489918 7.308457\n26 7.581097 7.396744 7.491733 7.300458\n27 7.582923 7.368377 7.515990 7.358491\n28 7.572931 7.244174 7.466398 7.172318\n29 7.579088 7.366221 7.480393 7.158943\n30 7.601925 7.050239 7.405865 7.281161\n31 7.601097 7.217883 7.501238 7.079388\n32 7.602343 7.215997 7.486182 7.362801\n33 7.621057 7.371830 7.477008 7.321741\n34 7.632899 7.159265 7.465772 7.294746\n35 7.614549 7.213676 7.464199 7.014393\n36 7.586656 7.270587 7.435904 7.400305\n37 7.593428 7.108840 7.522947 7.414827\n38 7.593836 7.193211 7.492250 7.175875\n39 7.586345 7.250112 7.477559 7.152434\n40 7.610498 7.269978 7.452130 7.254088\n41 7.570510 7.347217 7.476158 7.220753\n42 7.618182 7.287882 7.412706 7.084224\n43 7.621420 7.233066 7.507654 7.124081\n44 7.624912 7.074213 7.438136 7.212636\n45 7.541945 7.178940 7.451000 7.109039\n46 7.635028 7.263358 7.453537 7.242004\n47 7.590112 7.170538 7.506422 6.924094\n48 7.638272 7.468543 7.431446 7.129897\n49 7.600589 7.215825 7.450062 7.366063\n50 7.607752 7.131514 7.427264 7.360753\n\n$out_nc_quantile_y\n             1        4        2        3\n2.5%  7.528537 6.604338 7.257360 6.873810\n50%   7.604075 6.699554 7.324793 6.982175\n97.5% 7.639328 6.779852 7.374694 7.092368\n\n$out_cf_quantile_y\n             1        4        2        3\n2.5%  7.529402 7.055633 7.407404 7.008799\n50%   7.603543 7.234802 7.469238 7.215704\n97.5% 7.637962 7.391138 7.517707 7.430056\n\n$mediation\n        4         2         3 \n0.6073567 0.5348774 0.3926196 \n\n$mediation_quantile\n              4         2          3\n2.5%  0.4362047 0.3328234 0.05168082\n97.5% 0.7746384 0.7824060 0.71708929\n\n$mc_conv_info_m\n          [,1]     [,2]     [,3]     [,4]\n [1,] 7.723179 5.928527 7.115377 6.273738\n [2,] 7.703455 5.931829 7.113009 6.283259\n [3,] 7.707302 5.893149 7.113309 6.302433\n [4,] 7.705497 5.903295 7.112800 6.309729\n [5,] 7.706187 5.906655 7.120460 6.311052\n [6,] 7.712124 5.901055 7.122027 6.330075\n [7,] 7.710921 5.900642 7.118638 6.347855\n [8,] 7.708649 5.901588 7.121293 6.351281\n [9,] 7.712484 5.896719 7.121812 6.349336\n[10,] 7.711633 5.888257 7.125844 6.352904\n\n$mc_conv_info_y\n          [,1]     [,2]     [,3]     [,4]\n [1,] 7.645142 6.743777 7.373939 6.902550\n [2,] 7.641534 6.744677 7.373561 6.903504\n [3,] 7.642238 6.734132 7.373609 6.905424\n [4,] 7.641907 6.736898 7.373527 6.906155\n [5,] 7.642034 6.737814 7.374752 6.906288\n [6,] 7.643120 6.736288 7.375003 6.908193\n [7,] 7.642899 6.736175 7.374461 6.909974\n [8,] 7.642484 6.736433 7.374885 6.910317\n [9,] 7.643185 6.735106 7.374968 6.910122\n[10,] 7.643030 6.732799 7.375613 6.910479\n\nmean(fit_cfdecomp$out_nc_y[,2] - fit_cfdecomp$out_nc_y[,1])\n\n[1] -0.9016258\n\nmean(fit_cfdecomp$out_cf_y[,2] - fit_cfdecomp$out_nc_y[,1])\n\n[1] -0.3558926\n\nmean(fit_cfdecomp$out_nc_y[,2] - fit_cfdecomp$out_cf_y[,2])\n\n[1] -0.5457332\n\nfit_cfdecomp$mediation\n\n        4         2         3 \n0.6073567 0.5348774 0.3926196 \n\nmean(fit_cfdecomp$out_nc_y[,3] - fit_cfdecomp$out_nc_y[,1])\n\n[1] -0.2804946\n\nmean(fit_cfdecomp$out_cf_y[,3] - fit_cfdecomp$out_nc_y[,1])\n\n[1] -0.1334747\n\nmean(fit_cfdecomp$out_nc_y[,3] - fit_cfdecomp$out_cf_y[,3])\n\n[1] -0.1470199\n\nmean(fit_cfdecomp$out_nc_y[,4] - fit_cfdecomp$out_nc_y[,1])\n\n[1] -0.6136728\n\nmean(fit_cfdecomp$out_cf_y[,4] - fit_cfdecomp$out_nc_y[,1])\n\n[1] -0.3771942\n\nmean(fit_cfdecomp$out_nc_y[,4] - fit_cfdecomp$out_cf_y[,4])\n\n[1] -0.2364786"
-  },
-  {
-    "objectID": "blog/posts/Causal_Decomposition.html#causal.decomp",
-    "href": "blog/posts/Causal_Decomposition.html#causal.decomp",
-    "title": "Causal Decomposition Analysis",
-    "section": "causal.decomp",
-    "text": "causal.decomp\n\nPark et al. (2023) の方法。\n\n\n# smi \nfit.y &lt;- lm(Y ~ X + T + X:T + L1 + L2 + C1 + C2 + C3 + C4, data = d)\nfit.m &lt;- lm(T ~ X + C1 + C2 + C3 + C4, data = d)\n\nfit_smi &lt;- smi(fit.y = fit.y,\n    fit.m = fit.m,\n    treat = \"X\", \n    sims = 100, \n    conf.level = .95,\n    conditional = TRUE,\n    covariates = 1,\n    # baseline covariatesを調整できる\n    #covariates = c(\"C1\", \"C2\", \"C3\", \"C4\"),\n    seed = 227,\n    )\n\nfit_smi\n\n\nResults:\n\n                               estimate 95% CI Lower 95% CI Upper\nInitial Disparity   (1 vs 4) -0.8993401   -0.9925190  -0.79813505\nDisparity Remaining (1 vs 4) -0.3384430   -0.4880863  -0.14795873\nDisparity Reduction (1 vs 4) -0.5608971   -0.7346168  -0.42650061\nInitial Disparity   (1 vs 2) -0.2749659   -0.3378874  -0.19366549\nDisparity Remaining (1 vs 2) -0.1213246   -0.2203441  -0.05458727\nDisparity Reduction (1 vs 2) -0.1536412   -0.1896213  -0.10521328\nInitial Disparity   (1 vs 3) -0.6137425   -0.7326095  -0.47793913\nDisparity Remaining (1 vs 3) -0.3500123   -0.5151994  -0.08733348\nDisparity Reduction (1 vs 3) -0.2637302   -0.4880614  -0.11574038\n\n\n\nsensitivity analysis(Park et al. 2023)\n\n\nsensRes &lt;- sensitivity(boot.res = fit_smi, fit.m = fit.m, fit.y = fit.y, \n                       mediator = \"T\",\n                       covariates = c(\"C1\", \"C2\", \"C3\", \"C4\"), \n                       treat = \"X\",\n                       sel.lev.treat = \"4\", \n                       max.rsq = 0.3)\nplot(sensRes)"
-  },
-  {
-    "objectID": "blog/posts/Causal_Decomposition.html#cfdecomp-1",
-    "href": "blog/posts/Causal_Decomposition.html#cfdecomp-1",
-    "title": "Causal Decomposition Analysis",
-    "section": "cfdecomp",
-    "text": "cfdecomp\n\n# cfd.mean\nset.seed(123456)\nfit_cfdecomp_b &lt;-\n  cfd.mean(\n    formula.y = 'Y ~ X + T2 + X:T2 + L1 + L2 + C1 + C2 + C3 + C4',\n    formula.m = 'T2 ~ X + C1 + C2 + C3 + C4',\n    mediator = 'T2',\n    group = 'X',\n    data = d |&gt; mutate(T2 = as.numeric(T2) - 1) |&gt; data.frame(),\n    family.y = 'gaussian',\n    family.m = 'binomial',\n    bs.size = 50,\n    mc.size = 10,\n    alpha = 0.05\n  )\nmean(fit_cfdecomp_b$out_nc_y[,\"4\"] - fit_cfdecomp_b$out_nc_y[,\"1\"])\n\n[1] -0.8981701\n\nmean(fit_cfdecomp_b$out_cf_y[,\"4\"] - fit_cfdecomp_b$out_nc_y[,\"1\"])\n\n[1] -0.5546351\n\nmean(fit_cfdecomp_b$out_nc_y[,\"4\"] - fit_cfdecomp_b$out_cf_y[,\"4\"])\n\n[1] -0.343535\n\nfit_cfdecomp_b$mediation\n\n        4         2         3 \n0.3828971 0.1298177 0.2061071 \n\nmean(fit_cfdecomp_b$out_nc_y[,\"2\"] - fit_cfdecomp_b$out_nc_y[,\"1\"])\n\n[1] -0.2774845\n\nmean(fit_cfdecomp_b$out_cf_y[,\"2\"] - fit_cfdecomp_b$out_nc_y[,\"1\"])\n\n[1] -0.2419289\n\nmean(fit_cfdecomp_b$out_nc_y[,\"2\"] - fit_cfdecomp_b$out_cf_y[,\"2\"])\n\n[1] -0.03555558\n\nmean(fit_cfdecomp_b$out_nc_y[,\"3\"] - fit_cfdecomp_b$out_nc_y[,\"1\"])\n\n[1] -0.5849521\n\nmean(fit_cfdecomp_b$out_cf_y[,\"3\"] - fit_cfdecomp_b$out_nc_y[,\"1\"])\n\n[1] -0.4655888\n\nmean(fit_cfdecomp_b$out_nc_y[,\"3\"] - fit_cfdecomp_b$out_cf_y[,\"3\"])\n\n[1] -0.1193632"
-  },
-  {
-    "objectID": "blog/posts/Causal_Decomposition.html#causal.decomp-1",
-    "href": "blog/posts/Causal_Decomposition.html#causal.decomp-1",
-    "title": "Causal Decomposition Analysis",
-    "section": "causal.decomp",
-    "text": "causal.decomp\n\n# smi\nfit.y &lt;- lm(Y ~ X + T2 + X:T2 + L1 + L2 + C1 + C2 + C3 + C4, data = d)\nfit.m &lt;- glm(T2 ~ X + C1 + C2 + C3 + C4, data = d, family = binomial(link = \"logit\"))\n\nfit_smi_b &lt;- smi(fit.y = fit.y,\n               fit.m = fit.m,\n               treat = \"X\", \n               sims = 100, \n               conf.level = .95,\n               conditional = TRUE,\n               # covariates = 1,\n               covariates = c(\"C1\", \"C2\", \"C3\", \"C4\"),\n               seed = 123456)\nfit_smi_b\n\n\nResults:\n\n                                estimate 95% CI Lower 95% CI Upper\nInitial Disparity   (1 vs 4) -0.95667843  -1.02938841  -0.88175003\nDisparity Remaining (1 vs 4) -0.61262729  -0.77966809  -0.46844380\nDisparity Reduction (1 vs 4) -0.34405113  -0.49650368  -0.21581205\nInitial Disparity   (1 vs 2) -0.31394841  -0.38058533  -0.26000373\nDisparity Remaining (1 vs 2) -0.27995004  -0.34624791  -0.22226331\nDisparity Reduction (1 vs 2) -0.03399837  -0.05003528  -0.02022012\nInitial Disparity   (1 vs 3) -0.59968604  -0.69525994  -0.49987857\nDisparity Remaining (1 vs 3) -0.48148718  -0.61387973  -0.32105036\nDisparity Reduction (1 vs 3) -0.11819886  -0.24676548  -0.03361808\n\nsensRes &lt;- sensitivity(boot.res = fit_smi_b, \n                       fit.m = fit.m, \n                       fit.y = fit.y, \n                       mediator = \"T2\",\n                       covariates = c(\"C1\", \"C2\", \"C3\", \"C4\"), \n                       treat = \"X\",\n                       sel.lev.treat = \"4\", \n                       max.rsq = 0.3)\nplot(sensRes)"
-  },
-  {
-    "objectID": "blog/posts/Causal_Decomposition.html#gapclosing",
-    "href": "blog/posts/Causal_Decomposition.html#gapclosing",
-    "title": "Causal Decomposition Analysis",
-    "section": "gapclosing",
-    "text": "gapclosing\n\nLundberg (2022)\n\n\n# gapclosing - regression\n# stochastic intervention\n# treatmentの割り当て確率の予測値を算出\nfit_glm &lt;- glm(T2 ~ X + C1 + C2 + C3, data = d, family = binomial(link = \"logit\"))\n\n# 全員のtreatmentが1だった時の予測値\nassing_prob &lt;- predict(fit_glm, newdata = d |&gt; mutate(X = \"1\"), type = \"response\")\n\n# 予測値をもとにrandom draw\ndraw &lt;- rbinom(n = nrow(d), size = 1, prob = assing_prob)\n\nfit_gapclosing &lt;- \n  gapclosing(\n    data = d |&gt; mutate(T2 = as.numeric(T2) - 1),\n    outcome_formula = Y ~ T2 * X + C1 + C2 + C3 + C4 + L1 + L2,\n    treatment_name = \"T2\",\n    category_name = \"X\",\n    counterfactual_assignments = draw # random draw\n  )\n\nfit_gapclosing\n\n\nFactual mean outcomes:\n# A tibble: 4 × 2\n  X     estimate\n  &lt;fct&gt;    &lt;dbl&gt;\n1 1         7.60\n2 4         6.70\n3 2         7.32\n4 3         6.98\n\nCounterfactual mean outcomes (post-intervention means):\n# A tibble: 4 × 2\n  X     estimate\n  &lt;fct&gt;    &lt;dbl&gt;\n1 1         7.60\n2 4         7.03\n3 2         7.36\n4 3         7.11\n\nFactual disparities:\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4    0.899\n 2 1 - 2    0.275\n 3 1 - 3    0.614\n 4 4 - 1   -0.899\n 5 4 - 2   -0.624\n 6 4 - 3   -0.286\n 7 2 - 1   -0.275\n 8 2 - 4    0.624\n 9 2 - 3    0.339\n10 3 - 1   -0.614\n11 3 - 4    0.286\n12 3 - 2   -0.339\n\nCounterfactual disparities (gap-closing estimands):\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4   0.566 \n 2 1 - 2   0.241 \n 3 1 - 3   0.483 \n 4 4 - 1  -0.566 \n 5 4 - 2  -0.325 \n 6 4 - 3  -0.0830\n 7 2 - 1  -0.241 \n 8 2 - 4   0.325 \n 9 2 - 3   0.242 \n10 3 - 1  -0.483 \n11 3 - 4   0.0830\n12 3 - 2  -0.242 \n\nAdditive gap closed: Counterfactual - Factual\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4   0.334 \n 2 1 - 2   0.0339\n 3 1 - 3   0.131 \n 4 4 - 1  -0.334 \n 5 4 - 2  -0.300 \n 6 4 - 3  -0.203 \n 7 2 - 1  -0.0339\n 8 2 - 4   0.300 \n 9 2 - 3   0.0972\n10 3 - 1  -0.131 \n11 3 - 4   0.203 \n12 3 - 2  -0.0972\n\nProportional gap closed: (Counterfactual - Factual) / Factual\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4    0.371\n 2 1 - 2    0.123\n 3 1 - 3    0.214\n 4 4 - 1    0.371\n 5 4 - 2    0.480\n 6 4 - 3    0.710\n 7 2 - 1    0.123\n 8 2 - 4    0.480\n 9 2 - 3    0.287\n10 3 - 1    0.214\n11 3 - 4    0.710\n12 3 - 2    0.287\n\ndisparityplot(fit_gapclosing, category_A = \"1\", category_B = \"4\")\n\n\n\n\n\n\n\ndisparityplot(fit_gapclosing, category_A = \"1\", category_B = \"2\")\n\n\n\n\n\n\n\ndisparityplot(fit_gapclosing, category_A = \"1\", category_B = \"3\")\n\n\n\n\n\n\n\n\n\n機械学習をつかったdoubly robustな方法も使える\n\n\n# gapclosing - ranger, doubly robust\nfit_gapclosing_ranger &lt;- \n  gapclosing(\n  data = d |&gt; mutate(T2 = as.numeric(T2) - 1),\n  outcome_formula = Y ~ T2 + X + C1 + C2 + C3 + C4 + L1 + L2,\n  treatment_formula = T2 ~ X + C1 + C2 + C3 + C4 + L1 + L2, \n  treatment_name = \"T2\",\n  treatment_algorithm = \"ranger\",\n  outcome_algorithm = \"ranger\",\n  category_name = \"X\",\n  counterfactual_assignments = rbinom(n = nrow(d), size = 1, prob = assing_prob) \n)\n\nfit_gapclosing\n\n\nFactual mean outcomes:\n# A tibble: 4 × 2\n  X     estimate\n  &lt;fct&gt;    &lt;dbl&gt;\n1 1         7.60\n2 4         6.70\n3 2         7.32\n4 3         6.98\n\nCounterfactual mean outcomes (post-intervention means):\n# A tibble: 4 × 2\n  X     estimate\n  &lt;fct&gt;    &lt;dbl&gt;\n1 1         7.60\n2 4         7.03\n3 2         7.36\n4 3         7.11\n\nFactual disparities:\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4    0.899\n 2 1 - 2    0.275\n 3 1 - 3    0.614\n 4 4 - 1   -0.899\n 5 4 - 2   -0.624\n 6 4 - 3   -0.286\n 7 2 - 1   -0.275\n 8 2 - 4    0.624\n 9 2 - 3    0.339\n10 3 - 1   -0.614\n11 3 - 4    0.286\n12 3 - 2   -0.339\n\nCounterfactual disparities (gap-closing estimands):\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4   0.566 \n 2 1 - 2   0.241 \n 3 1 - 3   0.483 \n 4 4 - 1  -0.566 \n 5 4 - 2  -0.325 \n 6 4 - 3  -0.0830\n 7 2 - 1  -0.241 \n 8 2 - 4   0.325 \n 9 2 - 3   0.242 \n10 3 - 1  -0.483 \n11 3 - 4   0.0830\n12 3 - 2  -0.242 \n\nAdditive gap closed: Counterfactual - Factual\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4   0.334 \n 2 1 - 2   0.0339\n 3 1 - 3   0.131 \n 4 4 - 1  -0.334 \n 5 4 - 2  -0.300 \n 6 4 - 3  -0.203 \n 7 2 - 1  -0.0339\n 8 2 - 4   0.300 \n 9 2 - 3   0.0972\n10 3 - 1  -0.131 \n11 3 - 4   0.203 \n12 3 - 2  -0.0972\n\nProportional gap closed: (Counterfactual - Factual) / Factual\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4    0.371\n 2 1 - 2    0.123\n 3 1 - 3    0.214\n 4 4 - 1    0.371\n 5 4 - 2    0.480\n 6 4 - 3    0.710\n 7 2 - 1    0.123\n 8 2 - 4    0.480\n 9 2 - 3    0.287\n10 3 - 1    0.214\n11 3 - 4    0.710\n12 3 - 2    0.287\n\ndisparityplot(fit_gapclosing_ranger, category_A = \"1\", category_B = \"4\")\n\n\n\n\n\n\n\ndisparityplot(fit_gapclosing_ranger, category_A = \"1\", category_B = \"2\")\n\n\n\n\n\n\n\ndisparityplot(fit_gapclosing_ranger, category_A = \"1\", category_B = \"3\")"
-  },
-  {
-    "objectID": "blog/posts/Multilevel.html",
-    "href": "blog/posts/Multilevel.html",
-    "title": "マルチレベルモデルは点推定値に影響を及ぼすか？",
-    "section": "",
-    "text": "library(tidyverse)\nlibrary(lmerTest)\nlibrary(broom)\nlibrary(broom.mixed)"
-  },
-  {
-    "objectID": "blog/posts/Multilevel.html#マルチレベルモデルにおけるよくある誤解",
-    "href": "blog/posts/Multilevel.html#マルチレベルモデルにおけるよくある誤解",
-    "title": "マルチレベルモデルは点推定値に影響を及ぼすか？",
-    "section": "マルチレベルモデルにおけるよくある誤解",
-    "text": "マルチレベルモデルにおけるよくある誤解\n「マルチレベルモデルでやんなきゃ係数にバイアスが…」←ホント？"
-  },
-  {
-    "objectID": "blog/posts/Multilevel.html#データ生成",
-    "href": "blog/posts/Multilevel.html#データ生成",
-    "title": "マルチレベルモデルは点推定値に影響を及ぼすか？",
-    "section": "データ生成",
-    "text": "データ生成\nマルチレベルのデータを考える サンプルサイズ1000、グループ数50のデータ\n\\[\\begin{align}\ny_{ig} \\sim 0.5x_{ig} + \\mathrm{Normal}(\\theta_g, 1) \\\\\n\\theta_g \\sim \\mathrm{Normal}(0, 3) \\\\\nx_i \\sim \\mathrm{Normal}(0, 1)\n\\end{align}\\]\n\ndgp &lt;- function(samplesize = 1000) {\n  tibble(\n    id = 1:samplesize,\n    group = rep(1:50, 20),\n    x = rnorm(samplesize, mean = 0, sd = 1),\n  ) |&gt; \n    group_by(group) |&gt; \n    mutate(group_mean = rnorm(1, mean = 0, sd = 3)) |&gt; \n    ungroup() |&gt; \n    mutate(y = 0.5*x + rnorm(samplesize, mean = group_mean, sd = 1))\n}\n\ndata &lt;- dgp()\n\n\nlm(y ~ x, data = data) |&gt; \n  summary()\n\n\nCall:\nlm(formula = y ~ x, data = data)\n\nResiduals:\n    Min      1Q  Median      3Q     Max \n-7.6088 -2.3228 -0.1326  2.1536  9.9809 \n\nCoefficients:\n            Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept) -0.30026    0.10027  -2.994  0.00282 ** \nx            0.43733    0.09608   4.552 5.98e-06 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 3.171 on 998 degrees of freedom\nMultiple R-squared:  0.02034,   Adjusted R-squared:  0.01935 \nF-statistic: 20.72 on 1 and 998 DF,  p-value: 5.98e-06\n\nlmer(y ~ x + (1|group), data = data) |&gt; \n  summary()\n\nLinear mixed model fit by REML. t-tests use Satterthwaite's method [\nlmerModLmerTest]\nFormula: y ~ x + (1 | group)\n   Data: data\n\nREML criterion at convergence: 3184.6\n\nScaled residuals: \n    Min      1Q  Median      3Q     Max \n-2.6532 -0.6731  0.0089  0.6698  3.3401 \n\nRandom effects:\n Groups   Name        Variance Std.Dev.\n group    (Intercept) 9.130    3.022   \n Residual             1.092    1.045   \nNumber of obs: 1000, groups:  group, 50\n\nFixed effects:\n             Estimate Std. Error        df t value Pr(&gt;|t|)    \n(Intercept)  -0.30028    0.42859  48.99985  -0.701    0.487    \nx             0.48207    0.03242 949.54983  14.871   &lt;2e-16 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nCorrelation of Fixed Effects:\n  (Intr)\nx 0.000"
-  },
-  {
-    "objectID": "blog/posts/Multilevel.html#シミュレーション",
-    "href": "blog/posts/Multilevel.html#シミュレーション",
-    "title": "マルチレベルモデルは点推定値に影響を及ぼすか？",
-    "section": "シミュレーション",
-    "text": "シミュレーション\nデータを1000個作成\n\ndata_list &lt;- \n  map(1:1000, \\(x) dgp(1000)) |&gt; \n  enframe()\n\nOLSと変量効果モデルで推定\n\nresult &lt;- \n  data_list |&gt; \n  mutate(\n    lm = map(value, \\(data) lm(y ~ x, data = data)),\n    lmer = map(value, \\(data) lmer(y ~ x + (1|group), data = data))\n  )\n\nxの係数のみ取り出す\n\nres2 &lt;- \n  result |&gt; \n  mutate(\n    lm_res = map(lm, \\(model) {\n      tidy(model) |&gt; \n        select(term, estimate)\n    }),\n    lmer_res = map(lmer, \\(model) {\n      tidy(model) |&gt; \n        select(term, estimate)\n    })\n  ) |&gt; \n  select(name, lm_res, lmer_res) |&gt; \n  pivot_longer(!name, names_to = 'model', values_to = 'value') |&gt; \n  unnest(value) |&gt; \n  filter(term == 'x')\n\n結果を図示\n\nどちらの点推定値も真の値の0.5を中心に分布＝バイアスはない\nOLSによる点推定値はバリアンスが大きい\n変量効果（マルチレベル）モデルによる点推定値はバリアンスが小さい\n\n\nres2 |&gt; \n  ggplot(aes(estimate, fill = model))+\n  geom_vline(xintercept = 0.5, linetype = 'dashed', alpha = 0.5)+\n  geom_histogram(alpha = 0.3, color = 'black', binwidth = 0.02, position = 'identity')+\n  scale_x_continuous(breaks = seq(0, 1, 0.2))"
-  },
-  {
-    "objectID": "blog/posts/rlang学習.html",
-    "href": "blog/posts/rlang学習.html",
-    "title": "rlang学習",
-    "section": "",
-    "text": "Advanced R"
-  },
-  {
-    "objectID": "blog/posts/rlang学習.html#参考",
-    "href": "blog/posts/rlang学習.html#参考",
-    "title": "rlang学習",
-    "section": "",
-    "text": "Advanced R"
-  },
-  {
-    "objectID": "blog/posts/rlang学習.html#下準備",
-    "href": "blog/posts/rlang学習.html#下準備",
-    "title": "rlang学習",
-    "section": "下準備",
-    "text": "下準備\n\nlibrary(rlang)\nlibrary(lobstr)"
-  },
-  {
-    "objectID": "blog/posts/rlang学習.html#expression",
-    "href": "blog/posts/rlang学習.html#expression",
-    "title": "rlang学習",
-    "section": "expression",
-    "text": "expression\n\nexpr：コードをそのまま捕まえる\n\n作成されたオブジェクト：expression\ncall, symbol, constant, pairlistの4つからなる\n\n\n\nexpr(mean(x, na.rm = TRUE))\n\nmean(x, na.rm = TRUE)\n\nexpr(10 + 100 + 1000)\n\n10 + 100 + 1000\n\n\n\nexprは関数の引数なども書いてあるまま保持する\n\n\n# これはxになる\ncapture_it &lt;- function(x) {\n  expr(x)\n}\n\ncapture_it(a + b + c)\n\nx\n\n\n\n引数は評価した上でコードを保持したい場合はenexprを使う\n\n\ncapture_it &lt;- function(x) {\n  enexpr(x)\n}\ncapture_it(a + b + c)\n\na + b + c"
-  },
-  {
-    "objectID": "blog/posts/rlang学習.html#abstract-syntax-tree-ast-による表現",
-    "href": "blog/posts/rlang学習.html#abstract-syntax-tree-ast-による表現",
-    "title": "rlang学習",
-    "section": "abstract syntax tree (AST) による表現",
-    "text": "abstract syntax tree (AST) による表現\n\ncodeはtree形式で表現できる\nfがcall, aがsymbol, “b”がconstantらしい\n\n\nlobstr::ast(f(a, \"b\"))\n\n█─f \n├─a \n└─\"b\" \n\n\n\n+や*も関数であることがわかる\n\n\nlobstr::ast(1 + 2 * 3)\n\n█─`+` \n├─1 \n└─█─`*` \n  ├─2 \n  └─3"
-  },
-  {
-    "objectID": "blog/posts/rlang学習.html#codeを生成するcode",
-    "href": "blog/posts/rlang学習.html#codeを生成するcode",
-    "title": "rlang学習",
-    "section": "codeを生成するcode",
-    "text": "codeを生成するcode\n\ncall2\n\n\ncall2('f', 1, 2)\n\nf(1, 2)\n\ncall2('+', 1, call2('*', 2, 3))\n\n1 + 2 * 3\n\n\n\n!!を使ったcodeの生成\n\n捕まえておいたコードを評価したいところで評価する\n\n\n\nxx &lt;- expr(x + x)\nyy &lt;- expr(y + y)\n\nexpr(!!xx / !!yy)\n\n(x + x)/(y + y)"
-  },
-  {
-    "objectID": "blog/posts/rlang学習.html#codeの評価",
-    "href": "blog/posts/rlang学習.html#codeの評価",
-    "title": "rlang学習",
-    "section": "codeの評価",
-    "text": "codeの評価\n\neval(expr, env)：exprをenvで評価\n\n\neval(expr(x + y), env(x = 1, y = 10))\n\n[1] 11\n\neval(expr(x + y), env(x = 2, y = 100))\n\n[1] 102\n\n\n\nenvを指定しないときは現在のenvironmentで評価\n\n\nx &lt;- 10\ny &lt;- 100\n\neval(expr(x + y))\n\n[1] 110\n\n\n\nデータを環境として扱う\neval_tidy(expr, data)：exprをdata内部で評価\n\ndataでcurrent environmentを上書きするのでdata-mask呼ばれる\n\nevalでもできないことはないが、落とし穴があるらしい\n\n\ndf &lt;- data.frame(x = 1:5, y = sample(5))\neval_tidy(expr(x + y), df)\n\n[1]  4  6  4  6 10\n\n\n\ndplyrっぽい関数\n\n\nwith2 &lt;- function(df, expr) {\n  eval_tidy(enexpr(expr), df)\n}\n\nwith2(df, x + y)\n\n[1]  4  6  4  6 10"
-  },
-  {
-    "objectID": "blog/posts/rlang学習.html#quosure",
-    "href": "blog/posts/rlang学習.html#quosure",
-    "title": "rlang学習",
-    "section": "Quosure",
-    "text": "Quosure\n\nexprだけを使う方法は問題がでてくる\n関数の内部でaを定義してみる\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eval_tidy(enexpr(expr), df)\n}\n\n\nさらに関数の外部（global environment）でもaを定義する\n\n\ndf &lt;- data.frame(x = 1:3)\na &lt;- 10\n\n\nこの状態でwith2を使うと問題が発生\n\nglobal environmentのaではなく、関数内部で定義したaが優先的に使われる\n\n\n\nwith2(df, x + a)\n\n[1] 1001 1002 1003\n\n\n\nquosure：expressionとenvironmentをセットで保持する\n\ndata-maskでは、eval_tidyのdata -&gt; quosureのenv -&gt; global envの順で評価される\n\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eval_tidy(enquo(expr), df)\n}\n\nx &lt;- 10\n\nwith2(df, x + a)\n\n[1] 11 12 13"
+    "objectID": "blog/posts/Rでロジットモデル.html#footnotes",
+    "href": "blog/posts/Rでロジットモデル.html#footnotes",
+    "title": "Rでロジットモデル",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\n教育社会学での使用例は近藤・古田（2009）とか．↩︎"
   },
   {
     "objectID": "blog/posts/Sudharsanan_Bijlsma_2021.html",
@@ -770,60 +392,445 @@
     "text": "monte carloとbootstrapの実装\n\n実際にはrandom drawは一回ではなく何回か行うことで不確実性を表現する\n標準誤差の推定のためにbootstrap法も必要\nまずはtreatmentとoutcomeのモデルを推定し、パラメータを取得\n\n\n# パラメータ推定\nestimate_model &lt;- function(data) {\n  \n  mediator_model &lt;- lm(med.gauss ~ SES * age, data = data)\n  outcome_model &lt;- lm(out.gauss ~ SES * age * med.gauss, data = data)\n  \n  pred_mean_m &lt;- predict(mediator_model, newdata = data, type = \"response\")\n  residual_ref_m &lt;- mediator_model$residuals\n  sd_ref_m &lt;- sd(residual_ref_m)\n\n  pred_mean_m_SES1 &lt;- predict(mediator_model, newdata = data |&gt; mutate(SES = '1'))\n  residual_ref_m_SES1 &lt;-\n    broom::augment(mediator_model)  |&gt;\n    filter(SES == '1') |&gt; \n    pull(.resid)\n  sd_ref_m_SES1 &lt;- sd(residual_ref_m_SES1)\n\n}\n\n\nパラメータをもとにmediatorをシミュレートするのを何回か繰り返す\n\n\nmontecarlo_sampling &lt;- function(data, mc = 10) {\n  # パラメータ推定\n  estimate_model(data)\n  # モンテカルロシミュレーション\n  map(1:mc, \\(mc) {\n    # mediatorサンプリング\n    boot_sample &lt;- \n      data |&gt; \n      mutate(\n        pred_med_draw_1 = rnorm(n(), mean = pred_mean_m, sd = sd_ref_m),\n        pred_med_draw_2 = pred_mean_m + sample(residual_ref_m, n(), replace = TRUE),\n        pred_med_draw_1_SES1 = rnorm(n(), mean = pred_mean_m_SES1, sd = sd_ref_m_SES1),\n        pred_med_draw_2_SES1 = pred_mean_m_SES1 + sample(residual_ref_m_SES1, n(), replace = TRUE),\n      )\n    # サンプリングしたものからoutcome予測\n    boot_sample |&gt; \n      mutate(\n        pred_out_draw_1 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_1)\n        ),\n        pred_out_draw_2 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_2)\n        ),\n        pred_out_draw_1_SES1 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_1_SES1)\n        ),\n        pred_out_draw_2_SES1 = predict(\n          outcome_model, newdata = boot_sample |&gt; mutate(med.gauss = pred_med_draw_2_SES1)\n        )\n      ) |&gt; \n      group_by(SES) |&gt; \n      summarise(across(c(pred_out_draw_1:pred_out_draw_2_SES1), mean))\n    \n  }) |&gt; \n    list_rbind(names_to = 'mc') |&gt; \n    # シミュレーション結果を集計\n    group_by(SES) |&gt; \n    summarise(across(c(pred_out_draw_1:pred_out_draw_2_SES1), mean))\n  \n}\n\n\nこれをbootstrapで繰り返す\n\n\nresult &lt;- \n  map(1:250, \\(index) {\n    # bootstrapサンプル発生\n    bootsample &lt;- slice_sample(data, prop = 1, replace = TRUE)\n    montecarlo_sampling(bootsample, mc = 10) \n  }) |&gt; \n  list_rbind(names_to = 'index')\n\n\n結果を集計\n\n\nresult |&gt; \n  pivot_longer(\n    cols = c(pred_out_draw_1:pred_out_draw_2_SES1), \n    names_to = 'type', \n    values_to = 'value'\n  ) |&gt; \n  summarise(\n    mean = mean(value), \n    conf.low = quantile(value, 0.025),\n    conf.high = quantile(value, 0.975),\n    .by = c(SES, type)\n  ) |&gt; \n  arrange(type) |&gt; \n  kable()\n\n\n\n\nSES\ntype\nmean\nconf.low\nconf.high\n\n\n\n\n1\npred_out_draw_1\n4.015\n3.937\n4.091\n\n\n2\npred_out_draw_1\n3.183\n3.124\n3.251\n\n\n3\npred_out_draw_1\n2.645\n2.599\n2.688\n\n\n1\npred_out_draw_1_SES1\n4.276\n4.193\n4.351\n\n\n2\npred_out_draw_1_SES1\n3.513\n3.446\n3.582\n\n\n3\npred_out_draw_1_SES1\n2.970\n2.934\n3.000\n\n\n1\npred_out_draw_2\n4.015\n3.938\n4.094\n\n\n2\npred_out_draw_2\n3.182\n3.123\n3.253\n\n\n3\npred_out_draw_2\n2.646\n2.600\n2.687\n\n\n1\npred_out_draw_2_SES1\n4.276\n4.183\n4.358\n\n\n2\npred_out_draw_2_SES1\n3.515\n3.457\n3.584\n\n\n3\npred_out_draw_2_SES1\n2.970\n2.941\n2.998"
   },
   {
-    "objectID": "blog/posts/Rでロジットモデル.html",
-    "href": "blog/posts/Rでロジットモデル.html",
-    "title": "Rでロジットモデル",
+    "objectID": "blog/posts/rlang学習.html",
+    "href": "blog/posts/rlang学習.html",
+    "title": "rlang学習",
     "section": "",
-    "text": "これは簡単で，2値のfactorを従属変数，リンク関数をglm(family = binomial('logit'))のように指定してやればOK\nちなみにbinomial('probit')にしてやればプロビット回帰になる"
+    "text": "Advanced R"
   },
   {
-    "objectID": "blog/posts/Rでロジットモデル.html#二項ロジット",
-    "href": "blog/posts/Rでロジットモデル.html#二項ロジット",
-    "title": "Rでロジットモデル",
+    "objectID": "blog/posts/rlang学習.html#参考",
+    "href": "blog/posts/rlang学習.html#参考",
+    "title": "rlang学習",
     "section": "",
-    "text": "これは簡単で，2値のfactorを従属変数，リンク関数をglm(family = binomial('logit'))のように指定してやればOK\nちなみにbinomial('probit')にしてやればプロビット回帰になる"
+    "text": "Advanced R"
   },
   {
-    "objectID": "blog/posts/Rでロジットモデル.html#多項ロジット",
-    "href": "blog/posts/Rでロジットモデル.html#多項ロジット",
-    "title": "Rでロジットモデル",
-    "section": "多項ロジット",
-    "text": "多項ロジット\nnnet::multinomは検定とかやってくれないし，かといってmlogit::mlogitは独自のデータ形式を要求してくるので面倒くさい．ただ，nnetはbroomに対応しているので，検定部分はbroomに任せることでこの問題は解決．\nということでこれからはnnetで推定→broomに放り込んで検定というのを使っていきたい"
+    "objectID": "blog/posts/rlang学習.html#下準備",
+    "href": "blog/posts/rlang学習.html#下準備",
+    "title": "rlang学習",
+    "section": "下準備",
+    "text": "下準備\n\nlibrary(rlang)\nlibrary(lobstr)"
   },
   {
-    "objectID": "blog/posts/Rでロジットモデル.html#順序ロジット",
-    "href": "blog/posts/Rでロジットモデル.html#順序ロジット",
-    "title": "Rでロジットモデル",
-    "section": "順序ロジット",
-    "text": "順序ロジット\nMASS::polrが最有力か？ただし，data.frame形式しか受け付けていないのでtibbleのままデータを入れるとエラーになるのが難点．以前LMestで潜在移行モデルを動かした時にも似たようなことがあった．なんとかならんものか…\nちなみにpolrってなんだろうと思ったら，proportional odds logistic regression（比例オッズロジスティック回帰）の略でした．"
+    "objectID": "blog/posts/rlang学習.html#expression",
+    "href": "blog/posts/rlang学習.html#expression",
+    "title": "rlang学習",
+    "section": "expression",
+    "text": "expression\n\nexpr：コードをそのまま捕まえる\n\n作成されたオブジェクト：expression\ncall, symbol, constant, pairlistの4つからなる\n\n\n\nexpr(mean(x, na.rm = TRUE))\n\nmean(x, na.rm = TRUE)\n\nexpr(10 + 100 + 1000)\n\n10 + 100 + 1000\n\n\n\nexprは関数の引数なども書いてあるまま保持する\n\n\n# これはxになる\ncapture_it &lt;- function(x) {\n  expr(x)\n}\n\ncapture_it(a + b + c)\n\nx\n\n\n\n引数は評価した上でコードを保持したい場合はenexprを使う\n\n\ncapture_it &lt;- function(x) {\n  enexpr(x)\n}\ncapture_it(a + b + c)\n\na + b + c"
   },
   {
-    "objectID": "blog/posts/Rでロジットモデル.html#一般化順序ロジット",
-    "href": "blog/posts/Rでロジットモデル.html#一般化順序ロジット",
-    "title": "Rでロジットモデル",
-    "section": "一般化順序ロジット",
-    "text": "一般化順序ロジット\n平行性の仮定を一部緩めた部分比例オッズモデル（partial proportional odds model）1とかをやりたいときは，VGAM::vglmが使える．\nx1，x2，x3のうち，x1だけ平行性の仮定を緩めたいときは，以下のように書く\nVGAM::vglm(formula = y ~ x1 + x2 + x3, \n           family = VGAM::cumulative(parallel = FALSE ~ 1 + x1, reverse = TRUE),\n           data = data) \nparallelの書き方がミソで，parallel = FALSEのあとに等値制約を緩めたいパラメタをformulaで記述する．今回の場合は切片（閾値）とx1の係数だけは各段階で異なるので~ 1 + x1と記述する．また，parallel = TRUEとすると通常の順序ロジットモデルになる．\nreverseは係数の符号を反転させるオプションで，reverse = TRUEを入れるとStataのgologit2を用いた時の結果と同じになる．"
+    "objectID": "blog/posts/rlang学習.html#abstract-syntax-tree-ast-による表現",
+    "href": "blog/posts/rlang学習.html#abstract-syntax-tree-ast-による表現",
+    "title": "rlang学習",
+    "section": "abstract syntax tree (AST) による表現",
+    "text": "abstract syntax tree (AST) による表現\n\ncodeはtree形式で表現できる\nfがcall, aがsymbol, “b”がconstantらしい\n\n\nlobstr::ast(f(a, \"b\"))\n\n█─f \n├─a \n└─\"b\" \n\n\n\n+や*も関数であることがわかる\n\n\nlobstr::ast(1 + 2 * 3)\n\n█─`+` \n├─1 \n└─█─`*` \n  ├─2 \n  └─3"
   },
   {
-    "objectID": "blog/posts/Rでロジットモデル.html#footnotes",
-    "href": "blog/posts/Rでロジットモデル.html#footnotes",
-    "title": "Rでロジットモデル",
-    "section": "Footnotes",
-    "text": "Footnotes\n\n\n教育社会学での使用例は近藤・古田（2009）とか．↩︎"
+    "objectID": "blog/posts/rlang学習.html#codeを生成するcode",
+    "href": "blog/posts/rlang学習.html#codeを生成するcode",
+    "title": "rlang学習",
+    "section": "codeを生成するcode",
+    "text": "codeを生成するcode\n\ncall2\n\n\ncall2('f', 1, 2)\n\nf(1, 2)\n\ncall2('+', 1, call2('*', 2, 3))\n\n1 + 2 * 3\n\n\n\n!!を使ったcodeの生成\n\n捕まえておいたコードを評価したいところで評価する\n\n\n\nxx &lt;- expr(x + x)\nyy &lt;- expr(y + y)\n\nexpr(!!xx / !!yy)\n\n(x + x)/(y + y)"
+  },
+  {
+    "objectID": "blog/posts/rlang学習.html#codeの評価",
+    "href": "blog/posts/rlang学習.html#codeの評価",
+    "title": "rlang学習",
+    "section": "codeの評価",
+    "text": "codeの評価\n\neval(expr, env)：exprをenvで評価\n\n\neval(expr(x + y), env(x = 1, y = 10))\n\n[1] 11\n\neval(expr(x + y), env(x = 2, y = 100))\n\n[1] 102\n\n\n\nenvを指定しないときは現在のenvironmentで評価\n\n\nx &lt;- 10\ny &lt;- 100\n\neval(expr(x + y))\n\n[1] 110\n\n\n\nデータを環境として扱う\neval_tidy(expr, data)：exprをdata内部で評価\n\ndataでcurrent environmentを上書きするのでdata-mask呼ばれる\n\nevalでもできないことはないが、落とし穴があるらしい\n\n\ndf &lt;- data.frame(x = 1:5, y = sample(5))\neval_tidy(expr(x + y), df)\n\n[1]  4  6  4  6 10\n\n\n\ndplyrっぽい関数\n\n\nwith2 &lt;- function(df, expr) {\n  eval_tidy(enexpr(expr), df)\n}\n\nwith2(df, x + y)\n\n[1]  4  6  4  6 10"
+  },
+  {
+    "objectID": "blog/posts/rlang学習.html#quosure",
+    "href": "blog/posts/rlang学習.html#quosure",
+    "title": "rlang学習",
+    "section": "Quosure",
+    "text": "Quosure\n\nexprだけを使う方法は問題がでてくる\n関数の内部でaを定義してみる\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eval_tidy(enexpr(expr), df)\n}\n\n\nさらに関数の外部（global environment）でもaを定義する\n\n\ndf &lt;- data.frame(x = 1:3)\na &lt;- 10\n\n\nこの状態でwith2を使うと問題が発生\n\nglobal environmentのaではなく、関数内部で定義したaが優先的に使われる\n\n\n\nwith2(df, x + a)\n\n[1] 1001 1002 1003\n\n\n\nquosure：expressionとenvironmentをセットで保持する\n\ndata-maskでは、eval_tidyのdata -&gt; quosureのenv -&gt; global envの順で評価される\n\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eval_tidy(enquo(expr), df)\n}\n\nx &lt;- 10\n\nwith2(df, x + a)\n\n[1] 11 12 13"
+  },
+  {
+    "objectID": "blog/posts/Multilevel.html",
+    "href": "blog/posts/Multilevel.html",
+    "title": "マルチレベルモデルは点推定値に影響を及ぼすか？",
+    "section": "",
+    "text": "library(tidyverse)\nlibrary(lmerTest)\nlibrary(broom)\nlibrary(broom.mixed)"
+  },
+  {
+    "objectID": "blog/posts/Multilevel.html#マルチレベルモデルにおけるよくある誤解",
+    "href": "blog/posts/Multilevel.html#マルチレベルモデルにおけるよくある誤解",
+    "title": "マルチレベルモデルは点推定値に影響を及ぼすか？",
+    "section": "マルチレベルモデルにおけるよくある誤解",
+    "text": "マルチレベルモデルにおけるよくある誤解\n「マルチレベルモデルでやんなきゃ係数にバイアスが…」←ホント？"
+  },
+  {
+    "objectID": "blog/posts/Multilevel.html#データ生成",
+    "href": "blog/posts/Multilevel.html#データ生成",
+    "title": "マルチレベルモデルは点推定値に影響を及ぼすか？",
+    "section": "データ生成",
+    "text": "データ生成\nマルチレベルのデータを考える サンプルサイズ1000、グループ数50のデータ\n\\[\\begin{align}\ny_{ig} \\sim 0.5x_{ig} + \\mathrm{Normal}(\\theta_g, 1) \\\\\n\\theta_g \\sim \\mathrm{Normal}(0, 3) \\\\\nx_i \\sim \\mathrm{Normal}(0, 1)\n\\end{align}\\]\n\ndgp &lt;- function(samplesize = 1000) {\n  tibble(\n    id = 1:samplesize,\n    group = rep(1:50, 20),\n    x = rnorm(samplesize, mean = 0, sd = 1),\n  ) |&gt; \n    group_by(group) |&gt; \n    mutate(group_mean = rnorm(1, mean = 0, sd = 3)) |&gt; \n    ungroup() |&gt; \n    mutate(y = 0.5*x + rnorm(samplesize, mean = group_mean, sd = 1))\n}\n\ndata &lt;- dgp()\n\n\nlm(y ~ x, data = data) |&gt; \n  summary()\n\n\nCall:\nlm(formula = y ~ x, data = data)\n\nResiduals:\n    Min      1Q  Median      3Q     Max \n-7.6088 -2.3228 -0.1326  2.1536  9.9809 \n\nCoefficients:\n            Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept) -0.30026    0.10027  -2.994  0.00282 ** \nx            0.43733    0.09608   4.552 5.98e-06 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 3.171 on 998 degrees of freedom\nMultiple R-squared:  0.02034,   Adjusted R-squared:  0.01935 \nF-statistic: 20.72 on 1 and 998 DF,  p-value: 5.98e-06\n\nlmer(y ~ x + (1|group), data = data) |&gt; \n  summary()\n\nLinear mixed model fit by REML. t-tests use Satterthwaite's method [\nlmerModLmerTest]\nFormula: y ~ x + (1 | group)\n   Data: data\n\nREML criterion at convergence: 3184.6\n\nScaled residuals: \n    Min      1Q  Median      3Q     Max \n-2.6532 -0.6731  0.0089  0.6698  3.3401 \n\nRandom effects:\n Groups   Name        Variance Std.Dev.\n group    (Intercept) 9.130    3.022   \n Residual             1.092    1.045   \nNumber of obs: 1000, groups:  group, 50\n\nFixed effects:\n             Estimate Std. Error        df t value Pr(&gt;|t|)    \n(Intercept)  -0.30028    0.42859  48.99985  -0.701    0.487    \nx             0.48207    0.03242 949.54983  14.871   &lt;2e-16 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nCorrelation of Fixed Effects:\n  (Intr)\nx 0.000"
+  },
+  {
+    "objectID": "blog/posts/Multilevel.html#シミュレーション",
+    "href": "blog/posts/Multilevel.html#シミュレーション",
+    "title": "マルチレベルモデルは点推定値に影響を及ぼすか？",
+    "section": "シミュレーション",
+    "text": "シミュレーション\nデータを1000個作成\n\ndata_list &lt;- \n  map(1:1000, \\(x) dgp(1000)) |&gt; \n  enframe()\n\nOLSと変量効果モデルで推定\n\nresult &lt;- \n  data_list |&gt; \n  mutate(\n    lm = map(value, \\(data) lm(y ~ x, data = data)),\n    lmer = map(value, \\(data) lmer(y ~ x + (1|group), data = data))\n  )\n\nxの係数のみ取り出す\n\nres2 &lt;- \n  result |&gt; \n  mutate(\n    lm_res = map(lm, \\(model) {\n      tidy(model) |&gt; \n        select(term, estimate)\n    }),\n    lmer_res = map(lmer, \\(model) {\n      tidy(model) |&gt; \n        select(term, estimate)\n    })\n  ) |&gt; \n  select(name, lm_res, lmer_res) |&gt; \n  pivot_longer(!name, names_to = 'model', values_to = 'value') |&gt; \n  unnest(value) |&gt; \n  filter(term == 'x')\n\n結果を図示\n\nどちらの点推定値も真の値の0.5を中心に分布＝バイアスはない\nOLSによる点推定値はバリアンスが大きい\n変量効果（マルチレベル）モデルによる点推定値はバリアンスが小さい\n\n\nres2 |&gt; \n  ggplot(aes(estimate, fill = model))+\n  geom_vline(xintercept = 0.5, linetype = 'dashed', alpha = 0.5)+\n  geom_histogram(alpha = 0.3, color = 'black', binwidth = 0.02, position = 'identity')+\n  scale_x_continuous(breaks = seq(0, 1, 0.2))"
+  },
+  {
+    "objectID": "blog/posts/Causal_Decomposition.html",
+    "href": "blog/posts/Causal_Decomposition.html",
+    "title": "Causal Decomposition Analysis",
+    "section": "",
+    "text": "library(tidyverse)\nlibrary(cfdecomp)\nlibrary(gapclosing)\nlibrary(causal.decomp)\n\n\nd &lt;- \n  sMIDUS |&gt; \n  transmute(Y = health |&gt; as.numeric(),  # outcome\n            T = edu |&gt; as.numeric(),   # treatment (continuous)\n            T2 = edu |&gt; case_match(4:6 ~ 0,   # treatment (binary)\n                                   7:9 ~ 1,\n                                   .default = NA) |&gt; factor(),\n            X = racesex |&gt; factor(levels = c(\"1\", \"4\", \"2\", \"3\")),  # note!\n            L1 = lowchildSES |&gt; as.numeric(),\n            L2 = abuse |&gt; as.numeric(),\n            C1 = age |&gt; as.numeric(),\n            C2 = stroke |&gt; as.numeric(),\n            C3 = T2DM |&gt; as.numeric(),\n            C4 = heart |&gt; as.numeric()) |&gt; \n  mutate(across(L1:C4, \\(.x){.x - mean(.x, na.rm = TRUE)})) |&gt; \n  tibble()"
+  },
+  {
+    "objectID": "blog/posts/Causal_Decomposition.html#前準備",
+    "href": "blog/posts/Causal_Decomposition.html#前準備",
+    "title": "Causal Decomposition Analysis",
+    "section": "",
+    "text": "library(tidyverse)\nlibrary(cfdecomp)\nlibrary(gapclosing)\nlibrary(causal.decomp)\n\n\nd &lt;- \n  sMIDUS |&gt; \n  transmute(Y = health |&gt; as.numeric(),  # outcome\n            T = edu |&gt; as.numeric(),   # treatment (continuous)\n            T2 = edu |&gt; case_match(4:6 ~ 0,   # treatment (binary)\n                                   7:9 ~ 1,\n                                   .default = NA) |&gt; factor(),\n            X = racesex |&gt; factor(levels = c(\"1\", \"4\", \"2\", \"3\")),  # note!\n            L1 = lowchildSES |&gt; as.numeric(),\n            L2 = abuse |&gt; as.numeric(),\n            C1 = age |&gt; as.numeric(),\n            C2 = stroke |&gt; as.numeric(),\n            C3 = T2DM |&gt; as.numeric(),\n            C4 = heart |&gt; as.numeric()) |&gt; \n  mutate(across(L1:C4, \\(.x){.x - mean(.x, na.rm = TRUE)})) |&gt; \n  tibble()"
+  },
+  {
+    "objectID": "blog/posts/Causal_Decomposition.html#cfdecomp",
+    "href": "blog/posts/Causal_Decomposition.html#cfdecomp",
+    "title": "Causal Decomposition Analysis",
+    "section": "cfdecomp",
+    "text": "cfdecomp\n\nSudharsanan and Bijlsma (2021) の方法。mediatorの値をシミュレーションで複数生成するのが特徴\n\n\n# cfd.mean\nfit_cfdecomp &lt;-\n  cfdecomp::cfd.mean(\n    formula.y = 'Y ~ X + T + X:T + L1 + L2 + C1 + C2 + C3 + C4',\n    formula.m = 'T ~ X + C1 + C2 + C3 + C4',\n    mediator = 'T',\n    group = 'X',\n    data = d |&gt; data.frame(),\n    family.y = 'gaussian',\n    family.m = 'gaussian',\n    bs.size = 50,\n    mc.size = 10,\n    alpha = 0.05\n  )\n\n\nfit_cfdecomp\n\n$out_nc_m\n          1        4        2        3\n1  7.711633 5.888257 7.125844 6.352904\n2  7.711335 5.888175 7.067714 6.367545\n3  7.680955 5.879973 7.083105 6.290285\n4  7.731151 5.883833 7.054332 6.314513\n5  7.741197 5.919269 7.068209 6.411571\n6  7.679647 5.874477 7.071199 6.442494\n7  7.743790 5.900932 7.083522 6.434297\n8  7.718472 5.884156 7.099022 6.309715\n9  7.678637 5.804392 7.116342 6.344669\n10 7.707989 5.879045 7.084649 6.386724\n11 7.665000 5.854644 7.082168 6.404390\n12 7.687069 5.879753 7.062328 6.411204\n13 7.713308 5.892926 7.065359 6.375275\n14 7.705918 5.886559 7.081125 6.461115\n15 7.749694 5.860974 7.105595 6.348651\n16 7.738547 5.872752 7.087563 6.404910\n17 7.693606 5.850646 7.098890 6.459896\n18 7.713330 5.893088 7.091596 6.376642\n19 7.709143 5.823530 7.029086 6.413343\n20 7.733210 5.858471 7.087219 6.467162\n21 7.738161 5.911049 7.092461 6.335316\n22 7.746965 5.920713 7.089514 6.283847\n23 7.694358 5.888971 7.102488 6.363968\n24 7.693684 5.908104 7.052797 6.421523\n25 7.679553 5.875793 7.105435 6.411341\n26 7.659899 5.884256 7.051559 6.460068\n27 7.686961 5.894971 7.072704 6.403770\n28 7.710311 5.869419 7.055817 6.434180\n29 7.716763 5.903774 7.081851 6.455534\n30 7.693189 5.868528 7.081334 6.421027\n31 7.742753 5.925176 7.080192 6.333420\n32 7.751380 5.894483 7.097142 6.455502\n33 7.711411 5.809214 7.071902 6.437017\n34 7.740161 5.911441 7.105231 6.511967\n35 7.705447 5.909566 7.095954 6.380936\n36 7.702558 5.903924 7.081581 6.407733\n37 7.700893 5.881401 7.086621 6.461621\n38 7.738122 5.904513 7.063869 6.395699\n39 7.746447 5.870571 7.026998 6.484040\n40 7.759368 5.910303 7.092030 6.406555\n41 7.718450 5.831043 7.054374 6.358089\n42 7.695918 5.835081 7.075573 6.416062\n43 7.731954 5.813791 7.036193 6.421428\n44 7.712310 5.893671 7.025246 6.455531\n45 7.680701 5.846358 7.061539 6.407396\n46 7.694061 5.845573 7.072832 6.391219\n47 7.668851 5.817726 7.080903 6.406440\n48 7.711376 5.949511 7.053901 6.456014\n49 7.716736 5.826249 7.080758 6.422543\n50 7.654022 5.866163 7.131136 6.413449\n\n$out_cf_m\n          1        4        2        3\n1  7.710530 7.707118 7.729085 7.689582\n2  7.722146 7.715962 7.718530 7.694744\n3  7.685399 7.679285 7.699618 7.684752\n4  7.710964 7.722139 7.724466 7.721053\n5  7.730490 7.752241 7.751842 7.799405\n6  7.664568 7.663683 7.674068 7.663177\n7  7.724971 7.749857 7.752868 7.706792\n8  7.714129 7.716862 7.722281 7.723609\n9  7.683756 7.671424 7.702381 7.617404\n10 7.695261 7.735147 7.719256 7.703986\n11 7.670528 7.683359 7.689876 7.687277\n12 7.706871 7.707688 7.704846 7.672708\n13 7.704887 7.736651 7.703969 7.675736\n14 7.709934 7.709054 7.727723 7.682492\n15 7.740935 7.721385 7.747651 7.710687\n16 7.742387 7.735513 7.746277 7.728202\n17 7.691813 7.700624 7.705163 7.669490\n18 7.695803 7.723519 7.715414 7.705193\n19 7.714527 7.724800 7.728529 7.731613\n20 7.752440 7.731310 7.731205 7.740443\n21 7.747701 7.751927 7.746104 7.736706\n22 7.744353 7.753527 7.757974 7.699908\n23 7.698835 7.707310 7.733331 7.642548\n24 7.688320 7.678430 7.695832 7.700293\n25 7.678879 7.703020 7.682947 7.674868\n26 7.662760 7.686827 7.677796 7.669470\n27 7.667674 7.688950 7.702769 7.645594\n28 7.708490 7.720959 7.712414 7.715071\n29 7.717942 7.738635 7.736016 7.725968\n30 7.696543 7.693711 7.704273 7.674739\n31 7.732255 7.762128 7.749186 7.722042\n32 7.746046 7.742624 7.751110 7.730741\n33 7.713978 7.723498 7.716193 7.716831\n34 7.745275 7.731578 7.746356 7.749622\n35 7.705166 7.686891 7.714852 7.647096\n36 7.700198 7.701480 7.708816 7.661288\n37 7.711325 7.716404 7.731762 7.711473\n38 7.712923 7.725907 7.735120 7.730548\n39 7.750298 7.756705 7.764771 7.732673\n40 7.766789 7.768882 7.776410 7.764838\n41 7.717941 7.713504 7.723617 7.715233\n42 7.679975 7.704309 7.704923 7.687836\n43 7.737060 7.735301 7.739600 7.718730\n44 7.708164 7.721542 7.701967 7.645525\n45 7.682980 7.686698 7.681756 7.670019\n46 7.695651 7.713801 7.706790 7.662348\n47 7.665926 7.714450 7.687832 7.659873\n48 7.703820 7.719615 7.695535 7.688421\n49 7.726563 7.701374 7.736214 7.689662\n50 7.645600 7.695163 7.665097 7.640491\n\n$out_nc_quantile_m\n             1        4        2        3\n2.5%  7.661047 5.810243 7.027468 6.294657\n50%   7.711356 5.882617 7.081230 6.409468\n97.5% 7.751000 5.924172 7.123706 6.480242\n\n$out_cf_quantile_m\n             1        4        2        3\n2.5%  7.663167 7.673000 7.674907 7.640954\n50%   7.709212 7.716633 7.718893 7.697326\n97.5% 7.751958 7.760908 7.763242 7.761414\n\n$out_nc_y\n          1        4        2        3\n1  7.643030 6.732799 7.375613 6.910479\n2  7.607577 6.717165 7.346198 7.052359\n3  7.607693 6.599873 7.269480 6.873304\n4  7.610145 6.723795 7.289715 6.952498\n5  7.616292 6.678440 7.333097 7.001349\n6  7.557731 6.704395 7.250811 6.992294\n7  7.599877 6.719521 7.340502 7.077658\n8  7.628274 6.719762 7.296094 6.900450\n9  7.519645 6.578178 7.334936 6.963192\n10 7.636567 6.695734 7.262511 7.051596\n11 7.611775 6.700613 7.292579 7.049620\n12 7.631828 6.683791 7.331269 7.083689\n13 7.563892 6.674326 7.316754 6.908562\n14 7.603895 6.737479 7.327165 6.927612\n15 7.618607 6.670229 7.255864 6.985934\n16 7.622240 6.704231 7.320607 7.053559\n17 7.585641 6.734660 7.341138 6.945470\n18 7.604256 6.707089 7.302909 7.041279\n19 7.524772 6.703693 7.298052 7.103668\n20 7.553036 6.722339 7.308819 7.009432\n21 7.574128 6.759331 7.311300 6.899021\n22 7.609917 6.680900 7.350035 6.967131\n23 7.607101 6.731611 7.357399 6.922846\n24 7.620362 6.689117 7.271719 6.909727\n25 7.600291 6.721549 7.343278 7.091111\n26 7.580349 6.750467 7.322421 7.079178\n27 7.588436 6.694641 7.341734 6.990717\n28 7.573369 6.765644 7.320928 6.946950\n29 7.578826 6.691312 7.331328 6.974224\n30 7.601308 6.629131 7.267103 6.999810\n31 7.603843 6.783977 7.376238 6.952896\n32 7.603542 6.734427 7.370235 6.965581\n33 7.620574 6.695155 7.328574 6.988810\n34 7.631733 6.629085 7.316282 7.039475\n35 7.614603 6.723767 7.332842 6.990229\n36 7.587058 6.682920 7.313699 6.875552\n37 7.590790 6.698495 7.371529 7.092733\n38 7.599795 6.681993 7.317343 6.869174\n39 7.585488 6.704832 7.335817 7.077249\n40 7.609017 6.707175 7.327749 6.978417\n41 7.570631 6.681757 7.330553 6.931524\n42 7.622285 6.650356 7.320067 6.998195\n43 7.620196 6.697024 7.337561 6.933217\n44 7.625899 6.619717 7.265149 7.086506\n45 7.541506 6.675692 7.294960 6.897559\n46 7.634605 6.657319 7.288395 6.937194\n47 7.590675 6.667401 7.355573 6.968337\n48 7.640129 6.790121 7.279111 6.935163\n49 7.598317 6.712968 7.344339 7.088489\n50 7.609962 6.684222 7.339409 7.026853\n\n$out_cf_y\n          1        4        2        3\n1  7.642828 7.228655 7.472077 7.044363\n2  7.610666 7.217077 7.479253 7.210653\n3  7.608739 7.042916 7.414806 7.153437\n4  7.605145 7.217781 7.452585 7.336006\n5  7.613874 7.287004 7.518205 7.143872\n6  7.554566 7.294251 7.384723 7.342034\n7  7.595708 7.312383 7.507010 7.324459\n8  7.627264 7.353019 7.429607 7.023240\n9  7.520749 7.217301 7.498648 7.195415\n10 7.634141 7.158135 7.437276 7.380509\n11 7.613326 7.312547 7.438580 7.217391\n12 7.636896 7.233261 7.494746 7.434478\n13 7.561744 7.346572 7.457141 7.021547\n14 7.604743 7.324411 7.453311 7.211474\n15 7.616689 7.236342 7.432433 7.312738\n16 7.623216 7.294132 7.488400 7.301480\n17 7.585169 7.293564 7.492201 7.007174\n18 7.599991 7.097552 7.472330 7.256049\n19 7.525761 7.140974 7.451360 7.495060\n20 7.557790 7.315725 7.505289 7.214017\n21 7.576391 7.363599 7.451759 7.137034\n22 7.609120 7.228905 7.483233 7.328490\n23 7.608396 7.173141 7.499450 7.104582\n24 7.619150 7.134299 7.413481 7.102330\n25 7.600139 7.295098 7.489918 7.308457\n26 7.581097 7.396744 7.491733 7.300458\n27 7.582923 7.368377 7.515990 7.358491\n28 7.572931 7.244174 7.466398 7.172318\n29 7.579088 7.366221 7.480393 7.158943\n30 7.601925 7.050239 7.405865 7.281161\n31 7.601097 7.217883 7.501238 7.079388\n32 7.602343 7.215997 7.486182 7.362801\n33 7.621057 7.371830 7.477008 7.321741\n34 7.632899 7.159265 7.465772 7.294746\n35 7.614549 7.213676 7.464199 7.014393\n36 7.586656 7.270587 7.435904 7.400305\n37 7.593428 7.108840 7.522947 7.414827\n38 7.593836 7.193211 7.492250 7.175875\n39 7.586345 7.250112 7.477559 7.152434\n40 7.610498 7.269978 7.452130 7.254088\n41 7.570510 7.347217 7.476158 7.220753\n42 7.618182 7.287882 7.412706 7.084224\n43 7.621420 7.233066 7.507654 7.124081\n44 7.624912 7.074213 7.438136 7.212636\n45 7.541945 7.178940 7.451000 7.109039\n46 7.635028 7.263358 7.453537 7.242004\n47 7.590112 7.170538 7.506422 6.924094\n48 7.638272 7.468543 7.431446 7.129897\n49 7.600589 7.215825 7.450062 7.366063\n50 7.607752 7.131514 7.427264 7.360753\n\n$out_nc_quantile_y\n             1        4        2        3\n2.5%  7.528537 6.604338 7.257360 6.873810\n50%   7.604075 6.699554 7.324793 6.982175\n97.5% 7.639328 6.779852 7.374694 7.092368\n\n$out_cf_quantile_y\n             1        4        2        3\n2.5%  7.529402 7.055633 7.407404 7.008799\n50%   7.603543 7.234802 7.469238 7.215704\n97.5% 7.637962 7.391138 7.517707 7.430056\n\n$mediation\n        4         2         3 \n0.6073567 0.5348774 0.3926196 \n\n$mediation_quantile\n              4         2          3\n2.5%  0.4362047 0.3328234 0.05168082\n97.5% 0.7746384 0.7824060 0.71708929\n\n$mc_conv_info_m\n          [,1]     [,2]     [,3]     [,4]\n [1,] 7.723179 5.928527 7.115377 6.273738\n [2,] 7.703455 5.931829 7.113009 6.283259\n [3,] 7.707302 5.893149 7.113309 6.302433\n [4,] 7.705497 5.903295 7.112800 6.309729\n [5,] 7.706187 5.906655 7.120460 6.311052\n [6,] 7.712124 5.901055 7.122027 6.330075\n [7,] 7.710921 5.900642 7.118638 6.347855\n [8,] 7.708649 5.901588 7.121293 6.351281\n [9,] 7.712484 5.896719 7.121812 6.349336\n[10,] 7.711633 5.888257 7.125844 6.352904\n\n$mc_conv_info_y\n          [,1]     [,2]     [,3]     [,4]\n [1,] 7.645142 6.743777 7.373939 6.902550\n [2,] 7.641534 6.744677 7.373561 6.903504\n [3,] 7.642238 6.734132 7.373609 6.905424\n [4,] 7.641907 6.736898 7.373527 6.906155\n [5,] 7.642034 6.737814 7.374752 6.906288\n [6,] 7.643120 6.736288 7.375003 6.908193\n [7,] 7.642899 6.736175 7.374461 6.909974\n [8,] 7.642484 6.736433 7.374885 6.910317\n [9,] 7.643185 6.735106 7.374968 6.910122\n[10,] 7.643030 6.732799 7.375613 6.910479\n\nmean(fit_cfdecomp$out_nc_y[,2] - fit_cfdecomp$out_nc_y[,1])\n\n[1] -0.9016258\n\nmean(fit_cfdecomp$out_cf_y[,2] - fit_cfdecomp$out_nc_y[,1])\n\n[1] -0.3558926\n\nmean(fit_cfdecomp$out_nc_y[,2] - fit_cfdecomp$out_cf_y[,2])\n\n[1] -0.5457332\n\nfit_cfdecomp$mediation\n\n        4         2         3 \n0.6073567 0.5348774 0.3926196 \n\nmean(fit_cfdecomp$out_nc_y[,3] - fit_cfdecomp$out_nc_y[,1])\n\n[1] -0.2804946\n\nmean(fit_cfdecomp$out_cf_y[,3] - fit_cfdecomp$out_nc_y[,1])\n\n[1] -0.1334747\n\nmean(fit_cfdecomp$out_nc_y[,3] - fit_cfdecomp$out_cf_y[,3])\n\n[1] -0.1470199\n\nmean(fit_cfdecomp$out_nc_y[,4] - fit_cfdecomp$out_nc_y[,1])\n\n[1] -0.6136728\n\nmean(fit_cfdecomp$out_cf_y[,4] - fit_cfdecomp$out_nc_y[,1])\n\n[1] -0.3771942\n\nmean(fit_cfdecomp$out_nc_y[,4] - fit_cfdecomp$out_cf_y[,4])\n\n[1] -0.2364786"
+  },
+  {
+    "objectID": "blog/posts/Causal_Decomposition.html#causal.decomp",
+    "href": "blog/posts/Causal_Decomposition.html#causal.decomp",
+    "title": "Causal Decomposition Analysis",
+    "section": "causal.decomp",
+    "text": "causal.decomp\n\nPark et al. (2023) の方法。\n\n\n# smi \nfit.y &lt;- lm(Y ~ X + T + X:T + L1 + L2 + C1 + C2 + C3 + C4, data = d)\nfit.m &lt;- lm(T ~ X + C1 + C2 + C3 + C4, data = d)\n\nfit_smi &lt;- smi(fit.y = fit.y,\n    fit.m = fit.m,\n    treat = \"X\", \n    sims = 100, \n    conf.level = .95,\n    conditional = TRUE,\n    covariates = 1,\n    # baseline covariatesを調整できる\n    #covariates = c(\"C1\", \"C2\", \"C3\", \"C4\"),\n    seed = 227,\n    )\n\nfit_smi\n\n\nResults:\n\n                               estimate 95% CI Lower 95% CI Upper\nInitial Disparity   (1 vs 4) -0.8993401   -0.9925190  -0.79813505\nDisparity Remaining (1 vs 4) -0.3384430   -0.4880863  -0.14795873\nDisparity Reduction (1 vs 4) -0.5608971   -0.7346168  -0.42650061\nInitial Disparity   (1 vs 2) -0.2749659   -0.3378874  -0.19366549\nDisparity Remaining (1 vs 2) -0.1213246   -0.2203441  -0.05458727\nDisparity Reduction (1 vs 2) -0.1536412   -0.1896213  -0.10521328\nInitial Disparity   (1 vs 3) -0.6137425   -0.7326095  -0.47793913\nDisparity Remaining (1 vs 3) -0.3500123   -0.5151994  -0.08733348\nDisparity Reduction (1 vs 3) -0.2637302   -0.4880614  -0.11574038\n\n\n\nsensitivity analysis(Park et al. 2023)\n\n\nsensRes &lt;- sensitivity(boot.res = fit_smi, fit.m = fit.m, fit.y = fit.y, \n                       mediator = \"T\",\n                       covariates = c(\"C1\", \"C2\", \"C3\", \"C4\"), \n                       treat = \"X\",\n                       sel.lev.treat = \"4\", \n                       max.rsq = 0.3)\nplot(sensRes)"
+  },
+  {
+    "objectID": "blog/posts/Causal_Decomposition.html#cfdecomp-1",
+    "href": "blog/posts/Causal_Decomposition.html#cfdecomp-1",
+    "title": "Causal Decomposition Analysis",
+    "section": "cfdecomp",
+    "text": "cfdecomp\n\n# cfd.mean\nset.seed(123456)\nfit_cfdecomp_b &lt;-\n  cfd.mean(\n    formula.y = 'Y ~ X + T2 + X:T2 + L1 + L2 + C1 + C2 + C3 + C4',\n    formula.m = 'T2 ~ X + C1 + C2 + C3 + C4',\n    mediator = 'T2',\n    group = 'X',\n    data = d |&gt; mutate(T2 = as.numeric(T2) - 1) |&gt; data.frame(),\n    family.y = 'gaussian',\n    family.m = 'binomial',\n    bs.size = 50,\n    mc.size = 10,\n    alpha = 0.05\n  )\nmean(fit_cfdecomp_b$out_nc_y[,\"4\"] - fit_cfdecomp_b$out_nc_y[,\"1\"])\n\n[1] -0.8981701\n\nmean(fit_cfdecomp_b$out_cf_y[,\"4\"] - fit_cfdecomp_b$out_nc_y[,\"1\"])\n\n[1] -0.5546351\n\nmean(fit_cfdecomp_b$out_nc_y[,\"4\"] - fit_cfdecomp_b$out_cf_y[,\"4\"])\n\n[1] -0.343535\n\nfit_cfdecomp_b$mediation\n\n        4         2         3 \n0.3828971 0.1298177 0.2061071 \n\nmean(fit_cfdecomp_b$out_nc_y[,\"2\"] - fit_cfdecomp_b$out_nc_y[,\"1\"])\n\n[1] -0.2774845\n\nmean(fit_cfdecomp_b$out_cf_y[,\"2\"] - fit_cfdecomp_b$out_nc_y[,\"1\"])\n\n[1] -0.2419289\n\nmean(fit_cfdecomp_b$out_nc_y[,\"2\"] - fit_cfdecomp_b$out_cf_y[,\"2\"])\n\n[1] -0.03555558\n\nmean(fit_cfdecomp_b$out_nc_y[,\"3\"] - fit_cfdecomp_b$out_nc_y[,\"1\"])\n\n[1] -0.5849521\n\nmean(fit_cfdecomp_b$out_cf_y[,\"3\"] - fit_cfdecomp_b$out_nc_y[,\"1\"])\n\n[1] -0.4655888\n\nmean(fit_cfdecomp_b$out_nc_y[,\"3\"] - fit_cfdecomp_b$out_cf_y[,\"3\"])\n\n[1] -0.1193632"
+  },
+  {
+    "objectID": "blog/posts/Causal_Decomposition.html#causal.decomp-1",
+    "href": "blog/posts/Causal_Decomposition.html#causal.decomp-1",
+    "title": "Causal Decomposition Analysis",
+    "section": "causal.decomp",
+    "text": "causal.decomp\n\n# smi\nfit.y &lt;- lm(Y ~ X + T2 + X:T2 + L1 + L2 + C1 + C2 + C3 + C4, data = d)\nfit.m &lt;- glm(T2 ~ X + C1 + C2 + C3 + C4, data = d, family = binomial(link = \"logit\"))\n\nfit_smi_b &lt;- smi(fit.y = fit.y,\n               fit.m = fit.m,\n               treat = \"X\", \n               sims = 100, \n               conf.level = .95,\n               conditional = TRUE,\n               # covariates = 1,\n               covariates = c(\"C1\", \"C2\", \"C3\", \"C4\"),\n               seed = 123456)\nfit_smi_b\n\n\nResults:\n\n                                estimate 95% CI Lower 95% CI Upper\nInitial Disparity   (1 vs 4) -0.95667843  -1.02938841  -0.88175003\nDisparity Remaining (1 vs 4) -0.61262729  -0.77966809  -0.46844380\nDisparity Reduction (1 vs 4) -0.34405113  -0.49650368  -0.21581205\nInitial Disparity   (1 vs 2) -0.31394841  -0.38058533  -0.26000373\nDisparity Remaining (1 vs 2) -0.27995004  -0.34624791  -0.22226331\nDisparity Reduction (1 vs 2) -0.03399837  -0.05003528  -0.02022012\nInitial Disparity   (1 vs 3) -0.59968604  -0.69525994  -0.49987857\nDisparity Remaining (1 vs 3) -0.48148718  -0.61387973  -0.32105036\nDisparity Reduction (1 vs 3) -0.11819886  -0.24676548  -0.03361808\n\nsensRes &lt;- sensitivity(boot.res = fit_smi_b, \n                       fit.m = fit.m, \n                       fit.y = fit.y, \n                       mediator = \"T2\",\n                       covariates = c(\"C1\", \"C2\", \"C3\", \"C4\"), \n                       treat = \"X\",\n                       sel.lev.treat = \"4\", \n                       max.rsq = 0.3)\nplot(sensRes)"
+  },
+  {
+    "objectID": "blog/posts/Causal_Decomposition.html#gapclosing",
+    "href": "blog/posts/Causal_Decomposition.html#gapclosing",
+    "title": "Causal Decomposition Analysis",
+    "section": "gapclosing",
+    "text": "gapclosing\n\nLundberg (2022)\n\n\n# gapclosing - regression\n# stochastic intervention\n# treatmentの割り当て確率の予測値を算出\nfit_glm &lt;- glm(T2 ~ X + C1 + C2 + C3, data = d, family = binomial(link = \"logit\"))\n\n# 全員のtreatmentが1だった時の予測値\nassing_prob &lt;- predict(fit_glm, newdata = d |&gt; mutate(X = \"1\"), type = \"response\")\n\n# 予測値をもとにrandom draw\ndraw &lt;- rbinom(n = nrow(d), size = 1, prob = assing_prob)\n\nfit_gapclosing &lt;- \n  gapclosing(\n    data = d |&gt; mutate(T2 = as.numeric(T2) - 1),\n    outcome_formula = Y ~ T2 * X + C1 + C2 + C3 + C4 + L1 + L2,\n    treatment_name = \"T2\",\n    category_name = \"X\",\n    counterfactual_assignments = draw # random draw\n  )\n\nfit_gapclosing\n\n\nFactual mean outcomes:\n# A tibble: 4 × 2\n  X     estimate\n  &lt;fct&gt;    &lt;dbl&gt;\n1 1         7.60\n2 4         6.70\n3 2         7.32\n4 3         6.98\n\nCounterfactual mean outcomes (post-intervention means):\n# A tibble: 4 × 2\n  X     estimate\n  &lt;fct&gt;    &lt;dbl&gt;\n1 1         7.60\n2 4         7.03\n3 2         7.36\n4 3         7.11\n\nFactual disparities:\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4    0.899\n 2 1 - 2    0.275\n 3 1 - 3    0.614\n 4 4 - 1   -0.899\n 5 4 - 2   -0.624\n 6 4 - 3   -0.286\n 7 2 - 1   -0.275\n 8 2 - 4    0.624\n 9 2 - 3    0.339\n10 3 - 1   -0.614\n11 3 - 4    0.286\n12 3 - 2   -0.339\n\nCounterfactual disparities (gap-closing estimands):\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4   0.566 \n 2 1 - 2   0.241 \n 3 1 - 3   0.483 \n 4 4 - 1  -0.566 \n 5 4 - 2  -0.325 \n 6 4 - 3  -0.0830\n 7 2 - 1  -0.241 \n 8 2 - 4   0.325 \n 9 2 - 3   0.242 \n10 3 - 1  -0.483 \n11 3 - 4   0.0830\n12 3 - 2  -0.242 \n\nAdditive gap closed: Counterfactual - Factual\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4   0.334 \n 2 1 - 2   0.0339\n 3 1 - 3   0.131 \n 4 4 - 1  -0.334 \n 5 4 - 2  -0.300 \n 6 4 - 3  -0.203 \n 7 2 - 1  -0.0339\n 8 2 - 4   0.300 \n 9 2 - 3   0.0972\n10 3 - 1  -0.131 \n11 3 - 4   0.203 \n12 3 - 2  -0.0972\n\nProportional gap closed: (Counterfactual - Factual) / Factual\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4    0.371\n 2 1 - 2    0.123\n 3 1 - 3    0.214\n 4 4 - 1    0.371\n 5 4 - 2    0.480\n 6 4 - 3    0.710\n 7 2 - 1    0.123\n 8 2 - 4    0.480\n 9 2 - 3    0.287\n10 3 - 1    0.214\n11 3 - 4    0.710\n12 3 - 2    0.287\n\ndisparityplot(fit_gapclosing, category_A = \"1\", category_B = \"4\")\n\n\n\n\n\n\n\ndisparityplot(fit_gapclosing, category_A = \"1\", category_B = \"2\")\n\n\n\n\n\n\n\ndisparityplot(fit_gapclosing, category_A = \"1\", category_B = \"3\")\n\n\n\n\n\n\n\n\n\n機械学習をつかったdoubly robustな方法も使える\n\n\n# gapclosing - ranger, doubly robust\nfit_gapclosing_ranger &lt;- \n  gapclosing(\n  data = d |&gt; mutate(T2 = as.numeric(T2) - 1),\n  outcome_formula = Y ~ T2 + X + C1 + C2 + C3 + C4 + L1 + L2,\n  treatment_formula = T2 ~ X + C1 + C2 + C3 + C4 + L1 + L2, \n  treatment_name = \"T2\",\n  treatment_algorithm = \"ranger\",\n  outcome_algorithm = \"ranger\",\n  category_name = \"X\",\n  counterfactual_assignments = rbinom(n = nrow(d), size = 1, prob = assing_prob) \n)\n\nfit_gapclosing\n\n\nFactual mean outcomes:\n# A tibble: 4 × 2\n  X     estimate\n  &lt;fct&gt;    &lt;dbl&gt;\n1 1         7.60\n2 4         6.70\n3 2         7.32\n4 3         6.98\n\nCounterfactual mean outcomes (post-intervention means):\n# A tibble: 4 × 2\n  X     estimate\n  &lt;fct&gt;    &lt;dbl&gt;\n1 1         7.60\n2 4         7.03\n3 2         7.36\n4 3         7.11\n\nFactual disparities:\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4    0.899\n 2 1 - 2    0.275\n 3 1 - 3    0.614\n 4 4 - 1   -0.899\n 5 4 - 2   -0.624\n 6 4 - 3   -0.286\n 7 2 - 1   -0.275\n 8 2 - 4    0.624\n 9 2 - 3    0.339\n10 3 - 1   -0.614\n11 3 - 4    0.286\n12 3 - 2   -0.339\n\nCounterfactual disparities (gap-closing estimands):\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4   0.566 \n 2 1 - 2   0.241 \n 3 1 - 3   0.483 \n 4 4 - 1  -0.566 \n 5 4 - 2  -0.325 \n 6 4 - 3  -0.0830\n 7 2 - 1  -0.241 \n 8 2 - 4   0.325 \n 9 2 - 3   0.242 \n10 3 - 1  -0.483 \n11 3 - 4   0.0830\n12 3 - 2  -0.242 \n\nAdditive gap closed: Counterfactual - Factual\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4   0.334 \n 2 1 - 2   0.0339\n 3 1 - 3   0.131 \n 4 4 - 1  -0.334 \n 5 4 - 2  -0.300 \n 6 4 - 3  -0.203 \n 7 2 - 1  -0.0339\n 8 2 - 4   0.300 \n 9 2 - 3   0.0972\n10 3 - 1  -0.131 \n11 3 - 4   0.203 \n12 3 - 2  -0.0972\n\nProportional gap closed: (Counterfactual - Factual) / Factual\n# A tibble: 12 × 2\n   X     estimate\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 1 - 4    0.371\n 2 1 - 2    0.123\n 3 1 - 3    0.214\n 4 4 - 1    0.371\n 5 4 - 2    0.480\n 6 4 - 3    0.710\n 7 2 - 1    0.123\n 8 2 - 4    0.480\n 9 2 - 3    0.287\n10 3 - 1    0.214\n11 3 - 4    0.710\n12 3 - 2    0.287\n\ndisparityplot(fit_gapclosing_ranger, category_A = \"1\", category_B = \"4\")\n\n\n\n\n\n\n\ndisparityplot(fit_gapclosing_ranger, category_A = \"1\", category_B = \"2\")\n\n\n\n\n\n\n\ndisparityplot(fit_gapclosing_ranger, category_A = \"1\", category_B = \"3\")"
+  },
+  {
+    "objectID": "research.html",
+    "href": "research.html",
+    "title": "Research",
+    "section": "",
+    "text": "鎌田健太郎，2024，「初年次教育の導入・改革は学生の学習を促進したか——国立総合大学における因果効果の検討」『教育学研究』91(1): 1–12．\n\n Appendix  再現コード\n\n鎌田健太郎，2022，「高等教育再拡大期における学生活動の変化——Typological Approach による学生下位集団の時代比較」『高等教育研究』25: 257–74．"
+  },
+  {
+    "objectID": "research.html#査読付き論文",
+    "href": "research.html#査読付き論文",
+    "title": "Research",
+    "section": "",
+    "text": "鎌田健太郎，2024，「初年次教育の導入・改革は学生の学習を促進したか——国立総合大学における因果効果の検討」『教育学研究』91(1): 1–12．\n\n Appendix  再現コード\n\n鎌田健太郎，2022，「高等教育再拡大期における学生活動の変化——Typological Approach による学生下位集団の時代比較」『高等教育研究』25: 257–74．"
+  },
+  {
+    "objectID": "profile.en.html",
+    "href": "profile.en.html",
+    "title": "Profile",
+    "section": "",
+    "text": "April 2023 - Present: Research Fellow (DC1), Japan Society for the Promotion of Science (JSPS)\nApril 2021 - Present: Project Academic Specialist, Center for Social Research and Data Archives, Institute of Social Science, The University of Tokyo"
+  },
+  {
+    "objectID": "profile.en.html#position",
+    "href": "profile.en.html#position",
+    "title": "Profile",
+    "section": "",
+    "text": "April 2023 - Present: Research Fellow (DC1), Japan Society for the Promotion of Science (JSPS)\nApril 2021 - Present: Project Academic Specialist, Center for Social Research and Data Archives, Institute of Social Science, The University of Tokyo"
+  },
+  {
+    "objectID": "profile.en.html#education",
+    "href": "profile.en.html#education",
+    "title": "Profile",
+    "section": "Education",
+    "text": "Education\n\nApril 2023 - Present: Ph.D. Student in Division of Social Sciences in Education, Graduate School of Education, The University of Tokyo\nApril 2021 - March 2023: M.A. in Division of Social Sciences in Education, Graduate School of Education, The University of Tokyo\nApril 2019 - March 2021: B.A. in Division of Social Sciences in Education, Faculty of Education, The University of Tokyo"
+  },
+  {
+    "objectID": "blog/index.html",
+    "href": "blog/index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "学校外教育の参加率\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nNov 1, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n手動でSuperlearner\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nNov 1, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n信頼区間を理解したい\n\n\n\nStatistics\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nSep 21, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nPIAAC、PISAの標準誤差\n\n\n\nStatistics\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nSep 21, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nBorusyak et al. (2024)\n\n\n\nCausal Inference\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nAug 19, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n複利計算\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nAug 15, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nマルチアンサーの処理\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nJun 5, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nバージョンを指定したRのインストール\n\n\n\nR\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nApr 30, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nBLASの変更によるRの高速化\n\n\n\nR\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nMar 10, 2024\n\n\n\n\n\n\n\n\n\n\n\n\ntensorflowをRstudioで\n\n\n\nR Tips\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 23, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nCausal Decomposition Analysis\n\n\n\nCausal Inference\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nTargeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)\n\n\n\nCausal Inference\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nマルチレベルモデルは点推定値に影響を及ぼすか？\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nrlang学習\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nSudharsanan & Bijlsma (2021)\n\n\n\nCausal Inference\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nLongitudinal TMLE\n\n\n\nCausal Inference\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n観測度数・期待度数から対数尤度を計算する方法\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n学生生活実態調査の文字コード\n\n\n\nOthers\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nJun 25, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n新しいパソコンを買ったらやること\n\n\n\nSetup\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nFeb 14, 2022\n\n\n\n\n\n\n\n\n\n\n\n\nZoteroの設定備忘録\n\n\n\nSetup\n\n\nZotero\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nJun 5, 2021\n\n\n\n\n\n\n\n\n\n\n\n\nRでロジットモデル\n\n\n\nStatistics\n\n\nR\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nApr 29, 2021\n\n\n\n\n\n\n\n\n\n\n\n\n移動平均のかゆいところに，partial = TRUE\n\n\n\nR\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nOct 25, 2020\n\n\n\n\n\n\n\n\n\n\n\n\nRとPython書き比べ（ユークリッドの互除法）\n\n\n\nR\n\n\nPython\n\n\n\n\n\n\n\nKentaro Kamada\n\n\nJul 31, 2020\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "blog/posts/TMLE.html",
+    "href": "blog/posts/TMLE.html",
+    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
+    "section": "",
+    "text": "参考ページ：https://www.khstats.com/blog/tmle/tutorial-pt2\n\n\n\n\n\nlibrary(tidyverse)\nlibrary(sl3)\nlibrary(tmle3)\nlibrary(future)\n\nkable &lt;- partial(\n  knitr::kable,\n  digits = 3\n)\n\nplan(multisession, workers = 8)\n\nset.seed(7)\n\n\n\n\n\n元のサイトでは\\(Y\\)が2値変数になっていて、推定が真値と一致しているかどうかの評価が難しいので、ここでは\\(Y\\)を連続変数としている。\nATEの真値は0.3に設定\n\n\ngenerate_data &lt;- function(n){ \n    W1 &lt;- rbinom(n, size=1, prob=0.2) # binary confounder\n    W2 &lt;- rbinom(n, size=1, prob=0.5) # binary confounder\n    W3 &lt;- round(runif(n, min=2, max=7)) # continuous confounder\n    W4 &lt;- round(runif(n, min=0, max=4)) # continuous confounder\n    A  &lt;- rbinom(n, size=1, prob= plogis(-0.2 + 0.2*W2 + log(0.1*W3) + 0.3*W4 + 0.2*W1*W4)) # binary treatment depends on confounders\n    Y &lt;- -1 + 0.3*A - 0.1*W1 + 0.2*W2 + 0.3*W3 - 0.1*W4 + sin(0.1*W2*W4) # continuous outcome depends on confounders\n    return(tibble(Y, W1, W2, W3, W4, A))\n}\n\nn &lt;- 1000\ndat_obs &lt;- generate_data(n) # generate a data set with n observations\n\n\ndat_obs |&gt; \n  summarise(samplemean = mean(Y), .by = A)\n\n# A tibble: 2 × 2\n      A samplemean\n  &lt;int&gt;      &lt;dbl&gt;\n1     1      0.686\n2     0      0.237\n\n\n\n\n\n\nglm、Lasso、Random forest、Multivariate adaptive regression splineをスタッキング\n\n\nsl_libs &lt;-\n  Lrnr_sl$new(\n    learners = Stack$new(\n      Lrnr_glm$new(), \n      Lrnr_glmnet$new(alpha = 1), \n      Lrnr_ranger$new(num.trees = 2000, max.depth = 3), \n      Lrnr_earth$new()\n    )\n  )\n\n\n\n\n\n\n\n\\[\n{\\mathrm E}[Y | A, W]\n\\]\n\ntask &lt;- \n  sl3_Task$new(\n    dat_obs, \n    covariates = select(dat_obs, !Y) |&gt; names(), \n    outcome = 'Y', \n    outcome_type = 'continuous', \n    folds = 8L\n  )\n\ntask_A1 &lt;- \n  sl3_Task$new(\n    dat_obs |&gt; mutate(A = 1), \n    covariates = select(dat_obs, !Y) |&gt; names(), \n    outcome = 'Y', \n    outcome_type = 'continuous', \n    folds = 8L\n  )\n\ntask_A0 &lt;- \n  sl3_Task$new(\n    dat_obs |&gt; mutate(A = 0), \n    covariates = select(dat_obs, !Y) |&gt; names(), \n    outcome = 'Y', \n    outcome_type = 'continuous', \n    folds = 8L\n  )\n\n# 全サンプルで学習\nsl_fit &lt;- sl_libs$train(task)\n\n\n以下の3つの予測値を算出\n\\(A := 1\\)は全サンプルでAを1にする（\\(A = 1\\)はサンプルのうちのAが1となる部分集団）\n\n\\[\\begin{align}\n&{\\mathrm E}[Y | A, W] \\\\\n&{\\mathrm E}[Y | A := 1, W] \\\\\n&{\\mathrm E}[Y | A := 0, W]\n\\end{align}\\]\n\ndat_tmle1 &lt;- \n  dat_obs |&gt; \n  mutate(\n    # 観測サンプルについての予測値\n    Q_A = sl_fit$predict(task),\n    # 全てのサンプルでA = 1に固定したときの予測値\n    Q_A1 = sl_fit$predict(task_A1),\n    # 全てのサンプルでA = 0に固定した時の予測値\n    Q_A0 = sl_fit$predict(task_A0)\n  )\n\n\nstandardization（g-computation）によるATE\n\n\\[\nATE_{g \\mathrm{-}comp} = {\\mathrm E}[ {\\mathrm E}[Y | A := 1, W] - {\\mathrm E}[Y | A := 0, W]]\n\\]\n\ndat_tmle1 |&gt; \n  summarise(ATE = mean(Q_A1 - Q_A0))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.300\n\n\n\n\n\n\n\n傾向スコアを機械学習モデルにより予測\n\n\\[\n\\mathrm{Pr}(A = 1 | W)\n\\]\n\ntask_g &lt;- \n  sl3_Task$new(\n    data = dat_obs, \n    covariates = select(dat_obs, !c(Y, A)) |&gt; names(), \n    outcome = 'A', \n    outcome_type = 'binomial', \n    folds = 8\n  )\n\nsl_fit_g &lt;- sl_libs$train(task_g)\n\n\n\n\n傾向スコアからClever Covariateと呼ばれる情報を作成（IPWに似ている）\n\n\\[\\begin{align}\n&H(A,W) &= \\frac{A}{\\mathrm{Pr}(A = 1 | W)} - \\frac{1 - A}{1 - \\mathrm{Pr}(A = 1 | W)} \\\\\n&H(1,W) &= \\frac{A}{\\mathrm{Pr}(A = 1 | W)} \\\\\n&H(0,W) &= - \\frac{1 - A}{1 - \\mathrm{Pr}(A = 1 | W)}\n\\end{align}\\]\n\ndat_tmle2 &lt;- \n  dat_tmle1 |&gt; \n  mutate(\n    # Propensity Scoreの予測\n    ps = sl_fit_g$predict(task_g),\n    # ipw (Inverse Probability Weight)\n    ipw = case_when(\n      A == 1 ~ 1 / ps, \n      A == 0 ~ 1 / (1 - ps)\n    ),\n    # Clever Covariates\n    H_A = case_when(\n      A == 1 ~ 1 / ps,\n      A == 0 ~ -1 / (1 - ps)\n    ),\n    H_A1 = case_when(\n      A == 1 ~ H_A,\n      A == 0 ~ 0\n    ),\n    H_A0 = case_when(\n      A == 1 ~ 0,\n      A == 0 ~ H_A\n    )\n  )\n\n\nIPWによるATE\n\n\\[\nATE_{ipw} = {\\mathrm E}[\\frac{A}{\\mathrm{Pr}(A = 1 | W)}Y - \\frac{1 - A}{1 - \\mathrm{Pr}(A = 1 | W)}Y]\n\\]\n\ndat_tmle2 |&gt; \n  summarise(CFmean = sum(Y*ipw) / sum(ipw), .by = A) |&gt; \n  arrange(A) |&gt; \n  summarise(ATE = diff(CFmean))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.298\n\n\n\nAugumented IPWによるATE\n\n（ほんとは関数推定時にcross-fitをする）\n\n\n\\[\nATE_{aipw} = \\mathrm E[\\mathrm E[Y | A := 1, W] - \\mathrm E[Y | A := 0, W] + \\frac{A}{\\mathrm Pr(A = 1 | W)}(Y - {\\mathrm E}[Y | A := 1, W]) - \\frac{1 - A}{1 - \\mathrm Pr(A = 1 | W)}(Y - \\mathrm E[Y | A := 0, W])]\n\\]\n\ndat_tmle2 |&gt; \n  summarise(ATE = mean(Q_A1 - Q_A0 + ipw*A*(Y - Q_A1) - ipw*(1 - A)*(Y - Q_A0)))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.300\n\n\n\n\n\n\n\nAIPWの問題点：統計的最適化がターゲットのパラメータ（ATE）に対してではなく、母平均関数\\({\\mathrm E}[Y | A,W]\\)および傾向スコア関数\\(\\mathrm{Pr}(A = 1 | W)\\)のパラメータについて最適化されている点\n推定したいパラメータ（ATE）のEIF（Efficient Influence Function）を解くことがこのステップのポイントらしい\n具体的には、Step1で推定した\\(\\mathrm{E}[Y | A, W]\\)と、Step2で推定したClever Covariate\\(H(A, W)\\)を用いて、以下の回帰式の\\(\\epsilon\\)（変動パラメータ）を推定する\n\n\\[\nY = \\mathrm{E}[Y | A, W] + \\epsilon H(A,W)\n\\]\n\n切片が0で、Step1の推定値の係数を1に固定するために、-1とoffsetを利用する\n\n\nfit &lt;- glm(Y ~ -1 + offset(Q_A) + H_A, data = dat_tmle2, family = gaussian())\n\n\n変動パラメータの推定値\n\n\nepsilon &lt;- coef(fit)\n\nepsilon\n\n        H_A \n6.40031e-07 \n\n\n\n\n\n\n推定したepsilonと\\(Y\\)の予測値をもとに、\\(Y\\)の予測値を更新\n\n\ndat_tmle3 &lt;- \n  dat_tmle2 |&gt; \n  mutate(\n    Q_A_update = Q_A + epsilon*H_A,\n    Q_A1_update = Q_A1 + epsilon*H_A1,\n    Q_A0_update = Q_A0 + epsilon*H_A0,\n  )\n\n\n\n\n\n更新されたアウトカムの予測値を用いて、Standardizationの要領でATEを推定\n\n\ndat_tmle3 |&gt; \n  summarise(ATE = mean(Q_A1_update - Q_A0_update))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.300\n\nATE &lt;- mean(dat_tmle3$Q_A1_update - dat_tmle3$Q_A0_update)\n\n\n\n\n\nTMLEではbootstrapによらずとも標準誤差を算出できる（！）\nまずは、Influence Functionを推定する\nInfluence Function：各サンプルがどれだけATEに影響をあたえるか？\n\n\ndat_tmle4 &lt;- \n  dat_tmle3 |&gt; \n  mutate(\n    IF = (Y - Q_A_update)*H_A + Q_A1_update - Q_A0_update - ATE\n  )\n\nATEの標準誤差はIFを用いて\n\\[\nSE = \\sqrt{\\frac{\\mathrm{var}(IF)}{N}}\n\\]\n\ndat_tmle4 |&gt; \n  summarise(SE = sqrt(var(IF) / 1000))\n\n# A tibble: 1 × 1\n         SE\n      &lt;dbl&gt;\n1 0.0000217"
+  },
+  {
+    "objectID": "blog/posts/TMLE.html#下準備",
+    "href": "blog/posts/TMLE.html#下準備",
+    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
+    "section": "",
+    "text": "library(tidyverse)\nlibrary(sl3)\nlibrary(tmle3)\nlibrary(future)\n\nkable &lt;- partial(\n  knitr::kable,\n  digits = 3\n)\n\nplan(multisession, workers = 8)\n\nset.seed(7)\n\n\n\n\n\n元のサイトでは\\(Y\\)が2値変数になっていて、推定が真値と一致しているかどうかの評価が難しいので、ここでは\\(Y\\)を連続変数としている。\nATEの真値は0.3に設定\n\n\ngenerate_data &lt;- function(n){ \n    W1 &lt;- rbinom(n, size=1, prob=0.2) # binary confounder\n    W2 &lt;- rbinom(n, size=1, prob=0.5) # binary confounder\n    W3 &lt;- round(runif(n, min=2, max=7)) # continuous confounder\n    W4 &lt;- round(runif(n, min=0, max=4)) # continuous confounder\n    A  &lt;- rbinom(n, size=1, prob= plogis(-0.2 + 0.2*W2 + log(0.1*W3) + 0.3*W4 + 0.2*W1*W4)) # binary treatment depends on confounders\n    Y &lt;- -1 + 0.3*A - 0.1*W1 + 0.2*W2 + 0.3*W3 - 0.1*W4 + sin(0.1*W2*W4) # continuous outcome depends on confounders\n    return(tibble(Y, W1, W2, W3, W4, A))\n}\n\nn &lt;- 1000\ndat_obs &lt;- generate_data(n) # generate a data set with n observations\n\n\ndat_obs |&gt; \n  summarise(samplemean = mean(Y), .by = A)\n\n# A tibble: 2 × 2\n      A samplemean\n  &lt;int&gt;      &lt;dbl&gt;\n1     1      0.686\n2     0      0.237\n\n\n\n\n\n\nglm、Lasso、Random forest、Multivariate adaptive regression splineをスタッキング\n\n\nsl_libs &lt;-\n  Lrnr_sl$new(\n    learners = Stack$new(\n      Lrnr_glm$new(), \n      Lrnr_glmnet$new(alpha = 1), \n      Lrnr_ranger$new(num.trees = 2000, max.depth = 3), \n      Lrnr_earth$new()\n    )\n  )"
+  },
+  {
+    "objectID": "blog/posts/TMLE.html#step1アウトカムの予測",
+    "href": "blog/posts/TMLE.html#step1アウトカムの予測",
+    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
+    "section": "",
+    "text": "\\[\n{\\mathrm E}[Y | A, W]\n\\]\n\ntask &lt;- \n  sl3_Task$new(\n    dat_obs, \n    covariates = select(dat_obs, !Y) |&gt; names(), \n    outcome = 'Y', \n    outcome_type = 'continuous', \n    folds = 8L\n  )\n\ntask_A1 &lt;- \n  sl3_Task$new(\n    dat_obs |&gt; mutate(A = 1), \n    covariates = select(dat_obs, !Y) |&gt; names(), \n    outcome = 'Y', \n    outcome_type = 'continuous', \n    folds = 8L\n  )\n\ntask_A0 &lt;- \n  sl3_Task$new(\n    dat_obs |&gt; mutate(A = 0), \n    covariates = select(dat_obs, !Y) |&gt; names(), \n    outcome = 'Y', \n    outcome_type = 'continuous', \n    folds = 8L\n  )\n\n# 全サンプルで学習\nsl_fit &lt;- sl_libs$train(task)\n\n\n以下の3つの予測値を算出\n\\(A := 1\\)は全サンプルでAを1にする（\\(A = 1\\)はサンプルのうちのAが1となる部分集団）\n\n\\[\\begin{align}\n&{\\mathrm E}[Y | A, W] \\\\\n&{\\mathrm E}[Y | A := 1, W] \\\\\n&{\\mathrm E}[Y | A := 0, W]\n\\end{align}\\]\n\ndat_tmle1 &lt;- \n  dat_obs |&gt; \n  mutate(\n    # 観測サンプルについての予測値\n    Q_A = sl_fit$predict(task),\n    # 全てのサンプルでA = 1に固定したときの予測値\n    Q_A1 = sl_fit$predict(task_A1),\n    # 全てのサンプルでA = 0に固定した時の予測値\n    Q_A0 = sl_fit$predict(task_A0)\n  )\n\n\nstandardization（g-computation）によるATE\n\n\\[\nATE_{g \\mathrm{-}comp} = {\\mathrm E}[ {\\mathrm E}[Y | A := 1, W] - {\\mathrm E}[Y | A := 0, W]]\n\\]\n\ndat_tmle1 |&gt; \n  summarise(ATE = mean(Q_A1 - Q_A0))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.300"
+  },
+  {
+    "objectID": "blog/posts/TMLE.html#step2処置確率傾向スコアの予測",
+    "href": "blog/posts/TMLE.html#step2処置確率傾向スコアの予測",
+    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
+    "section": "",
+    "text": "傾向スコアを機械学習モデルにより予測\n\n\\[\n\\mathrm{Pr}(A = 1 | W)\n\\]\n\ntask_g &lt;- \n  sl3_Task$new(\n    data = dat_obs, \n    covariates = select(dat_obs, !c(Y, A)) |&gt; names(), \n    outcome = 'A', \n    outcome_type = 'binomial', \n    folds = 8\n  )\n\nsl_fit_g &lt;- sl_libs$train(task_g)\n\n\n\n\n傾向スコアからClever Covariateと呼ばれる情報を作成（IPWに似ている）\n\n\\[\\begin{align}\n&H(A,W) &= \\frac{A}{\\mathrm{Pr}(A = 1 | W)} - \\frac{1 - A}{1 - \\mathrm{Pr}(A = 1 | W)} \\\\\n&H(1,W) &= \\frac{A}{\\mathrm{Pr}(A = 1 | W)} \\\\\n&H(0,W) &= - \\frac{1 - A}{1 - \\mathrm{Pr}(A = 1 | W)}\n\\end{align}\\]\n\ndat_tmle2 &lt;- \n  dat_tmle1 |&gt; \n  mutate(\n    # Propensity Scoreの予測\n    ps = sl_fit_g$predict(task_g),\n    # ipw (Inverse Probability Weight)\n    ipw = case_when(\n      A == 1 ~ 1 / ps, \n      A == 0 ~ 1 / (1 - ps)\n    ),\n    # Clever Covariates\n    H_A = case_when(\n      A == 1 ~ 1 / ps,\n      A == 0 ~ -1 / (1 - ps)\n    ),\n    H_A1 = case_when(\n      A == 1 ~ H_A,\n      A == 0 ~ 0\n    ),\n    H_A0 = case_when(\n      A == 1 ~ 0,\n      A == 0 ~ H_A\n    )\n  )\n\n\nIPWによるATE\n\n\\[\nATE_{ipw} = {\\mathrm E}[\\frac{A}{\\mathrm{Pr}(A = 1 | W)}Y - \\frac{1 - A}{1 - \\mathrm{Pr}(A = 1 | W)}Y]\n\\]\n\ndat_tmle2 |&gt; \n  summarise(CFmean = sum(Y*ipw) / sum(ipw), .by = A) |&gt; \n  arrange(A) |&gt; \n  summarise(ATE = diff(CFmean))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.298\n\n\n\nAugumented IPWによるATE\n\n（ほんとは関数推定時にcross-fitをする）\n\n\n\\[\nATE_{aipw} = \\mathrm E[\\mathrm E[Y | A := 1, W] - \\mathrm E[Y | A := 0, W] + \\frac{A}{\\mathrm Pr(A = 1 | W)}(Y - {\\mathrm E}[Y | A := 1, W]) - \\frac{1 - A}{1 - \\mathrm Pr(A = 1 | W)}(Y - \\mathrm E[Y | A := 0, W])]\n\\]\n\ndat_tmle2 |&gt; \n  summarise(ATE = mean(Q_A1 - Q_A0 + ipw*A*(Y - Q_A1) - ipw*(1 - A)*(Y - Q_A0)))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.300"
+  },
+  {
+    "objectID": "blog/posts/TMLE.html#step3変動パラメータの推定",
+    "href": "blog/posts/TMLE.html#step3変動パラメータの推定",
+    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
+    "section": "",
+    "text": "AIPWの問題点：統計的最適化がターゲットのパラメータ（ATE）に対してではなく、母平均関数\\({\\mathrm E}[Y | A,W]\\)および傾向スコア関数\\(\\mathrm{Pr}(A = 1 | W)\\)のパラメータについて最適化されている点\n推定したいパラメータ（ATE）のEIF（Efficient Influence Function）を解くことがこのステップのポイントらしい\n具体的には、Step1で推定した\\(\\mathrm{E}[Y | A, W]\\)と、Step2で推定したClever Covariate\\(H(A, W)\\)を用いて、以下の回帰式の\\(\\epsilon\\)（変動パラメータ）を推定する\n\n\\[\nY = \\mathrm{E}[Y | A, W] + \\epsilon H(A,W)\n\\]\n\n切片が0で、Step1の推定値の係数を1に固定するために、-1とoffsetを利用する\n\n\nfit &lt;- glm(Y ~ -1 + offset(Q_A) + H_A, data = dat_tmle2, family = gaussian())\n\n\n変動パラメータの推定値\n\n\nepsilon &lt;- coef(fit)\n\nepsilon\n\n        H_A \n6.40031e-07"
+  },
+  {
+    "objectID": "blog/posts/TMLE.html#step4アウトカムの予測値を更新",
+    "href": "blog/posts/TMLE.html#step4アウトカムの予測値を更新",
+    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
+    "section": "",
+    "text": "推定したepsilonと\\(Y\\)の予測値をもとに、\\(Y\\)の予測値を更新\n\n\ndat_tmle3 &lt;- \n  dat_tmle2 |&gt; \n  mutate(\n    Q_A_update = Q_A + epsilon*H_A,\n    Q_A1_update = Q_A1 + epsilon*H_A1,\n    Q_A0_update = Q_A0 + epsilon*H_A0,\n  )"
+  },
+  {
+    "objectID": "blog/posts/TMLE.html#step5推定したい統計量を推定",
+    "href": "blog/posts/TMLE.html#step5推定したい統計量を推定",
+    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
+    "section": "",
+    "text": "更新されたアウトカムの予測値を用いて、Standardizationの要領でATEを推定\n\n\ndat_tmle3 |&gt; \n  summarise(ATE = mean(Q_A1_update - Q_A0_update))\n\n# A tibble: 1 × 1\n    ATE\n  &lt;dbl&gt;\n1 0.300\n\nATE &lt;- mean(dat_tmle3$Q_A1_update - dat_tmle3$Q_A0_update)"
+  },
+  {
+    "objectID": "blog/posts/TMLE.html#step6標準誤差の推定",
+    "href": "blog/posts/TMLE.html#step6標準誤差の推定",
+    "title": "Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)",
+    "section": "",
+    "text": "TMLEではbootstrapによらずとも標準誤差を算出できる（！）\nまずは、Influence Functionを推定する\nInfluence Function：各サンプルがどれだけATEに影響をあたえるか？\n\n\ndat_tmle4 &lt;- \n  dat_tmle3 |&gt; \n  mutate(\n    IF = (Y - Q_A_update)*H_A + Q_A1_update - Q_A0_update - ATE\n  )\n\nATEの標準誤差はIFを用いて\n\\[\nSE = \\sqrt{\\frac{\\mathrm{var}(IF)}{N}}\n\\]\n\ndat_tmle4 |&gt; \n  summarise(SE = sqrt(var(IF) / 1000))\n\n# A tibble: 1 × 1\n         SE\n      &lt;dbl&gt;\n1 0.0000217"
+  },
+  {
+    "objectID": "blog/posts/tensorflow_with_Rstudio.html",
+    "href": "blog/posts/tensorflow_with_Rstudio.html",
+    "title": "tensorflowをRstudioで",
+    "section": "",
+    "text": "pythonをRStudioで使うのはreticulateパッケージによりだいぶ楽になった。\nただpythonにおけるdeep learningの代表的パッケージであるtensorflowをRStudioで使う際に少しつまづいたのでメモです。"
+  },
+  {
+    "objectID": "blog/posts/tensorflow_with_Rstudio.html#pythonの環境をどうやって構築するか",
+    "href": "blog/posts/tensorflow_with_Rstudio.html#pythonの環境をどうやって構築するか",
+    "title": "tensorflowをRstudioで",
+    "section": "pythonの環境をどうやって構築するか？",
+    "text": "pythonの環境をどうやって構築するか？\nRではrenvパッケージを使っている。ではpythonでは？\npythonはRよりも環境が複雑で変化も早そうなので、環境構築は重要。\n今回はpython公式が推奨しているっぽいvenvを使う。\n\n\n\n\n\n\nNote\n\n\n\n最初global環境でそのままやろうとしたが上手くいかず挫折。Dockerとかも有力だと思う。"
+  },
+  {
+    "objectID": "blog/posts/tensorflow_with_Rstudio.html#venvを使って仮想環境を用意",
+    "href": "blog/posts/tensorflow_with_Rstudio.html#venvを使って仮想環境を用意",
+    "title": "tensorflowをRstudioで",
+    "section": "venvを使って仮想環境を用意",
+    "text": "venvを使って仮想環境を用意\n\npythonがインストールされているか確認\n\nhomebrewなりでインストールしておく\nPATHを通しておく\n\n作業ディレクトリにて、terminalで以下のコマンドを実行し.venvフォルダを作成\n\n\n\n\nterminal\n\npython3 -m venv .venv"
+  },
+  {
+    "objectID": "blog/posts/tensorflow_with_Rstudio.html#pythonライブラリをインストール",
+    "href": "blog/posts/tensorflow_with_Rstudio.html#pythonライブラリをインストール",
+    "title": "tensorflowをRstudioで",
+    "section": "pythonライブラリをインストール",
+    "text": "pythonライブラリをインストール\n\n以下のコマンドを実行し、仮想環境を起動\n\npythonの場所が.venv内のフォルダになる\n\n\n\n\n\nterminal\n\nsource .venv/bin/activate\n\n\n\n\n\n\n\n\nNote\n\n\n\nsource .venv/bin/activateは、ライブラリをインストールするときは毎回実行する必要があります！\nまちがってglobal環境を汚さないように！\n\n\n\nライブラリをインストール\n\ntensorflowのほか、numpyも必須（tensorflowをインストールしたときに入る）\nM1 macでGPUを使いたい場合はtensorflow-metalもインストールする\n\n\n\n\n\nterminal\n\npip install tensorflow-macos\npip install tensorflow-metal\n\n\n\n仮想環境を抜けるときは以下のコマンドを実行\n\n\n\n\nterminal\n\ndeactivate"
+  },
+  {
+    "objectID": "blog/posts/tensorflow_with_Rstudio.html#rstudioでpythonを使う",
+    "href": "blog/posts/tensorflow_with_Rstudio.html#rstudioでpythonを使う",
+    "title": "tensorflowをRstudioで",
+    "section": "RStudioでpythonを使う",
+    "text": "RStudioでpythonを使う\n\npythonの場所を指定\n\nRStudioでpythonを使うには、RStudioにpythonの場所を教えてやる必要がある\n\n今回は.venv内のpythonを使いたいので、作業ディレクトリに.Rprofileを作成し、以下のコードを書く\nrenvを使っている場合は、.Rprofileが既に作成されていると思うので、その中に追記する\n\n\n\n\n\n.Rprofile\n\n# renv起動\nsource(\"renv/activate.R\")\n# pythonの場所を指定\nSys.setenv(RETICULATE_PYTHON = \".venv/bin/python3\")\n\n\n\n\n\n\n\n\nNote\n\n\n\npythonの場所の指定はrenvの起動より後に行う必要がある。もし先にpythonの場所を指定してしまうと、renvを起動したときにpythonの場所が上書きされてしまい、上手くいかなくなる。\n\n\n\n\npythonを起動\n\nRStudioでpythonのコードを実行すると、reticulate::repl_python()が走ってコンソールがpythonになる\n\n\n\n\npython\n\nimport sys\nprint(sys.version)\n\n\n3.11.10 (main, Sep  7 2024, 01:03:31) [Clang 15.0.0 (clang-1500.3.9.4)]\n\n\n\ntensorflowを起動して、GPUが使えるかを確認\nphysical_deviceでCPUとGPUの両方が表示されてればOK\n\n\n\n\npython\n\nimport tensorflow as tf\ntf.config.list_physical_devices()\n\n\n[PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU'), PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]"
+  },
+  {
+    "objectID": "blog/posts/tensorflow_with_Rstudio.html#ニューラルネットをやってみる",
+    "href": "blog/posts/tensorflow_with_Rstudio.html#ニューラルネットをやってみる",
+    "title": "tensorflowをRstudioで",
+    "section": "ニューラルネットをやってみる",
+    "text": "ニューラルネットをやってみる\n\nチュートリアルとして、手書きのアルファベットを分類するモデルを作成してみる\nRでデータを読み込んで、pythonに渡してtensorflowで分析\n参考\n\n\n\n\nR\n\nlibrary(tidyverse)\nlibrary(rsample)\nlibrary(reticulate)\n\n\n\nデータのダウンロード\n\n\n\nR\n\n# データのダウンロード\nif (!dir.exists('data')) dir.create('data')\ndownload.file('https://ai.stanford.edu/~btaskar/ocr/letter.data.gz', destfile = 'data/letter.data')\n\n\n\n\nデータの読み込み\n\n列名はhttps://ai.stanford.edu/~btaskar/ocr/letter.namesより取得できる\n詳細は以下の通り\n\nid: each letter is assigned a unique integer id\nletter: a-z\nnext_id: id for next letter in the word, -1 if last letter\nword_id: each word is assigned a unique integer id (not used)\nposition: position of letter in the word (not used)\nfold: 0-9 – cross-validation fold\np_i_j: 0/1 – value of pixel in row i, column j\n\nletterとp_i_j（pixel）のみ使うのでそれ以外は削除\n\n\n\n\nR\n\ncolname &lt;- read_lines('https://ai.stanford.edu/~btaskar/ocr/letter.names')\ndata &lt;- \n  read_tsv('data/letter.data', col_names = colname) |&gt; \n  # letterとpixelだけ残す\n  select(id, letter, matches('p_\\\\d+_\\\\d+'))\n\n\n\n\nデータの前処理\n\nletterを数値に変換\n\n\n\n\nR\n\ndf &lt;- \n  data |&gt; \n  mutate(\n    letter = factor(letter),\n    # pythonは0からはじまるので-1する（Rは1から）\n    letter_num = as.numeric(letter) - 1\n  )\n\n\n\n訓練データとテストデータに分割\n\n\n\n\nR\n\nsplit &lt;- rsample::initial_split(df, prop = 0.9)\ntrain &lt;- rsample::training(split)\ntest &lt;- rsample::testing(split)\n\n\n\npythonに渡せる形にデータを変換\n\nreticulate::np_array()であらかじめndarrayにしておくと便利\n\n\n\n\n\nR\n\ntrain_x &lt;- \n  train |&gt; \n  select(!c(id, letter, letter_num)) |&gt;\n  as.matrix() |&gt; \n  np_array()\n\ntrain_y &lt;-\n  train |&gt;\n  pull(letter_num) |&gt;\n  np_array()\n\ntest_x &lt;-\n  test |&gt; \n  select(!c(id, letter, letter_num)) |&gt;\n  as.matrix() |&gt; \n  np_array()\n\ntest_y &lt;-\n  test |&gt;\n  pull(letter_num) |&gt;\n  np_array()\n\n\n\n\nニューラルネットで学習\n\n中間層が1つのニューラルネットを作成\n\n入力層は16x8=128（ピクセル）\n中間層は64次元\n出力層はa-zの26分類\n\n\n\n\n\npython\n\nimport tensorflow as tf\nimport numpy as np\n\n# モデルの作成\nmodel = tf.keras.Sequential([\n  tf.keras.layers.Dense(64, activation='relu'),\n  tf.keras.layers.Dense(26, activation='softmax')\n])\n\nmodel.compile(\n  optimizer='adam',\n  loss='sparse_categorical_crossentropy',\n  metrics=['accuracy']\n)\n\n\n\nrで作成したデータをpythonに渡して学習\nr.train_xでRのtrain_xを参照できる\npythonのオブジェクトを渡すときはpy$train_x\n\n\n\n\npython\n\n# モデルの学習\nmodel.fit(r.train_x, r.train_y, epochs=10, verbose=2)\n\n\nEpoch 1/10\n1467/1467 - 5s - loss: 1.3436 - accuracy: 0.6342 - 5s/epoch - 4ms/step\nEpoch 2/10\n1467/1467 - 5s - loss: 0.9296 - accuracy: 0.7519 - 5s/epoch - 3ms/step\nEpoch 3/10\n1467/1467 - 5s - loss: 0.8666 - accuracy: 0.7679 - 5s/epoch - 3ms/step\nEpoch 4/10\n1467/1467 - 5s - loss: 0.8371 - accuracy: 0.7766 - 5s/epoch - 3ms/step\nEpoch 5/10\n1467/1467 - 5s - loss: 0.8229 - accuracy: 0.7802 - 5s/epoch - 3ms/step\nEpoch 6/10\n1467/1467 - 5s - loss: 0.8151 - accuracy: 0.7819 - 5s/epoch - 3ms/step\nEpoch 7/10\n1467/1467 - 5s - loss: 0.8121 - accuracy: 0.7816 - 5s/epoch - 3ms/step\nEpoch 8/10\n1467/1467 - 5s - loss: 0.8105 - accuracy: 0.7812 - 5s/epoch - 3ms/step\nEpoch 9/10\n1467/1467 - 5s - loss: 0.8127 - accuracy: 0.7813 - 5s/epoch - 3ms/step\nEpoch 10/10\n1467/1467 - 5s - loss: 0.8137 - accuracy: 0.7803 - 5s/epoch - 3ms/step\n&lt;keras.src.callbacks.History object at 0x30efc0f90&gt;\n\n\n\n\nテストデータで評価\n\nテストデータでの正答率は77%くらい\n\n\n\n\npython\n\n# モデルの評価\nmodel.evaluate(r.test_x, r.test_y, verbose=2)\n\n\n163/163 - 0s - loss: 0.8884 - accuracy: 0.7651 - 475ms/epoch - 3ms/step\n[0.8884354829788208, 0.7651457190513611]"
+  },
+  {
+    "objectID": "blog/posts/新しいパソコンを買ったらやること.html",
+    "href": "blog/posts/新しいパソコンを買ったらやること.html",
+    "title": "新しいパソコンを買ったらやること",
+    "section": "",
+    "text": "Office365のインストール\nOnedriveのインストール\n\n特に問題なくできた\n\n\n\n\n定番のパッケージマネージャー\n\n[https://brew.sh/index_ja:embed:cite]\n\n\n\n\nR本体のインストール\n\nrigというツールを使う。参考\nbrew tap r-lib/rig\nbrew install --cask rig \nrig add 4.3.3\n\nRstudioのインストール\n\nbrew install --cask rstudio\n\n自作したRstudioテーマを持ってくる（あとでgithubにでも置いておく）\nエディタで使用するフォントを選択\n\nmyricaを使いたかったが，なぜかMacだとうまくいっていない（調査中）\n\nRtools（Windows）or Xcode（Mac）のインストール\n\ngithub産のパッケージのビルドなどに必要\n\n（Macのみ）Xquartzのインストール\n\n詳しくはわからないが，入れないとRmarkdownがちゃんと動かなかった\n\n\n\n\n\n\n（winのみ）gitをインストール\n\nmacだとgit自体がすでにインストールされていた\n\nssh keyの作成→githubへ登録\ngit clone で適宜必要なプロジェクトをダウンロード\n\n\n\n\n\ntinytexのインストール\ntinytex::install_tinytex()でtex本体をインストール\nlatex_engine: lualatexの文章を作成し，エラーを見ながら適宜tinytex::tlmgr_install()で足りないパッケージを追加\n\n（Mac）haranoajiで引っかかった\n\n\n\n\n\n\n同期の開始\n\n「環境設定」の「同期」からユーザー名，パスワードを打ち込んで同期を開始\n「詳細」→「ファイルとフォルダ」から，基本ディレクトリを正しく設定する→pdfファイルと文献情報が紐づいた形で設定が引き継がれる\n\n\nあとは以下を参考に設定する\n[https://sickle-sword.hatenablog.com/entry/2021/06/05/160818?_ga=2.261856205.1735845236.1644808541-16137706.1644808541:embed:cite]"
+  },
+  {
+    "objectID": "blog/posts/新しいパソコンを買ったらやること.html#office関連のインストール",
+    "href": "blog/posts/新しいパソコンを買ったらやること.html#office関連のインストール",
+    "title": "新しいパソコンを買ったらやること",
+    "section": "",
+    "text": "Office365のインストール\nOnedriveのインストール\n\n特に問題なくできた"
+  },
+  {
+    "objectID": "blog/posts/新しいパソコンを買ったらやること.html#homebrewのインストールmac",
+    "href": "blog/posts/新しいパソコンを買ったらやること.html#homebrewのインストールmac",
+    "title": "新しいパソコンを買ったらやること",
+    "section": "",
+    "text": "定番のパッケージマネージャー\n\n[https://brew.sh/index_ja:embed:cite]"
+  },
+  {
+    "objectID": "blog/posts/新しいパソコンを買ったらやること.html#r関連のインストール",
+    "href": "blog/posts/新しいパソコンを買ったらやること.html#r関連のインストール",
+    "title": "新しいパソコンを買ったらやること",
+    "section": "",
+    "text": "R本体のインストール\n\nrigというツールを使う。参考\nbrew tap r-lib/rig\nbrew install --cask rig \nrig add 4.3.3\n\nRstudioのインストール\n\nbrew install --cask rstudio\n\n自作したRstudioテーマを持ってくる（あとでgithubにでも置いておく）\nエディタで使用するフォントを選択\n\nmyricaを使いたかったが，なぜかMacだとうまくいっていない（調査中）\n\nRtools（Windows）or Xcode（Mac）のインストール\n\ngithub産のパッケージのビルドなどに必要\n\n（Macのみ）Xquartzのインストール\n\n詳しくはわからないが，入れないとRmarkdownがちゃんと動かなかった"
+  },
+  {
+    "objectID": "blog/posts/新しいパソコンを買ったらやること.html#gitのインストール",
+    "href": "blog/posts/新しいパソコンを買ったらやること.html#gitのインストール",
+    "title": "新しいパソコンを買ったらやること",
+    "section": "",
+    "text": "（winのみ）gitをインストール\n\nmacだとgit自体がすでにインストールされていた\n\nssh keyの作成→githubへ登録\ngit clone で適宜必要なプロジェクトをダウンロード"
+  },
+  {
+    "objectID": "blog/posts/新しいパソコンを買ったらやること.html#rmarkdown関連のインストール",
+    "href": "blog/posts/新しいパソコンを買ったらやること.html#rmarkdown関連のインストール",
+    "title": "新しいパソコンを買ったらやること",
+    "section": "",
+    "text": "tinytexのインストール\ntinytex::install_tinytex()でtex本体をインストール\nlatex_engine: lualatexの文章を作成し，エラーを見ながら適宜tinytex::tlmgr_install()で足りないパッケージを追加\n\n（Mac）haranoajiで引っかかった"
+  },
+  {
+    "objectID": "blog/posts/新しいパソコンを買ったらやること.html#zoteroのインストール",
+    "href": "blog/posts/新しいパソコンを買ったらやること.html#zoteroのインストール",
+    "title": "新しいパソコンを買ったらやること",
+    "section": "",
+    "text": "同期の開始\n\n「環境設定」の「同期」からユーザー名，パスワードを打ち込んで同期を開始\n「詳細」→「ファイルとフォルダ」から，基本ディレクトリを正しく設定する→pdfファイルと文献情報が紐づいた形で設定が引き継がれる\n\n\nあとは以下を参考に設定する\n[https://sickle-sword.hatenablog.com/entry/2021/06/05/160818?_ga=2.261856205.1735845236.1644808541-16137706.1644808541:embed:cite]"
+  },
+  {
+    "objectID": "blog/posts/複利計算.html",
+    "href": "blog/posts/複利計算.html",
+    "title": "複利計算",
+    "section": "",
+    "text": "library(tidyverse)"
+  },
+  {
+    "objectID": "blog/posts/複利計算.html#複利計算",
+    "href": "blog/posts/複利計算.html#複利計算",
+    "title": "複利計算",
+    "section": "複利計算",
+    "text": "複利計算\n\n年間\\(a\\)万円ずつ積み立てることを考える\n年利は\\(r\\)とする\n\n\\[\\begin{align*}\n& 1年目:ar^1 \\\\\n& 2年目:ar^1 + ar^2 \\\\\n& 3年目:ar^1 + ar^2 + ar^3 \\\\\n& n年目:\\sum_{i=1}^{n} ar^i = \\frac{ar(1 - r^n)}{1 - r}\n\\end{align*}\\]\n\n等比級数の和の導出\n\n\\[\\begin{align*}\nS =& ar + ar^2 + ar^3 + ... + ar^n \\\\\nrS =& \\qquad\\; ar^2 + ar^3 + ... + ar^n + ar^{n+1} \\\\\nS - rS =& ar - ar^{n+1} \\\\\nS(1 - r) =& ar(1 - r^n) \\\\\nS =& \\frac{ar(1 - r^n)}{1 - r}\n\\end{align*}\\]\n\nシミュレーション\n\n\\(n\\)：30年積み立てる\n\\(a\\)：年間40万円ずつ（月あたり3.3333万円）\n\\(r\\)：年利は5％と仮定\n\n\n\nn &lt;- 30\na &lt;- 40\nr &lt;- 1.05\n\ntibble(\n  year = 1:n,\n  cost = a*year,\n  gain = a*r^year,\n  return = a*r*(1 - r^year)/(1 - r),\n) |&gt; \n  ggplot()+\n  geom_line(aes(x = year, y = return), color = 'red')+\n  geom_col(aes(x = year, y = cost), alpha = .7)+\n  geom_line(aes(x = year, y = cost), color = 'blue')"
+  },
+  {
+    "objectID": "blog/posts/複利計算.html#利率が年度ごとに変動する場合",
+    "href": "blog/posts/複利計算.html#利率が年度ごとに変動する場合",
+    "title": "複利計算",
+    "section": "利率が年度ごとに変動する場合",
+    "text": "利率が年度ごとに変動する場合\n\n年利は確率的に変動する値\n\n定数（\\(r\\)）ではなく、変数（\\(r_i\\)）として考える\n\n\n\\[\\begin{align*}\n& 1年目:ar_1 \\\\\n& 2年目:ar_1 + ar_1r_2\\\\\n& 3年目:ar_1 + ar_1r_2 + ar_1r_2r_3 = a(r_1 + r_1r_2 + r_1r_2r_3)\\\\\n& n年目:ar_1 + ar_1r_2 + ar_1r_2r_3 + ... + ar_1r_2r_3...r_n = a\\sum_{i=1}^{n} \\prod_{i=1}^{n}r_i\n\\end{align*}\\]\nここで、\\(r_i \\sim \\mathrm{Normal}(1.05, 0.1)\\)とする\n\ntibble(\n  year = 1:n,\n  rate = rnorm(n, r, .1),\n  cost = a*year,\n  return = a*(accumulate(rate, \\(x, y) x*y) |&gt; accumulate(\\(x, y) x + y)),\n) |&gt; \n  ggplot()+\n  geom_line(aes(x = year, y = return), color = 'red')+\n  geom_col(aes(x = year, y = cost), alpha = .7)+\n  geom_line(aes(x = year, y = cost), color = 'blue')"
+  },
+  {
+    "objectID": "blog/posts/複利計算.html#利率がランダムウォークする場合",
+    "href": "blog/posts/複利計算.html#利率がランダムウォークする場合",
+    "title": "複利計算",
+    "section": "利率がランダムウォークする場合",
+    "text": "利率がランダムウォークする場合\n\n景気は各時点でランダムに発生するわけではない\nむしろ1時点前の状況を強く反映する\n年利がランダムウォークすると仮定する\n\n\\[\\begin{align*}\n& r_1 \\sim \\mathrm{Normal}(1.05, 0.1) \\\\\n& r_{i + 1} = r_i + e_i, \\; e_i \\sim \\mathrm{Normal}(0, 0.01)\n\\end{align*}\\]\nパラメータの設定が難しい…\n\ntibble(\n  year = 1:n,\n  error = rnorm(n, 0, 0.01),\n  rate = accumulate(error, \\(x, y) x + y, .init = rnorm(1, r, .1))[-n],\n  cost = a*year,\n  return = a*(accumulate(rate, \\(x, y) x*y) |&gt; accumulate(\\(x, y) x + y)),\n) |&gt; \n  ggplot()+\n  geom_line(aes(x = year, y = return), color = 'red')+\n  geom_col(aes(x = year, y = cost), alpha = .7)+\n  geom_line(aes(x = year, y = cost), color = 'blue')"
+  },
+  {
+    "objectID": "blog/posts/Borusyak-2024.html",
+    "href": "blog/posts/Borusyak-2024.html",
+    "title": "Borusyak et al. (2024)",
+    "section": "",
+    "text": "Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, “Revisiting Event-Study Designs: Robust and Efficient Estimation,” The Review of Economic Studies, (https://doi.org/10.1093/restud/rdae007)."
+  },
+  {
+    "objectID": "blog/posts/Borusyak-2024.html#文献",
+    "href": "blog/posts/Borusyak-2024.html#文献",
+    "title": "Borusyak et al. (2024)",
+    "section": "",
+    "text": "Borusyak, Kirill, Xavier Jaravel & Jann Spiess, 2024, “Revisiting Event-Study Designs: Robust and Efficient Estimation,” The Review of Economic Studies, (https://doi.org/10.1093/restud/rdae007)."
+  },
+  {
+    "objectID": "blog/posts/Borusyak-2024.html#ざっくりとした要約",
+    "href": "blog/posts/Borusyak-2024.html#ざっくりとした要約",
+    "title": "Borusyak et al. (2024)",
+    "section": "ざっくりとした要約",
+    "text": "ざっくりとした要約\nDiD推定をg-computationのようなアイデアで行う手法を提案した論文です。従来のTwo-way fixed effectによる推定では問題が生じることが指摘されてきた、処置のタイミングによる効果の異質性（staggerd DiD design）の問題などに対処しています。通常g-computationによる推定量の標準誤差はBootstrapで計算することが多いと思うのですが、この論文では推定量の漸近正規性などを示しつつ、Bootstrapを使わずに標準誤差を計算する方法を提案している点が興味深いです。"
+  },
+  {
+    "objectID": "blog/posts/Borusyak-2024.html#estimand",
+    "href": "blog/posts/Borusyak-2024.html#estimand",
+    "title": "Borusyak et al. (2024)",
+    "section": "Estimand",
+    "text": "Estimand\n\n\\(Y_{it}(1), Y_{it}(0)\\)：個人\\(i\\)、時点\\(t\\)における介入を受けた場合と受けていない場合のpotential outcome\n\\(D_{it}\\)：介入を受けたかどうかのバイナリ変数\n\n個人レベルの因果効果\n\\[\\begin{align*}\n\\tau_{it} = Y_{it}(1) - Y_{it}(0) = Y_{it} - Y_{it}(0)\n\\end{align*}\\]\nこれを関心のある集団について平均する\n\nATT：\\(\\mathrm{E}[\\tau_{it}|D_{it} = 1] = \\mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1]\\)\nevent study：\\(\\mathrm{E}[\\tau_{it}|D_{it} = 1, T = t] = \\mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1, T = t]\\)\n特定の集団におけるATT：\\(\\mathrm{E}[\\tau_{it}|D_{it} = 1, Gender] = \\mathrm{E}[Y_{it} - Y_{it}(0) | D_{it} = 1, Gender]\\)\n\n論文ではウェイトを使った書き方をしているのでややこしいが、おそらくはこういうことだと思われる。"
+  },
+  {
+    "objectID": "blog/posts/Borusyak-2024.html#識別",
+    "href": "blog/posts/Borusyak-2024.html#識別",
+    "title": "Borusyak et al. (2024)",
+    "section": "識別",
+    "text": "識別\n因果効果を識別するための仮定は以下の通り\n\nGeneral moodel of \\(Y(0)\\)：\\(\\mathrm{E}[Y_{it}(0)] = A'_{it}\\lambda_i + X'_{it}\\delta\\)の形で書けること\n\n\n\\(A'_{it}\\lambda_i\\)：個体の固定効果＋固定効果と共変量の交互作用\n\\(X'_{it}\\delta\\)：時点の固定効果＋時変の共変量\n要するに\\(\\mathrm{E}[Y_{it}(0)]\\)が適切にモデル化できていること\n\n\nNo-anticipation effects：\\(Y_{it} = Y_{it}(0) \\ if \\ D_{it} = 0\\)\n\n\nConsistencyと同じ？\n\n\nModel of causal effects\n\n\n効果の異質性がパラメトリックモデルで書けること（？）\n複雑すぎるとダメということ？このあたりちょっとわからなかったです"
+  },
+  {
+    "objectID": "blog/posts/Borusyak-2024.html#推定",
+    "href": "blog/posts/Borusyak-2024.html#推定",
+    "title": "Borusyak et al. (2024)",
+    "section": "推定",
+    "text": "推定\n\n\\(\\mathrm{E}[Y_{it}(0)]\\)の推定\n\n\n処置を受けていないサンプル（\\(D_{it} = 0\\)）を用いて、以下のモデルをOLSで推定\n\n\\[\nY_{it} = A'_{it}\\lambda_i + X'_{it}\\delta + \\varepsilon_{it}\n\\]\n\n\\(\\hat{Y}_{it}(0) | D_{it} = 1\\) の予測\n\n\n推定したモデルに、処置を受けたサンプル（\\(D_{it} = 1\\)）を代入し、処置を受けたサンプルにおいて、処置を受けていなかった場合のpotential outcomeを予測\n\n\n\\(\\hat{\\tau}_{it}\\)の推定\n\n\n処置を受けたサンプルの、観察データ\\(Y_{it}\\)と予測したpotential outcome\\(\\hat{Y}_{it}(0)\\)の差を取る\n\n\n関心のある集団について平均値をとる\n\n\\[\n\\mathrm{ATT} = \\mathrm{E}[\\hat{\\tau}_{it}|D_{it} = 1]\n\\]\n標準誤差の推定も説明があるが、理解できなかった…"
+  },
+  {
+    "objectID": "blog/posts/Borusyak-2024.html#分析例",
+    "href": "blog/posts/Borusyak-2024.html#分析例",
+    "title": "Borusyak et al. (2024)",
+    "section": "分析例",
+    "text": "分析例\n著者によるStataパッケージの他、RではKyle Buttsによるdidimputationパッケージがある。\nここではdidimputationパッケージのトイデータを用いて、パッケージによる結果と、手計算による結果を比較する。\n\n# remotes::install_github('kylebutts/didimputation')\nlibrary(tidyverse)\nlibrary(fixest)\nlibrary(didimputation)"
+  },
+  {
+    "objectID": "blog/posts/Borusyak-2024.html#パッケージの結果",
+    "href": "blog/posts/Borusyak-2024.html#パッケージの結果",
+    "title": "Borusyak et al. (2024)",
+    "section": "パッケージの結果",
+    "text": "パッケージの結果\n\ndid_imputation(data = df_het, yname = \"dep_var\", gname = \"g\", tname = \"year\", idname = \"unit\") |&gt; \n  knitr::kable()\n\n\n\n\nterm\nestimate\nstd.error\nconf.low\nconf.high\n\n\n\n\ntreat\n2.262952\n0.0313968\n2.201414\n2.32449"
+  },
+  {
+    "objectID": "blog/posts/Borusyak-2024.html#手計算",
+    "href": "blog/posts/Borusyak-2024.html#手計算",
+    "title": "Borusyak et al. (2024)",
+    "section": "手計算",
+    "text": "手計算\n\n# OLSで処置を受けていないサンプルにおけるモデルを推定\nmodel &lt;- feols(dep_var ~ 1 | year + unit, data = df_het |&gt; filter(!treat), combine.quick = TRUE)\n\nprediction &lt;- \n  # 処置を受けた集団の予測値（potential outcome）を計算\n  broom::augment(model, newdata = df_het |&gt; filter(treat)) |&gt; \n  # 差分を計算\n  mutate(tau = dep_var - .fitted) \n\n# 集計\nprediction |&gt; \n  summarise(\n    ATT = mean(tau)\n  ) |&gt; \n  knitr::kable()\n\n\n\n\nATT\n\n\n\n\n2.262952\n\n\n\n\n\nATTの点推定値は一致する。"
+  },
+  {
+    "objectID": "blog/posts/Borusyak-2024.html#集団による異質性",
+    "href": "blog/posts/Borusyak-2024.html#集団による異質性",
+    "title": "Borusyak et al. (2024)",
+    "section": "集団による異質性",
+    "text": "集団による異質性\n次に、処置のタイミングにより効果が異なる場合の分析を考える。\nパッケージでは以下のように、処置のタイミングが同じグループごとにウェイトを作成してやることで、集団ごとの効果を推定できる。\n\ndf_het |&gt; \n  mutate(\n    group1 = case_when(\n      group == 'Group 1' & treat ~ 1,\n      .default = 0\n    ),\n    group2 = case_when(\n      group == 'Group 2' & treat ~ 1,\n      .default = 0\n    )\n  ) |&gt; \n  did_imputation(yname = \"dep_var\", gname = \"g\", tname = \"year\", idname = \"unit\", wtr = c('group1', 'group2')) |&gt; \n  knitr::kable()\n\n\n\n\nterm\nestimate\nstd.error\nconf.low\nconf.high\n\n\n\n\ngroup1\n2.513439\n0.0381686\n2.438629\n2.588249\n\n\ngroup2\n1.795048\n0.0389609\n1.718685\n1.871412\n\n\n\n\n\n手計算では、集計をグループごとに行えばよい。\n\n# 集計\nprediction |&gt; \n  summarise(\n    ATT = mean(tau),\n    .by = c(group)\n  ) |&gt; \n  knitr::kable()\n\n\n\n\ngroup\nATT\n\n\n\n\nGroup 1\n2.513439\n\n\nGroup 2\n1.795048\n\n\n\n\n\nこちらも点推定値は一致する。"
   },
   {
     "objectID": "blog/posts/学校外教育参加率.html",
     "href": "blog/posts/学校外教育参加率.html",
     "title": "学校外教育の参加率",
     "section": "",
-    "text": "library(tidyverse)\nlibrary(estatapi)"
+    "text": "学校外教育の参加率にについて、政府統計などを用いて示したい"
+  },
+  {
+    "objectID": "blog/posts/学校外教育参加率.html#モチベーション",
+    "href": "blog/posts/学校外教育参加率.html#モチベーション",
+    "title": "学校外教育の参加率",
+    "section": "",
+    "text": "学校外教育の参加率にについて、政府統計などを用いて示したい"
   },
   {
     "objectID": "blog/posts/学校外教育参加率.html#パッケージ読み込み",
     "href": "blog/posts/学校外教育参加率.html#パッケージ読み込み",
     "title": "学校外教育の参加率",
-    "section": "",
-    "text": "library(tidyverse)\nlibrary(estatapi)"
+    "section": "パッケージ読み込み",
+    "text": "パッケージ読み込み\n\nlibrary(tidyverse)\nlibrary(estatapi)"
   },
   {
     "objectID": "blog/posts/学校外教育参加率.html#準備",
@@ -837,7 +844,7 @@
     "href": "blog/posts/学校外教育参加率.html#メタデータ取得",
     "title": "学校外教育の参加率",
     "section": "メタデータ取得",
-    "text": "メタデータ取得\n使用するデータは以下の3つ\n\n「子供の学習費調査、3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 小学校」https://e-stat.go.jp/stat-search/database?page=1&statdisp_id=0003368820\n「子供の学習費調査、3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 中学校」https://e-stat.go.jp/stat-search/database?page=1&statdisp_id=0003368821\n「子供の学習費調査、3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 高等学校（全日制）」https://e-stat.go.jp/stat-search/database?page=1&statdisp_id=0003368822\n\n\n# 以下のコードでメタデータが取得できる\nestat_getMetaInfo(appid, '0003368820')\nestat_getMetaInfo(appid, '0003368821')\nestat_getMetaInfo(appid, '0003368822')"
+    "text": "メタデータ取得\n使用するデータは以下の3つ\n\n文部科学省「子供の学習費調査」3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 小学校 https://www.e-stat.go.jp/stat-search/database?statdisp_id=0003368820\n文部科学省「子供の学習費調査」3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 中学校 https://e-stat.go.jp/stat-search/database?statdisp_id=0003368821\n文部科学省「子供の学習費調査」3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 高等学校（全日制） https://e-stat.go.jp/stat-search/database?statdisp_id=0003368822\n\n\n# 以下のコードでメタデータが取得できる\nestat_getMetaInfo(appid, '0003368820')\nestat_getMetaInfo(appid, '0003368821')\nestat_getMetaInfo(appid, '0003368822')"
   },
   {
     "objectID": "blog/posts/学校外教育参加率.html#データ取得",
@@ -847,11 +854,18 @@
     "text": "データ取得\n\nメタデータを参照しつつ必要な情報のみを取得\n\n\nelementary &lt;- \n  estat_getStatsData(\n    appid, \n    '0003368820',\n    cdTab = '110', \n    cdCat01 = '160,170,180,190,200,210', \n    cdCat02 = '320'\n  )\n\njhigh &lt;- \n  estat_getStatsData(\n    appid, \n    '0003368821',\n    cdTab = '110', \n    cdCat01 = '160,170,180', \n    cdCat02 = '320'\n  )\n\nhigh &lt;- \n  estat_getStatsData(\n    appid, \n    '0003368822',\n    cdTab = '110', \n    cdCat01 = '160,170,180', \n    cdCat02 = '320'\n  )"
   },
   {
-    "objectID": "blog/posts/学校外教育参加率.html#データ整形プロット",
-    "href": "blog/posts/学校外教育参加率.html#データ整形プロット",
+    "objectID": "blog/posts/学校外教育参加率.html#データ整形",
+    "href": "blog/posts/学校外教育参加率.html#データ整形",
     "title": "学校外教育の参加率",
-    "section": "データ整形＆プロット",
-    "text": "データ整形＆プロット\n\nbind_rows(\n  小学校 = elementary,\n  中学校 = jhigh,\n  高校 = high,\n  .id = '学校段階'\n) |&gt; \n  filter(`時間軸（年度次）` == '2016年度') |&gt; \n  filter(!(学校段階 == '小学校' & `学年(年齢)・所在市町村人口規模(学科)` %in% c('第1学年', '第2学年', '第3学年'))) |&gt; \n  \n  ggplot(aes(`学年(年齢)・所在市町村人口規模(学科)`, value))+\n  geom_bar(stat = 'identity')+\n  geom_label(aes(label = value), size = 3)+\n  facet_grid(rows = vars(公私立区分), cols = vars(学校段階), scales = 'free_x')+\n  labs(x = '学年', y = '学習塾利用率')+\n  theme_bw(base_family = 'Noto Sans JP')"
+    "section": "データ整形",
+    "text": "データ整形\n\ndf &lt;- \n  bind_rows(\n    小学校 = elementary,\n    中学校 = jhigh,\n    高校 = high,\n    .id = '学校段階'\n  ) |&gt; \n  select(学校段階, 学年 = `学年(年齢)・所在市町村人口規模(学科)`, 公私立 = 公私立区分, 年度 = `時間軸（年度次）`, 塾利用率 = value) |&gt; \n  mutate(\n    年度 = parse_number(年度),\n    学校段階 = fct_relevel(学校段階, '小学校', '中学校', '高校'),\n    公私立 = fct_relevel(公私立, '公立', '私立'),\n    学年 = fct_relevel(学年, '第1学年', '第2学年', '第3学年', '第4学年', '第5学年', '第6学年')\n  )"
+  },
+  {
+    "objectID": "blog/posts/学校外教育参加率.html#プロット",
+    "href": "blog/posts/学校外教育参加率.html#プロット",
+    "title": "学校外教育の参加率",
+    "section": "プロット",
+    "text": "プロット\n\ndf |&gt; \n  ggplot(aes(学年, 塾利用率, fill = 公私立))+\n  geom_col(position = position_dodge(), color = 'black')+\n  geom_text(aes(label = 塾利用率), position = position_dodge(width = 0.9), vjust = 1.5)+\n  facet_grid(rows = vars(学校段階), cols = vars(年度))+\n  labs(y = '塾利用率（％）')+\n  theme_bw(base_family = 'Noto Sans JP')+\n  theme(legend.position = 'bottom')"
   },
   {
     "objectID": "blog/posts/学生生活実態調査の文字コード.html",

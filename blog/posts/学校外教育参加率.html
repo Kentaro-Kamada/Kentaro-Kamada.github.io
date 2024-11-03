@@ -207,11 +207,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#パッケージ読み込み" id="toc-パッケージ読み込み" class="nav-link active" data-scroll-target="#パッケージ読み込み">パッケージ読み込み</a></li>
+  <li><a href="#モチベーション" id="toc-モチベーション" class="nav-link active" data-scroll-target="#モチベーション">モチベーション</a></li>
+  <li><a href="#パッケージ読み込み" id="toc-パッケージ読み込み" class="nav-link" data-scroll-target="#パッケージ読み込み">パッケージ読み込み</a></li>
   <li><a href="#準備" id="toc-準備" class="nav-link" data-scroll-target="#準備">準備</a></li>
   <li><a href="#メタデータ取得" id="toc-メタデータ取得" class="nav-link" data-scroll-target="#メタデータ取得">メタデータ取得</a></li>
   <li><a href="#データ取得" id="toc-データ取得" class="nav-link" data-scroll-target="#データ取得">データ取得</a></li>
-  <li><a href="#データ整形プロット" id="toc-データ整形プロット" class="nav-link" data-scroll-target="#データ整形プロット">データ整形＆プロット</a></li>
+  <li><a href="#データ整形" id="toc-データ整形" class="nav-link" data-scroll-target="#データ整形">データ整形</a></li>
+  <li><a href="#プロット" id="toc-プロット" class="nav-link" data-scroll-target="#プロット">プロット</a></li>
   </ul>
 </nav>
     </div>
@@ -222,6 +224,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+<section id="モチベーション" class="level2">
+<h2 class="anchored" data-anchor-id="モチベーション">モチベーション</h2>
+<ul>
+<li>学校外教育の参加率にについて、政府統計などを用いて示したい</li>
+</ul>
+</section>
 <section id="パッケージ読み込み" class="level2">
 <h2 class="anchored" data-anchor-id="パッケージ読み込み">パッケージ読み込み</h2>
 <div class="cell">
@@ -244,9 +252,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="メタデータ取得">メタデータ取得</h2>
 <p>使用するデータは以下の3つ</p>
 <ol type="1">
-<li>「子供の学習費調査、3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 小学校」<a href="https://e-stat.go.jp/stat-search/database?page=1&amp;statdisp_id=0003368820" class="uri">https://e-stat.go.jp/stat-search/database?page=1&amp;statdisp_id=0003368820</a></li>
-<li>「子供の学習費調査、3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 中学校」<a href="https://e-stat.go.jp/stat-search/database?page=1&amp;statdisp_id=0003368821" class="uri">https://e-stat.go.jp/stat-search/database?page=1&amp;statdisp_id=0003368821</a></li>
-<li>「子供の学習費調査、3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 高等学校（全日制）」<a href="https://e-stat.go.jp/stat-search/database?page=1&amp;statdisp_id=0003368822" class="uri">https://e-stat.go.jp/stat-search/database?page=1&amp;statdisp_id=0003368822</a></li>
+<li>文部科学省「子供の学習費調査」3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 小学校 <a href="https://www.e-stat.go.jp/stat-search/database?statdisp_id=0003368820" class="uri">https://www.e-stat.go.jp/stat-search/database?statdisp_id=0003368820</a></li>
+<li>文部科学省「子供の学習費調査」3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 中学校 <a href="https://e-stat.go.jp/stat-search/database?statdisp_id=0003368821" class="uri">https://e-stat.go.jp/stat-search/database?statdisp_id=0003368821</a></li>
+<li>文部科学省「子供の学習費調査」3　学年（年齢）別，所在市町村の人口規模（学科）別の学習費支出状況 高等学校（全日制） <a href="https://e-stat.go.jp/stat-search/database?statdisp_id=0003368822" class="uri">https://e-stat.go.jp/stat-search/database?statdisp_id=0003368822</a></li>
 </ol>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 以下のコードでメタデータが取得できる</span></span>
@@ -289,28 +297,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="データ整形プロット" class="level2">
-<h2 class="anchored" data-anchor-id="データ整形プロット">データ整形＆プロット</h2>
+<section id="データ整形" class="level2">
+<h2 class="anchored" data-anchor-id="データ整形">データ整形</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  小学校 <span class="ot">=</span> elementary,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  中学校 <span class="ot">=</span> jhigh,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  高校 <span class="ot">=</span> high,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">.id =</span> <span class="st">'学校段階'</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">時間軸（年度次）</span><span class="st">`</span> <span class="sc">==</span> <span class="st">'2016年度'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(学校段階 <span class="sc">==</span> <span class="st">'小学校'</span> <span class="sc">&amp;</span> <span class="st">`</span><span class="at">学年(年齢)・所在市町村人口規模(学科)</span><span class="st">`</span> <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'第1学年'</span>, <span class="st">'第2学年'</span>, <span class="st">'第3学年'</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="st">`</span><span class="at">学年(年齢)・所在市町村人口規模(学科)</span><span class="st">`</span>, value))<span class="sc">+</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">'identity'</span>)<span class="sc">+</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">label =</span> value), <span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="at">rows =</span> <span class="fu">vars</span>(公私立区分), <span class="at">cols =</span> <span class="fu">vars</span>(学校段階), <span class="at">scales =</span> <span class="st">'free_x'</span>)<span class="sc">+</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'学年'</span>, <span class="at">y =</span> <span class="st">'学習塾利用率'</span>)<span class="sc">+</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_family =</span> <span class="st">'Noto Sans JP'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    小学校 <span class="ot">=</span> elementary,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    中学校 <span class="ot">=</span> jhigh,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    高校 <span class="ot">=</span> high,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.id =</span> <span class="st">'学校段階'</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(学校段階, 学年 <span class="ot">=</span> <span class="st">`</span><span class="at">学年(年齢)・所在市町村人口規模(学科)</span><span class="st">`</span>, 公私立 <span class="ot">=</span> 公私立区分, 年度 <span class="ot">=</span> <span class="st">`</span><span class="at">時間軸（年度次）</span><span class="st">`</span>, 塾利用率 <span class="ot">=</span> value) <span class="sc">|&gt;</span> </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    年度 <span class="ot">=</span> <span class="fu">parse_number</span>(年度),</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    学校段階 <span class="ot">=</span> <span class="fu">fct_relevel</span>(学校段階, <span class="st">'小学校'</span>, <span class="st">'中学校'</span>, <span class="st">'高校'</span>),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    公私立 <span class="ot">=</span> <span class="fu">fct_relevel</span>(公私立, <span class="st">'公立'</span>, <span class="st">'私立'</span>),</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    学年 <span class="ot">=</span> <span class="fu">fct_relevel</span>(学年, <span class="st">'第1学年'</span>, <span class="st">'第2学年'</span>, <span class="st">'第3学年'</span>, <span class="st">'第4学年'</span>, <span class="st">'第5学年'</span>, <span class="st">'第6学年'</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="プロット" class="level2">
+<h2 class="anchored" data-anchor-id="プロット">プロット</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(学年, 塾利用率, <span class="at">fill =</span> 公私立))<span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(), <span class="at">color =</span> <span class="st">'black'</span>)<span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> 塾利用率), <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>), <span class="at">vjust =</span> <span class="fl">1.5</span>)<span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="at">rows =</span> <span class="fu">vars</span>(学校段階), <span class="at">cols =</span> <span class="fu">vars</span>(年度))<span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">'塾利用率（％）'</span>)<span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_family =</span> <span class="st">'Noto Sans JP'</span>)<span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'bottom'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="学校外教育参加率_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="学校外教育参加率_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="1536"></p>
 </figure>
 </div>
 </div>

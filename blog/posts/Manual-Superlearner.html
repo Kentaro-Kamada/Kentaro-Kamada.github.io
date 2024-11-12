@@ -278,7 +278,7 @@ Y = 5 + 4\sqrt{9x} \times I(x&lt;2) + I(x\geq2) \times (|x-6|^{2}) + \epsilon
 \end{align}\]</span></p>
 <ul>
 <li><span class="math inline">\(I()\)</span>：Indicator function（TRUEなら1、FALSEなら0となる）</li>
-<li><span class="math inline">\(\epsilon \sim \mathrm{Labpace}(0, 1)\)</span></li>
+<li><span class="math inline">\(\epsilon \sim \mathrm{Laplace}(0, 1)\)</span><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
@@ -494,18 +494,18 @@ serializing in order to be saved for future R sessions...done</code></pre>
 Key: &lt;learner&gt;
                            learner coefficients       MSE        se   fold_sd
                             &lt;fctr&gt;        &lt;num&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;
-1: Lrnr_earth_4_3_backward_0_1_0_0  0.000000000  2.439980 0.1491178 0.5590197
-2:       Lrnr_gam_NULL_NULL_GCV.Cp  0.655902673  2.156928 0.1368631 0.5163999
-3:                       Lrnr_mean  0.000000000 30.590277 1.0519860 2.2451721
-4:        Lrnr_xgboost_100_1_3_0.3  0.004810931  2.437071 0.1515221 0.5109703
-5:           Lrnr_bartMachine_TRUE  0.339286396  2.220592 0.1429715 0.4626009
+1: Lrnr_earth_4_3_backward_0_1_0_0 0.0000000000  2.439980 0.1491178 0.5590197
+2:       Lrnr_gam_NULL_NULL_GCV.Cp 0.6569887979  2.156928 0.1368631 0.5163999
+3:                       Lrnr_mean 0.0000000000 30.590277 1.0519860 2.2451721
+4:        Lrnr_xgboost_100_1_3_0.3 0.0004198064  2.437071 0.1515221 0.5109703
+5:           Lrnr_bartMachine_TRUE 0.3425913957  2.222028 0.1436348 0.4568411
    fold_min_MSE fold_max_MSE
           &lt;num&gt;        &lt;num&gt;
 1:     1.969880     3.393874
 2:     1.767867     3.055205
 3:    27.834174    33.991665
 4:     2.098941     3.308421
-5:     1.856710     3.012823</code></pre>
+5:     1.858237     3.001461</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -541,7 +541,13 @@ Key: &lt;learner&gt;
 
 </section>
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>ラプラス分布。二重指数分布（double exponential distribution）とも呼ばれる。論文中ではdoubly-exponential distributionと表記されている。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

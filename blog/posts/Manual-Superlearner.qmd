@@ -32,7 +32,9 @@ Y = 5 + 4\sqrt{9x} \times I(x<2) + I(x\geq2) \times (|x-6|^{2}) + \epsilon
 \end{align}
 
 - $I()$：Indicator function（TRUEなら1、FALSEなら0となる）
-- $\epsilon \sim \mathrm{Labpace}(0, 1)$
+- $\epsilon \sim \mathrm{Laplace}(0, 1)$[^1]
+
+[^1]: ラプラス分布。二重指数分布（double exponential distribution）とも呼ばれる。論文中ではdoubly-exponential distributionと表記されている。
 
 ```{r}
 set.seed(12345)

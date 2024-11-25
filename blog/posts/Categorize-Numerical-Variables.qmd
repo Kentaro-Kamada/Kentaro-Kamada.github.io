@@ -1,0 +1,105 @@
+---
+title: Rで連続変数のカテゴリ化
+date: 2024-11-25
+categories: [R]
+---
+
+
+## データ
+
+- いま1から100までの連続変数があるとする
+
+```{r}
+
+library(tidyverse)
+
+data <- 
+  tibble(
+    x = 1:100
+  )
+
+data |> print(n = 100)
+
+```
+
+
+## カテゴリ化
+
+- 連続変数を0-25%, 25%-50%, 50%-75%, 75%-100%の4つのカテゴリに分ける
+- `cut`と`quantile`を組み合わせるとうまくいく
+- 1から25がQ1, 26から50がQ2, 51から75がQ3, 76から100がQ4になる
+
+```{r}
+
+data |> 
+  mutate(
+    x_cut = cut(
+      x,
+      breaks = quantile(x, probs = c(0, 1/4, 2/4, 3/4, 1)),
+      include.lowest = TRUE
+    ),
+    x_cut2 = cut(
+      x,
+      breaks = quantile(x, probs = c(0, 1/4, 2/4, 3/4, 1)),
+      # ラベルを指定することもできる
+      labels = c("Q1", "Q2", "Q3", "Q4"),
+      include.lowest = TRUE
+    ),
+    # 区間を左端で閉じるか右端で閉じるかを指定できる
+    x_cut3 = cut(
+      x,
+      breaks = quantile(x, probs = c(0, 1/4, 2/4, 3/4, 1)),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) |> 
+  print(n = 100)
+
+```
+
+- 3分割だとこんな感じ
+- 100人を3分割すると1人あまるので、34人目までが最初の区間となっている
+- `right = FALSE`にすると、33人目までが最初の区間となり、最後の区間が34人になる
+
+```{r}
+data |> 
+  mutate(
+    x_cut = cut(
+      x,
+      breaks = quantile(x, probs = c(0, 1/3, 2/3, 1)),
+      include.lowest = TRUE
+    ),
+    x_cut2 = cut(
+      x,
+      breaks = quantile(x, probs = c(0, 1/3, 2/3, 1)),
+      include.lowest = TRUE,
+      right = FALSE
+    ),
+  ) |> 
+  print(n = Inf)
+```
+
+
+## quantileのアルゴリズム
+
+- 1から100を4分割すると、分位点は直感的に25,50,75になると思われるが、上記の結果ではそうなっていない
+- Rの`quantile`関数は9つのアルゴリズムがあり、アルゴリズムごとに結果が異なりうる
+  - デフォルトは`type = 7`
+- 詳細は`stats::quantile`のヘルプを参照
+
+```{r}
+
+quantile(1:100, probs = c(0, 1/4, 2/4, 3/4, 1))
+quantile(1:100, probs = c(0, 1/4, 2/4, 3/4, 1), type = 7)
+
+quantile(1:100, probs = c(0, 1/4, 2/4, 3/4, 1), type = 1)
+quantile(1:100, probs = c(0, 1/4, 2/4, 3/4, 1), type = 2)
+quantile(1:100, probs = c(0, 1/4, 2/4, 3/4, 1), type = 3)
+quantile(1:100, probs = c(0, 1/4, 2/4, 3/4, 1), type = 4)
+quantile(1:100, probs = c(0, 1/4, 2/4, 3/4, 1), type = 5)
+quantile(1:100, probs = c(0, 1/4, 2/4, 3/4, 1), type = 6)
+quantile(1:100, probs = c(0, 1/4, 2/4, 3/4, 1), type = 8)
+quantile(1:100, probs = c(0, 1/4, 2/4, 3/4, 1), type = 9)
+
+```
+

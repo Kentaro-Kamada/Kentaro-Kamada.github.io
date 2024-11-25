@@ -214,7 +214,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(23)</span></div><div class="category" data-category="Causal Inference">Causal Inference <span class="quarto-category-count">(5)</span></div><div class="category" data-category="Others">Others <span class="quarto-category-count">(8)</span></div><div class="category" data-category="Python">Python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(5)</span></div><div class="category" data-category="R Tips">R Tips <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Setup">Setup <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Statistics">Statistics <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Zotero">Zotero <span class="quarto-category-count">(1)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(24)</span></div><div class="category" data-category="Causal Inference">Causal Inference <span class="quarto-category-count">(5)</span></div><div class="category" data-category="Others">Others <span class="quarto-category-count">(8)</span></div><div class="category" data-category="Python">Python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(6)</span></div><div class="category" data-category="R Tips">R Tips <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Setup">Setup <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Statistics">Statistics <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Zotero">Zotero <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
 <main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
@@ -228,7 +228,55 @@ window.Quarto = {
 
 <div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-categories="Others" data-listing-date-sort="1730419200000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="275">
+<div class="g-col-1" data-index="0" data-categories="R" data-listing-date-sort="1732492800000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="395">
+<a href="../blog/posts/Categorize-Numerical-Variables.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Rで連続変数のカテゴリ化
+</h5>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+R
+</div>
+</div>
+<div class="card-text listing-description">
+
+
+<ul>
+<li>いま1から100までの連続変数があるとする</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"></span>
+<span id="cb1-3">data <span class="ot">&lt;-</span> </span>
+<span id="cb1-4">  <span class="fu">tibble</span>(</span>
+<span id="cb1-5">    <span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span></span>
+<span id="cb1-6">  )</span>
+<span id="cb1-7"></span>
+<span id="cb1-8">data <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">100</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 100 × 1
+        x
+    &lt;int&gt;
+  1     1
+  2     2
+  3 …</code></pre></div></div>
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Kentaro Kamada
+</div>
+<div class="listing-date">
+Nov 25, 2024
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="1" data-categories="Others" data-listing-date-sort="1730419200000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="275">
 <a href="../blog/posts/学校外教育参加率.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/学校外教育参加率_files/figure-html/unnamed-chunk-6-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -256,7 +304,7 @@ Nov 1, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="1" data-categories="Others" data-listing-date-sort="1730419200000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="743">
+<div class="g-col-1" data-index="2" data-categories="Others" data-listing-date-sort="1730419200000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="743">
 <a href="../blog/posts/Manual-Superlearner.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/Manual-Superlearner_files/figure-html/unnamed-chunk-3-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -284,7 +332,7 @@ Nov 1, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="2" data-categories="Statistics" data-listing-date-sort="1726876800000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="178">
+<div class="g-col-1" data-index="3" data-categories="Statistics" data-listing-date-sort="1726876800000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="178">
 <a href="../blog/posts/信頼区間を理解したい.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/信頼区間を理解したい_files/figure-html/unnamed-chunk-4-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -312,7 +360,7 @@ Sep 21, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="3" data-categories="Statistics" data-listing-date-sort="1726876800000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2209">
+<div class="g-col-1" data-index="4" data-categories="Statistics" data-listing-date-sort="1726876800000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2209">
 <a href="../blog/posts/Standard_Errors_in_PIAAC.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -342,7 +390,7 @@ Sep 21, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="4" data-categories="Causal Inference" data-listing-date-sort="1724025600000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="350">
+<div class="g-col-1" data-index="5" data-categories="Causal Inference" data-listing-date-sort="1724025600000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="350">
 <a href="../blog/posts/Borusyak-2024.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -370,7 +418,7 @@ Aug 19, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="5" data-categories="Others" data-listing-date-sort="1723680000000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="335">
+<div class="g-col-1" data-index="6" data-categories="Others" data-listing-date-sort="1723680000000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="335">
 <a href="../blog/posts/複利計算.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/複利計算_files/figure-html/unnamed-chunk-2-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -403,7 +451,7 @@ Aug 15, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="6" data-categories="Others" data-listing-date-sort="1717545600000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="155">
+<div class="g-col-1" data-index="7" data-categories="Others" data-listing-date-sort="1717545600000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="155">
 <a href="../blog/posts/multi_answer.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -431,7 +479,7 @@ Jun 5, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="7" data-categories="R" data-listing-date-sort="1714435200000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="17">
+<div class="g-col-1" data-index="8" data-categories="R" data-listing-date-sort="1714435200000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="17">
 <a href="../blog/posts/r_installation_with_rig.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -459,7 +507,7 @@ Apr 30, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="8" data-categories="R" data-listing-date-sort="1710028800000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="89">
+<div class="g-col-1" data-index="9" data-categories="R" data-listing-date-sort="1710028800000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="89">
 <a href="../blog/posts/how_to_change_BLAS.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -487,7 +535,7 @@ Mar 10, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="9" data-categories="R Tips" data-listing-date-sort="1708646400000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="347">
+<div class="g-col-1" data-index="10" data-categories="R Tips" data-listing-date-sort="1708646400000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="347">
 <a href="../blog/posts/tensorflow_with_Rstudio.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -515,7 +563,7 @@ Feb 23, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="10" data-categories="Causal Inference" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1382">
+<div class="g-col-1" data-index="11" data-categories="Causal Inference" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1382">
 <a href="../blog/posts/Causal_Decomposition.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/Causal_Decomposition_files/figure-html/unnamed-chunk-5-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -555,7 +603,7 @@ Feb 22, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="11" data-categories="Causal Inference" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1025">
+<div class="g-col-1" data-index="12" data-categories="Causal Inference" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1025">
 <a href="../blog/posts/TMLE.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -583,7 +631,7 @@ Feb 22, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="12" data-categories="Others" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="299">
+<div class="g-col-1" data-index="13" data-categories="Others" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="299">
 <a href="../blog/posts/Multilevel.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/Multilevel_files/figure-html/unnamed-chunk-7-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -611,7 +659,7 @@ Feb 22, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="13" data-categories="Others" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="226">
+<div class="g-col-1" data-index="14" data-categories="Others" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="226">
 <a href="../blog/posts/rlang学習.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -639,7 +687,7 @@ Feb 22, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="14" data-categories="Causal Inference" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1280">
+<div class="g-col-1" data-index="15" data-categories="Causal Inference" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1280">
 <a href="../blog/posts/Sudharsanan_Bijlsma_2021.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -667,7 +715,7 @@ Feb 22, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="15" data-categories="Causal Inference" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="663">
+<div class="g-col-1" data-index="16" data-categories="Causal Inference" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="663">
 <a href="../blog/posts/L-TMLE.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/L-TMLE_files/figure-html/unnamed-chunk-2-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -695,7 +743,7 @@ Feb 22, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="16" data-categories="Others" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="214">
+<div class="g-col-1" data-index="17" data-categories="Others" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="214">
 <a href="../blog/posts/度数から対数尤度を計算.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -723,7 +771,7 @@ Feb 22, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="17" data-categories="Others" data-listing-date-sort="1656115200000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="392">
+<div class="g-col-1" data-index="18" data-categories="Others" data-listing-date-sort="1656115200000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="392">
 <a href="../blog/posts/学生生活実態調査の文字コード.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -751,7 +799,7 @@ Jun 25, 2022
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="18" data-categories="Setup" data-listing-date-sort="1644796800000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="68">
+<div class="g-col-1" data-index="19" data-categories="Setup" data-listing-date-sort="1644796800000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="68">
 <a href="../blog/posts/新しいパソコンを買ったらやること.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -779,7 +827,7 @@ Feb 14, 2022
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="19" data-categories="Setup,Zotero" data-listing-date-sort="1622851200000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="264">
+<div class="g-col-1" data-index="20" data-categories="Setup,Zotero" data-listing-date-sort="1622851200000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="264">
 <a href="../blog/posts/Zoteroの設定備忘録.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -812,7 +860,7 @@ Jun 5, 2021
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="20" data-categories="Statistics,R" data-listing-date-sort="1619654400000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="77">
+<div class="g-col-1" data-index="21" data-categories="Statistics,R" data-listing-date-sort="1619654400000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="77">
 <a href="../blog/posts/Rでロジットモデル.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -843,7 +891,7 @@ Apr 29, 2021
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="21" data-categories="R" data-listing-date-sort="1603584000000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="286">
+<div class="g-col-1" data-index="22" data-categories="R" data-listing-date-sort="1603584000000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="286">
 <a href="../blog/posts/移動平均のかゆいところに.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -871,7 +919,7 @@ Oct 25, 2020
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="22" data-categories="R,Python" data-listing-date-sort="1596153600000" data-listing-file-modified-sort="1731416102484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="771">
+<div class="g-col-1" data-index="23" data-categories="R,Python" data-listing-date-sort="1596153600000" data-listing-file-modified-sort="1732538709591" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="771">
 <a href="../blog/posts/RとPython書き比べ（ユークリッドの互除法）.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>

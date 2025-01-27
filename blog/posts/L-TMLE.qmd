@@ -1,12 +1,12 @@
 ---
-title: "Longitudinal TMLE"
+title: "複数時点での処置の因果効果の推定"
 date: 2024-02-22
+date-modified: today
 categories: [Causal Inference]
 ---
 
-# 複数時点での介入の因果効果の推定
 
-@Hernan2020 では、TMLEは時間依存交絡などに対処するG-Methodの一般化として提示されている。ここでは`ltmle`パッケージを用いた時間依存交絡への対処を中心に記述する。
+@Hernan2024 のPart3では、複数時点での処置の因果推論について議論されている。ここでは、IPW、g-formulaを用いた因果効果の推定を実際にやってみる。
 
 ## 下準備
 
@@ -18,45 +18,25 @@ categories: [Causal Inference]
 
 library(tidyverse)
 library(broom)
-library(SuperLearner)
-library(ltmle)
-library(randomForest)
-library(ggdag)
-library(future)
 
 kable <- partial(
   knitr::kable,
   digits = 3
 )
 
-options(mc.cores = 8)
-plan(strategy = 'multisession')
-
 set.seed(95)
 ```
 
 
+
 ### データの作成
 
-以下のDAGを考える
+以下のDAGを考える[@Hernan2024, Figure 20.3]
 
-```{r}
+![](../images/L-TMLE-DAG.svg)
 
-dagify(
-  L1 ~ A0 + U1,
-  A1 ~ A0 + L1,
-  Y ~ U1,
-  exposure = c('A0', 'A1'), 
-  outcome = 'Y', 
-  coords = list(x = c(A0 = 0, L1 = 1, A1 = 2, U1 = 1, Y = 3),
-                y = c(A0 = 0, L1 = 0, A1 = 0, U1 = -1, Y = 0))
-) |> 
-  ggdag()+
-  theme_dag()
 
-```
-
-TreatmentはA0とA1であるが、ここからYへのpathはないので、因果効果は全ての組み合わせについて0になる
+Treatmentは$A_0$と$A_1$であるが、ここから$Y$へのpathはないので、因果効果は全ての組み合わせについて0になる
 
 具体的には、potential outcomeのすべての組み合わせについて、差分を取った値が0になる
 
@@ -69,50 +49,79 @@ TreatmentはA0とA1であるが、ここからYへのpathはないので、因�
 \mathrm{E}[Y^{0, 1} - Y^{1, 1}] &= 0
 \end{align}
 
+上記のDAGに合うように作成されたデータが以下である[@Hernan2024, Table 20.1]
+
 
 ```{r}
-generate_data <- function(n){ 
-    A0 <- rbinom(n, size=1, prob=0.3) # binary treatment
-    U1 <- rnorm(n, mean = 0, sd = 1) # latent continuous confounder
-    L1 <- 0.1 + 0.3*A0 + 0.3*U1 + rnorm(n, sd = 0.1)
-    A1 <- rbinom(n, size=1, prob = plogis(-0.2 + 0.3*L1 + 0.02*L1^2)) # binary treatment
-    Y <- -0.2 + 0.5*U1 + rnorm(n, sd = 0.1) # continuous outcome depends on confounders
-    return(tibble(Y, A0, A1, L1, U1))
-}
 
-data_obs <- generate_data(1000)
+data_agg <- 
+  tribble(
+    ~N, ~A0, ~L1, ~A1, ~Y, 
+    2400, 0, 0, 0, 84, 
+    1600, 0, 0, 1, 84, 
+    2400, 0, 1, 0, 52, 
+    9600, 0, 1, 1, 52, 
+    4800, 1, 0, 0, 76, 
+    3200, 1, 0, 1, 76, 
+    1600, 1, 1, 0, 44, 
+    6400, 1, 1, 1, 44
+  )
+
+data_agg |> kable()
+
+
 ```
 
-- A0の因果効果
+これを個人レベルのデータに変換
 
 ```{r}
 
-data_obs |> 
+data_ind <- uncount(data_agg, N)
+
+data_ind
+
+```
+
+
+## 各処置の因果効果
+
+- 各処置の効果を確認
+- 処置からアウトカムへの直接のパスはないので、各時点の処置の因果効果も0になる
+
+### $A_0$の因果効果
+
+```{r}
+
+data_ind |> 
   lm(Y ~ A0, data = _) |> 
   tidy() |> 
   kable()
 
 ```
 
-- A1の因果効果
+### $A_1$の因果効果
+
+- 以下のバックドアが存在するので$L_1$を統制
+- $A_1 \gets L_1 \gets U_1 \to Y$
 
 ```{r}
 
-data_obs |> 
-  lm(Y ~ A1 + L1, data = _) |> 
+data_ind |> 
+  lm(Y ~ A1 + L1, data = _) |>
   tidy() |> 
   kable()
 
 ```
 
 
-- collider bias
+### collider bias
 
-$L_1$を条件づけると、$A_0 \to L_1 \gets U_1 \to Y$というパスが開いて、バイアスをもたらす
+- $A_0$の因果効果の推定において、$L_1$を条件づける
+- $A_0 \to \boxed{L_1} \gets U_1 \to Y$というパスが開いて、バイアスをもたらす
 
 ```{r}
 
-data_obs |> 
+data_ind |> 
   lm(Y ~ A0 + L1, data = _) |> 
   tidy() |> 
   kable()
@@ -120,122 +129,308 @@ data_obs |>
 ```
 
 
-```{r}
-
-data_obs |> 
-  lm(Y ~ A0*A1, data = _) |> 
-  tidy() |> 
-  kable()
-
-```
-
 
 ## IPW
 
-@Hernan2020 にて紹介されている方法
+- $\bar{A}_k = (A_1, A_2, \dots, A_k)$：$k$時点までの処置の履歴
+- $\bar{L}_k = (L_1, L_2, \dots, L_k)$：$k$時点までの共変量の履歴
 
 以下のウェイトを作成する
+
+$$
+W^{\bar{A}_k} = \prod_{k=0}^{K}\frac{1}{f(A_k | \bar{A}_{k-1},\bar{L}_{k})}
+$$
+
+2時点では以下のように書ける
 
 $$
 W^{A_0, A_1} = \frac{1}{f(A_0 | L_0)} \times \frac{1}{f(A_1 | A_0, L_0, L_1)}
 $$
 
-今回はベースライン共変量がない（$L_0 = \varnothing$）ので
+さらに、今回はベースライン共変量がない（$L_0 = \varnothing$）ので
 
 $$
 W^{A_0, A_1} = \frac{1}{f(A_0)} \times \frac{1}{f(A_1 | A_0, L_1)}
 $$
 
+
+
+Stabilized IP weights も推定してみる
+
+
+$$
+SW^{A_0, A_1} = \frac{f(A_0)}{f(A_0)} \times \frac{f(A_1 | A_0)}{f(A_1 | A_0, L_1)}
+$$
+
+### 各処置に対するウェイトの推定
+
+まずは、$f(A_0), f(A_1|A_0,L_1), f(A_1|A_0)$の3つを推定する
+
 ```{r}
-res_ipw <-
-  broom::augment_columns(
-    glm(A0 ~ 1, data = data_obs, family = 'binomial'), 
-    data = data_obs, 
-    type.predict = 'response'
-  ) |> 
-  # A0に対するウェイト
+# 各時点の処置を予測するモデル
+model_A0 <- glm(A0 ~ 1, data = data_ind, family = "binomial")
+model_A1 <- glm(A1 ~ A0 * L1, data = data_ind, family = "binomial")
+
+# Stabilized Weightsの分子を予測するモデル
+model_A1_without_L1 <- glm(A1 ~ A0, data = data_ind, family = 'binomial')
+
+```
+
+予測値を算出
+
+```{r}
+
+ipw_data1 <-
+  data_ind |> 
   mutate(
-    ipw_A0 = case_when(
-      A0 == 1 ~ 1 / .fitted,
-      A0 == 0 ~ 1 / (1 - .fitted)
-    )
-  ) |> 
-  select(Y:U1, ipw_A0) |> 
-  broom::augment_columns(
-    glm(A1 ~ A0 + L1 + I(L1^2), data = data_obs, family = 'binomial'),
-    data = _,
-    type.predict = 'response'
-  ) |> 
-  mutate(
-    # A1に対するウェイト
-    ipw_A1 = case_when(
-      A1 == 1 ~ 1 / .fitted,
-      A1 == 0 ~ 1 / (1 - .fitted)
-    )
-  ) |> 
-  select(Y:U1, ipw_A0, ipw_A1) |> 
-  # A0に対するウェイトとA1に対するウェイトをかけ算
-  mutate(ipw = ipw_A0*ipw_A1) |> 
-  # 重み付け推定
-  summarise(CFmean = weighted.mean(Y, ipw), .by = c(A0, A1)) |> 
-  arrange(A0, A1)
-
-```
-
-ipwによる各treatment strategyにおけるcounterfactual mean
-
-```{r}
-
-res_ipw
-
-```
-
-counterfactual meanの差分
-
-```{r}
-
-cross_join(
-  res_ipw |> 
-    mutate(A0_A1 = str_c(A0, ',', A1)) |> 
-    select(A0_A1, CFmean),
-  res_ipw |> 
-    mutate(A0_A1 = str_c(A0, ',', A1)) |> 
-    select(A0_A1, CFmean)
-  ) |> 
-  filter(A0_A1.x != A0_A1.y) |> 
-  mutate(ATE = CFmean.y - CFmean.x)
-  
-
-```
-
-
-## Longitudinal TMLE
-
-- `ltmle`による実装
-
-```{r}
-
-res_tmle <- 
-  ltmle::ltmle(
-    # データセットの列の順番が大切
-    data = data_obs |> select(A0, L1, A1, Y), 
-    Anodes = c('A0', 'A1'), 
-    Lnodes = 'L1',
-    Ynodes = 'Y',
-    abar = list(treatment = c(1, 1), control = c(0, 0)), 
-    SL.library = c('SL.glm', 'SL.gam', 'SL.randomForest')
+    # 各モデルの予測値を算出
+    pred_A0 = predict(model_A0, type = 'response'),
+    pred_A1 = predict(model_A1, type = 'response'),
+    pred_A1_without_L1 = predict(model_A1_without_L1, type = 'response'),
   )
 
+ipw_data1 |> 
+  count(pick(everything())) |> 
+  kable()
 
-summary(res_tmle)
+```
 
+各処置に対するウェイトを作成
+
+```{r}
+ipw_data2 <-
+  ipw_data1 |> 
+  mutate(
+    # A0に対するウェイト
+    ipw_A0 = case_when(
+      A0 == 1 ~ 1 / pred_A0,
+      A0 == 0 ~ 1 / (1 - pred_A0)
+    ),
+    # A0に対するSW
+    sw_A0 = case_when(
+      A0 == 1 ~ pred_A0 / pred_A0,
+      A0 == 0 ~ (1 - pred_A0) / (1 - pred_A0)
+    ),
+    # A1に対するウェイト
+    ipw_A1 = case_when(
+      A1 == 1 ~ 1 / pred_A1,
+      A1 == 0 ~ 1 / (1 - pred_A1)
+    ),
+    # A1に対するSW
+    sw_A1 = case_when(
+      A1 == 1 ~ pred_A1_without_L1 / pred_A1,
+      A1 == 0 ~ (1 - pred_A1_without_L1) / (1 - pred_A1)
+    ),
+  )
+
+ipw_data2 |>
+  count(pick(everything())) |>
+  kable()
+
+```
+
+
+### IP weightの作成
+
+各時点のウェイトを掛け合わせる。たしかにSWのほうがウェイトが狭い範囲にまとまっていることがわかる。
+
+```{r}
+
+ipw_data3 <-
+  ipw_data2 |> 
+  mutate(
+    # A0に対するウェイトとA1に対するウェイトをかけ算
+    ipw = ipw_A0 * ipw_A1,
+    sw = sw_A0 * sw_A1
+  ) 
+
+ipw_data3 |> 
+  count(pick(everything())) |> 
+  kable()
+
+```
+
+### Counterfactual meanの推定
+
+すべてのパターンで同じ値なので、差分をとれば0になる
+
+```{r}
+
+res_ipw <- 
+  ipw_data3 |>
+  # 重み付け推定
+  summarise(
+    CFmean_ipw = weighted.mean(Y, ipw), 
+    CFmean_sw = weighted.mean(Y, sw), 
+    .by = c(A0, A1),
+  ) |>
+  arrange(A0, A1)
+
+res_ipw |> 
+  kable()
+
+```
+
+### Marginal structural modelの推定
+
+以下のようなmarginal structural modelを考えてみる
+
+$$
+\mathrm{E}[Y^{A_0,A_1}] = \beta_0 + \beta_1 (A_0 + A_1)
+$$
+
+当然ながら$\beta_1 = 0$となる
+
+```{r}
+
+estimatr::lm_robust(Y ~ I(A0 + A1), data = ipw_data3, weight = ipw) |> 
+  broom::tidy() |> 
+  kable()
+estimatr::lm_robust(Y ~ I(A0 + A1), data = ipw_data3, weights = sw) |> 
+  broom::tidy() |> 
+  kable()
 
 ```
 
 
 
-## 他のパッケージ
+## G-formula
 
-`ltmle`はメジャー（？）だが、あんまり汎用性が高いと言えず、開発も盛んなようには見えない。ほかにlongitudinal TMLEを実装しているパッケージとして[`lmtp`](https://github.com/nt-williams/lmtp)や[`stremr`](https://github.com/osofr/stremr)がある。`lmtp`はCRANにも登録してあり、試してみる価値あり。`stremr`はさまざまなアプローチの統合を目指す非常に意欲的なパッケージだが、開発は止まっている？っぽい。
+Sequential exchangeabilityが成立しているとき、以下の式が成り立つ
+
+$$
+\mathrm{E}[Y^{\bar{A}_k}] = \sum_\bar{l}\mathrm{E}[Y | \bar{A}_k = \bar{a}_k, \bar{L}_k = \bar{l}_k]\prod_{k = 0}^K f(l_k | \bar{a}_{k-1},\bar{l}_{k-1})
+$$
+
+一般式はイカツイが、2時点かつ$L_0$がない今回の条件だと以下のようになる
+
+$$
+\mathrm{E}[Y^{A_0,A_1}] = \sum_{l_1} \mathrm{E}[Y | A_0 = a_0,A_1 = a_1,L_1 = l_1]f(l_1 | a_0)
+$$
+
+### アウトカムと共変量の予測モデルを推定
+
+- $\mathrm{E}[Y | A_0 = a_0,A_1 = a_1,L_1 = l_1]$と$f(l_1 | a_0)$のモデルを推定
+- 1時点の時と比較すると、共変量の予測モデルが必要になる点が新しい
+
+```{r}
+
+# アウトカムモデル
+model_Y <- lm(Y ~ A0*A1*L1, data = data_ind)
+# L1の予測モデル
+model_L1 <- lm(L1 ~ A0, data = data_ind)
+
+```
+
+### 共変量の予測値を推定
+
+ひとまず、$A_0 = A_1 = 0$のときのpotential outcome$\mathrm{E}[Y^{0,0}]$を推定することを考える
+
+まずサンプル全員の処置の値を$A_0 = A_1 = 0$で置き換える
+
+```{r}
+
+gform_data1 <- 
+  data_ind |> 
+  # 名前を変えておく
+  rename(A0_obs = A0, A1_obs = A1, L1_obs = L1, Y_obs = Y) |> 
+  # 処置の値を変更
+  mutate(A0 = 0, A1 = 0)
+
+gform_data1 |> 
+  count(pick(everything())) |> 
+  kable()
+
+```
+
+次に、$A_0 = 0$の状況での$L_1$の値を予測する。これが$f(l_1 | 0)$
+
+$L^{A_0 = 0}$の値をシミュレートしているとも考えられる
+
+```{r}
+
+gform_data2 <- 
+  gform_data1 |> 
+  # 全員がA0 = 0のときの共変量L1の値をシミュレート
+  mutate(L1 = predict(model_L1, newdata = gform_data1))
+
+gform_data2 |> 
+  count(pick(everything())) |> 
+  kable()
 
 
+```
+
+### アウトカムの予測値を推定
+
+さらに、シミュレートした$L_1$と、$A_0 = A_1 = 0$のもとでの$Y$の値を予測する。これが$\mathrm{E}[Y | A_0 = 0,A_1 = 0,L_1 = l_1]$
+
+```{r}
+
+gform_data3 <- 
+  gform_data2 |> 
+  mutate(Y = predict(model_Y, newdata = gform_data2))
+
+gform_data3 |> 
+  count(pick(everything())) |> 
+  kable()
+
+```
+
+### サンプル全体で平均する
+
+以下のように変形できるので、アウトカムの予測値をサンプル全体で平均すればよい
+
+$$
+\sum_{l_1} \mathrm{E}[Y | A_0 = a_0,A_1 = a_1,L_1 = l_1]f(l_1 | a_0) = \mathrm{E}[\mathrm{E}[Y | A_0 = a_0, A_1 = a_1, L_1]]
+$$
+
+```{r}
+
+gform_data3 |> 
+  summarise(CFmean = mean(Y), .by = c(A0, A1)) |> 
+  kable()
+
+```
+
+### すべてのパターンを推定
+
+```{r}
+
+# 処置のパターンごとにデータを4つ作成
+list(
+  data_ind |> mutate(A0 = 0, A1 = 0),
+  data_ind |> mutate(A0 = 0, A1 = 1),
+  data_ind |> mutate(A0 = 1, A1 = 0),
+  data_ind |> mutate(A0 = 1, A1 = 1)
+) |>
+  # 各パターンにおいてL1の値を予測
+  map(
+    \(data) data |> mutate(L1 = predict(model_L1, newdata = data))
+  ) |>
+  # 予測したL1の値とトリートメントを用いて、Potential Outcomeを予測
+  map(
+    \(data) data |> mutate(Y_pred = predict(model_Y, newdata = data))
+  ) |> 
+  bind_rows() |> 
+  summarise(
+    CFmean = mean(Y_pred),
+    .by = c(A0, A1)
+  ) |> 
+  kable()
+
+```
+
+
+共変量が増えるとそれだけシミュレートする変数が増えるので大変そう...
+
+
+
+## 疑問点＆残された課題
+
+- Marginal structural modelのパラメータはg-formulaでは推定できないのか？
+  - L-TMLEの推定ができるパッケージではMSMのパラメータも推定できる
+- G-formulaとRegression with residualsの関係が気になった
+  - どちらも共変量のモデリングを行うが、g-fomulaは予測値を用いるのに対して、RWRは残差の方を用いる
+- 本当は今回の課題でTMLEまで実装したかった
+  - 理解が追いつかず断念

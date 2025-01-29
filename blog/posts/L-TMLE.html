@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kentaro Kamada">
 <meta name="dcterms.date" content="2024-02-22">
 
-<title>Longitudinal TMLE – Kentaro Kamada</title>
+<title>複数時点での処置の因果効果の推定 – Kentaro Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -91,10 +91,10 @@ div.csl-indent {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-9c546a04fa00a275547e7eb78afa1c09.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -220,7 +220,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Longitudinal TMLE</h1>
+      <h1 class="title">複数時点での処置の因果効果の推定</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Causal Inference</div>
               </div>
@@ -244,6 +244,12 @@ window.Quarto = {
       </div>
     </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">January 29, 2025</p>
+      </div>
+    </div>
       
     </div>
     
@@ -256,17 +262,33 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#複数時点での介入の因果効果の推定" id="toc-複数時点での介入の因果効果の推定" class="nav-link active" data-scroll-target="#複数時点での介入の因果効果の推定">複数時点での介入の因果効果の推定</a>
-  <ul class="collapse">
-  <li><a href="#下準備" id="toc-下準備" class="nav-link" data-scroll-target="#下準備">下準備</a>
+  <li><a href="#下準備" id="toc-下準備" class="nav-link active" data-scroll-target="#下準備">下準備</a>
   <ul class="collapse">
   <li><a href="#ライブラリなど" id="toc-ライブラリなど" class="nav-link" data-scroll-target="#ライブラリなど">ライブラリなど</a></li>
   <li><a href="#データの作成" id="toc-データの作成" class="nav-link" data-scroll-target="#データの作成">データの作成</a></li>
   </ul></li>
-  <li><a href="#ipw" id="toc-ipw" class="nav-link" data-scroll-target="#ipw">IPW</a></li>
-  <li><a href="#longitudinal-tmle" id="toc-longitudinal-tmle" class="nav-link" data-scroll-target="#longitudinal-tmle">Longitudinal TMLE</a></li>
-  <li><a href="#他のパッケージ" id="toc-他のパッケージ" class="nav-link" data-scroll-target="#他のパッケージ">他のパッケージ</a></li>
+  <li><a href="#各処置の因果効果" id="toc-各処置の因果効果" class="nav-link" data-scroll-target="#各処置の因果効果">各処置の因果効果</a>
+  <ul class="collapse">
+  <li><a href="#a_0の因果効果" id="toc-a_0の因果効果" class="nav-link" data-scroll-target="#a_0の因果効果"><span class="math inline">\(A_0\)</span>の因果効果</a></li>
+  <li><a href="#a_1の因果効果" id="toc-a_1の因果効果" class="nav-link" data-scroll-target="#a_1の因果効果"><span class="math inline">\(A_1\)</span>の因果効果</a></li>
+  <li><a href="#collider-bias" id="toc-collider-bias" class="nav-link" data-scroll-target="#collider-bias">collider bias</a></li>
   </ul></li>
+  <li><a href="#ipw" id="toc-ipw" class="nav-link" data-scroll-target="#ipw">IPW</a>
+  <ul class="collapse">
+  <li><a href="#各処置に対するウェイトの推定" id="toc-各処置に対するウェイトの推定" class="nav-link" data-scroll-target="#各処置に対するウェイトの推定">各処置に対するウェイトの推定</a></li>
+  <li><a href="#ip-weightの作成" id="toc-ip-weightの作成" class="nav-link" data-scroll-target="#ip-weightの作成">IP weightの作成</a></li>
+  <li><a href="#counterfactual-meanの推定" id="toc-counterfactual-meanの推定" class="nav-link" data-scroll-target="#counterfactual-meanの推定">Counterfactual meanの推定</a></li>
+  <li><a href="#marginal-structural-modelの推定" id="toc-marginal-structural-modelの推定" class="nav-link" data-scroll-target="#marginal-structural-modelの推定">Marginal structural modelの推定</a></li>
+  </ul></li>
+  <li><a href="#g-formula" id="toc-g-formula" class="nav-link" data-scroll-target="#g-formula">G-formula</a>
+  <ul class="collapse">
+  <li><a href="#アウトカムと共変量の予測モデルを推定" id="toc-アウトカムと共変量の予測モデルを推定" class="nav-link" data-scroll-target="#アウトカムと共変量の予測モデルを推定">アウトカムと共変量の予測モデルを推定</a></li>
+  <li><a href="#共変量の予測値を推定" id="toc-共変量の予測値を推定" class="nav-link" data-scroll-target="#共変量の予測値を推定">共変量の予測値を推定</a></li>
+  <li><a href="#アウトカムの予測値を推定" id="toc-アウトカムの予測値を推定" class="nav-link" data-scroll-target="#アウトカムの予測値を推定">アウトカムの予測値を推定</a></li>
+  <li><a href="#サンプル全体で平均する" id="toc-サンプル全体で平均する" class="nav-link" data-scroll-target="#サンプル全体で平均する">サンプル全体で平均する</a></li>
+  <li><a href="#すべてのパターンを推定" id="toc-すべてのパターンを推定" class="nav-link" data-scroll-target="#すべてのパターンを推定">すべてのパターンを推定</a></li>
+  </ul></li>
+  <li><a href="#疑問点残された課題" id="toc-疑問点残された課題" class="nav-link" data-scroll-target="#疑問点残された課題">疑問点＆残された課題</a></li>
   </ul>
 </nav>
     </div>
@@ -277,9 +299,7 @@ window.Quarto = {
 
 
 
-<section id="複数時点での介入の因果効果の推定" class="level1">
-<h1>複数時点での介入の因果効果の推定</h1>
-<p><span class="citation" data-cites="Hernan2020">Hernán and Robins (<a href="#ref-Hernan2020" role="doc-biblioref">2020</a>)</span> では、TMLEは時間依存交絡などに対処するG-Methodの一般化として提示されている。ここでは<code>ltmle</code>パッケージを用いた時間依存交絡への対処を中心に記述する。</p>
+<p><span class="citation" data-cites="Hernan2024">Hernán and Robins (<a href="#ref-Hernan2024" role="doc-biblioref">2024</a>)</span> のPart3では、複数時点での処置の因果推論について議論されている。ここでは、IPW、g-formulaを用いた因果効果の推定を実際にやってみる。</p>
 <section id="下準備" class="level2">
 <h2 class="anchored" data-anchor-id="下準備">下準備</h2>
 <section id="ライブラリなど" class="level3">
@@ -287,47 +307,20 @@ window.Quarto = {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SuperLearner)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ltmle)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>kable <span class="ot">&lt;-</span> <span class="fu">partial</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span>kable,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>kable <span class="ot">&lt;-</span> <span class="fu">partial</span>(</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span>kable,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> <span class="dv">8</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(<span class="at">strategy =</span> <span class="st">'multisession'</span>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="データの作成" class="level3">
 <h3 class="anchored" data-anchor-id="データの作成">データの作成</h3>
-<p>以下のDAGを考える</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dagify</span>(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  L1 <span class="sc">~</span> A0 <span class="sc">+</span> U1,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  A1 <span class="sc">~</span> A0 <span class="sc">+</span> L1,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  Y <span class="sc">~</span> U1,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> <span class="fu">c</span>(<span class="st">'A0'</span>, <span class="st">'A1'</span>), </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome =</span> <span class="st">'Y'</span>, </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">A0 =</span> <span class="dv">0</span>, <span class="at">L1 =</span> <span class="dv">1</span>, <span class="at">A1 =</span> <span class="dv">2</span>, <span class="at">U1 =</span> <span class="dv">1</span>, <span class="at">Y =</span> <span class="dv">3</span>),</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> <span class="fu">c</span>(<span class="at">A0 =</span> <span class="dv">0</span>, <span class="at">L1 =</span> <span class="dv">0</span>, <span class="at">A1 =</span> <span class="dv">0</span>, <span class="at">U1 =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">Y =</span> <span class="dv">0</span>))</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggdag</span>()<span class="sc">+</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="L-TMLE_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>TreatmentはA0とA1であるが、ここからYへのpathはないので、因果効果は全ての組み合わせについて0になる</p>
+<p>以下のDAGを考える<span class="citation" data-cites="Hernan2024">(<a href="#ref-Hernan2024" role="doc-biblioref">Hernán and Robins 2024, fig. 20.3</a>)</span></p>
+<p><img src="../images/L-TMLE-DAG.svg" class="img-fluid"></p>
+<p>Treatmentは<span class="math inline">\(A_0\)</span>と<span class="math inline">\(A_1\)</span>であるが、ここから<span class="math inline">\(Y\)</span>へのpathはないので、因果効果は全ての組み合わせについて0になる</p>
 <p>具体的には、potential outcomeのすべての組み合わせについて、差分を取った値が0になる</p>
 <p><span class="math display">\[\begin{align}
 \mathrm{E}[Y^{0, 0} - Y^{1, 0}] &amp;= 0\\
@@ -337,62 +330,129 @@ window.Quarto = {
 \mathrm{E}[Y^{1, 0} - Y^{1, 1}] &amp;= 0\\
 \mathrm{E}[Y^{0, 1} - Y^{1, 1}] &amp;= 0
 \end{align}\]</span></p>
+<p>上記のDAGに合うように作成されたデータが以下である<span class="citation" data-cites="Hernan2024">(<a href="#ref-Hernan2024" role="doc-biblioref">Hernán and Robins 2024</a>, Table 20.1)</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>generate_data <span class="ot">&lt;-</span> <span class="cf">function</span>(n){ </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    A0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size=</span><span class="dv">1</span>, <span class="at">prob=</span><span class="fl">0.3</span>) <span class="co"># binary treatment</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    U1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>) <span class="co"># latent continuous confounder</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    L1 <span class="ot">&lt;-</span> <span class="fl">0.1</span> <span class="sc">+</span> <span class="fl">0.3</span><span class="sc">*</span>A0 <span class="sc">+</span> <span class="fl">0.3</span><span class="sc">*</span>U1 <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="fl">0.1</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    A1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size=</span><span class="dv">1</span>, <span class="at">prob =</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="fl">0.2</span> <span class="sc">+</span> <span class="fl">0.3</span><span class="sc">*</span>L1 <span class="sc">+</span> <span class="fl">0.02</span><span class="sc">*</span>L1<span class="sc">^</span><span class="dv">2</span>)) <span class="co"># binary treatment</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    Y <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.2</span> <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">*</span>U1 <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="fl">0.1</span>) <span class="co"># continuous outcome depends on confounders</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">tibble</span>(Y, A0, A1, L1, U1))</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>data_obs <span class="ot">&lt;-</span> <span class="fu">generate_data</span>(<span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ul>
-<li>A0の因果効果</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">|&gt;</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data_agg <span class="ot">&lt;-</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tribble</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span>N, <span class="sc">~</span>A0, <span class="sc">~</span>L1, <span class="sc">~</span>A1, <span class="sc">~</span>Y, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2400</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">84</span>, </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1600</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">84</span>, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2400</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">52</span>, </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">9600</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">52</span>, </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">4800</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">76</span>, </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3200</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">76</span>, </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1600</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">44</span>, </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="dv">6400</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">44</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>data_agg <span class="sc">|&gt;</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
-<th style="text-align: left;">term</th>
-<th style="text-align: right;">estimate</th>
-<th style="text-align: right;">std.error</th>
-<th style="text-align: right;">statistic</th>
-<th style="text-align: right;">p.value</th>
+<th style="text-align: right;">N</th>
+<th style="text-align: right;">A0</th>
+<th style="text-align: right;">L1</th>
+<th style="text-align: right;">A1</th>
+<th style="text-align: right;">Y</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">-0.207</td>
-<td style="text-align: right;">0.019</td>
-<td style="text-align: right;">-10.925</td>
-<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">2400</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">84</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">A0</td>
-<td style="text-align: right;">0.029</td>
-<td style="text-align: right;">0.036</td>
-<td style="text-align: right;">0.804</td>
-<td style="text-align: right;">0.422</td>
+<td style="text-align: right;">1600</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">84</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2400</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">52</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">9600</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">52</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4800</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">76</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3200</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">76</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1600</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">44</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6400</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">44</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<ul>
-<li>A1の因果効果</li>
-</ul>
+<p>これを個人レベルのデータに変換</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">|&gt;</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A1 <span class="sc">+</span> L1, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data_ind <span class="ot">&lt;-</span> <span class="fu">uncount</span>(data_agg, N)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>data_ind</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32,000 × 4
+      A0    L1    A1     Y
+   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1     0     0     0    84
+ 2     0     0     0    84
+ 3     0     0     0    84
+ 4     0     0     0    84
+ 5     0     0     0    84
+ 6     0     0     0    84
+ 7     0     0     0    84
+ 8     0     0     0    84
+ 9     0     0     0    84
+10     0     0     0    84
+# ℹ 31,990 more rows</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="各処置の因果効果" class="level2">
+<h2 class="anchored" data-anchor-id="各処置の因果効果">各処置の因果効果</h2>
+<ul>
+<li>各処置の効果を確認</li>
+<li>処置からアウトカムへの直接のパスはないので、各時点の処置の因果効果も0になる</li>
+</ul>
+<section id="a_0の因果効果" class="level3">
+<h3 class="anchored" data-anchor-id="a_0の因果効果"><span class="math inline">\(A_0\)</span>の因果効果</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>data_ind <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -409,36 +469,32 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">-0.427</td>
-<td style="text-align: right;">0.012</td>
-<td style="text-align: right;">-34.532</td>
-<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">0.118</td>
+<td style="text-align: right;">507.077</td>
+<td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">A1</td>
-<td style="text-align: right;">-0.017</td>
-<td style="text-align: right;">0.017</td>
-<td style="text-align: right;">-1.020</td>
-<td style="text-align: right;">0.308</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">L1</td>
-<td style="text-align: right;">1.275</td>
-<td style="text-align: right;">0.025</td>
-<td style="text-align: right;">51.719</td>
+<td style="text-align: left;">A0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.167</td>
 <td style="text-align: right;">0.000</td>
+<td style="text-align: right;">1</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
+</section>
+<section id="a_1の因果効果" class="level3">
+<h3 class="anchored" data-anchor-id="a_1の因果効果"><span class="math inline">\(A_1\)</span>の因果効果</h3>
 <ul>
-<li>collider bias</li>
+<li>以下のバックドアが存在するので<span class="math inline">\(L_1\)</span>を統制</li>
+<li><span class="math inline">\(A_1 \gets L_1 \gets U_1 \to Y\)</span></li>
 </ul>
-<p><span class="math inline">\(L_1\)</span>を条件づけると、<span class="math inline">\(A_0 \to L_1 \gets U_1 \to Y\)</span>というパスが開いて、バイアスをもたらす</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">|&gt;</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0 <span class="sc">+</span> L1, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data_ind <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A1 <span class="sc">+</span> L1, <span class="at">data =</span> _) <span class="sc">|&gt;</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -455,32 +511,39 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">-0.352</td>
-<td style="text-align: right;">0.007</td>
-<td style="text-align: right;">-49.626</td>
+<td style="text-align: right;">78.667</td>
+<td style="text-align: right;">0.040</td>
+<td style="text-align: right;">1943.969</td>
 <td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">A0</td>
-<td style="text-align: right;">-0.469</td>
-<td style="text-align: right;">0.014</td>
-<td style="text-align: right;">-32.796</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: left;">A1</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.050</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">1</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">L1</td>
-<td style="text-align: right;">1.540</td>
-<td style="text-align: right;">0.019</td>
-<td style="text-align: right;">81.391</td>
+<td style="text-align: right;">-29.867</td>
+<td style="text-align: right;">0.049</td>
+<td style="text-align: right;">-611.652</td>
 <td style="text-align: right;">0</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
+</section>
+<section id="collider-bias" class="level3">
+<h3 class="anchored" data-anchor-id="collider-bias">collider bias</h3>
+<ul>
+<li><span class="math inline">\(A_0\)</span>の因果効果の推定において、<span class="math inline">\(L_1\)</span>を条件づける</li>
+<li><span class="math inline">\(A_0 \to \boxed{L_1} \gets U_1 \to Y\)</span>というパスが開いて、バイアスをもたらす</li>
+</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data_obs <span class="sc">|&gt;</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0<span class="sc">*</span>A1, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data_ind <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(Y <span class="sc">~</span> A0 <span class="sc">+</span> L1, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -497,31 +560,24 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">-0.217</td>
-<td style="text-align: right;">0.026</td>
-<td style="text-align: right;">-8.364</td>
-<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3.657678e+14</td>
+<td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">A0</td>
-<td style="text-align: right;">0.043</td>
-<td style="text-align: right;">0.051</td>
-<td style="text-align: right;">0.859</td>
-<td style="text-align: right;">0.390</td>
+<td style="text-align: right;">-8</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">-3.597746e+13</td>
+<td style="text-align: right;">0</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">A1</td>
-<td style="text-align: right;">0.021</td>
-<td style="text-align: right;">0.038</td>
-<td style="text-align: right;">0.559</td>
-<td style="text-align: right;">0.576</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">A0:A1</td>
-<td style="text-align: right;">-0.031</td>
-<td style="text-align: right;">0.072</td>
-<td style="text-align: right;">-0.428</td>
-<td style="text-align: right;">0.669</td>
+<td style="text-align: left;">L1</td>
+<td style="text-align: right;">-32</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">-1.393401e+14</td>
+<td style="text-align: right;">0</td>
 </tr>
 </tbody>
 </table>
@@ -531,152 +587,1166 @@ window.Quarto = {
 </section>
 <section id="ipw" class="level2">
 <h2 class="anchored" data-anchor-id="ipw">IPW</h2>
-<p><span class="citation" data-cites="Hernan2020">Hernán and Robins (<a href="#ref-Hernan2020" role="doc-biblioref">2020</a>)</span> にて紹介されている方法</p>
+<ul>
+<li><span class="math inline">\(\bar{A}_k = (A_1, A_2, \dots, A_k)\)</span>：<span class="math inline">\(k\)</span>時点までの処置の履歴</li>
+<li><span class="math inline">\(\bar{L}_k = (L_1, L_2, \dots, L_k)\)</span>：<span class="math inline">\(k\)</span>時点までの共変量の履歴</li>
+</ul>
 <p>以下のウェイトを作成する</p>
+<p><span class="math display">\[
+W^{\bar{A}_k} = \prod_{k=0}^{K}\frac{1}{f(A_k | \bar{A}_{k-1},\bar{L}_{k})}
+\]</span></p>
+<p>2時点では以下のように書ける</p>
 <p><span class="math display">\[
 W^{A_0, A_1} = \frac{1}{f(A_0 | L_0)} \times \frac{1}{f(A_1 | A_0, L_0, L_1)}
 \]</span></p>
-<p>今回はベースライン共変量がない（<span class="math inline">\(L_0 = \varnothing\)</span>）ので</p>
+<p>さらに、今回はベースライン共変量がない（<span class="math inline">\(L_0 = \varnothing\)</span>）ので</p>
 <p><span class="math display">\[
 W^{A_0, A_1} = \frac{1}{f(A_0)} \times \frac{1}{f(A_1 | A_0, L_1)}
 \]</span></p>
+<p>Stabilized IP weights も推定してみる</p>
+<p><span class="math display">\[
+SW^{A_0, A_1} = \frac{f(A_0)}{f(A_0)} \times \frac{f(A_1 | A_0)}{f(A_1 | A_0, L_1)}
+\]</span></p>
+<section id="各処置に対するウェイトの推定" class="level3">
+<h3 class="anchored" data-anchor-id="各処置に対するウェイトの推定">各処置に対するウェイトの推定</h3>
+<p>まずは、<span class="math inline">\(f(A_0), f(A_1|A_0,L_1), f(A_1|A_0)\)</span>の3つを推定する</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>res_ipw <span class="ot">&lt;-</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">augment_columns</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">glm</span>(A0 <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> data_obs, <span class="at">family =</span> <span class="st">'binomial'</span>), </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data_obs, </span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">type.predict =</span> <span class="st">'response'</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># A0に対するウェイト</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">ipw_A0 =</span> <span class="fu">case_when</span>(</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      A0 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> .fitted,</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      A0 <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> .fitted)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Y<span class="sc">:</span>U1, ipw_A0) <span class="sc">|&gt;</span> </span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">augment_columns</span>(</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">glm</span>(A1 <span class="sc">~</span> A0 <span class="sc">+</span> L1 <span class="sc">+</span> <span class="fu">I</span>(L1<span class="sc">^</span><span class="dv">2</span>), <span class="at">data =</span> data_obs, <span class="at">family =</span> <span class="st">'binomial'</span>),</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> _,</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">type.predict =</span> <span class="st">'response'</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># A1に対するウェイト</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">ipw_A1 =</span> <span class="fu">case_when</span>(</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>      A1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> .fitted,</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>      A1 <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> .fitted)</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Y<span class="sc">:</span>U1, ipw_A0, ipw_A1) <span class="sc">|&gt;</span> </span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># A0に対するウェイトとA1に対するウェイトをかけ算</span></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ipw =</span> ipw_A0<span class="sc">*</span>ipw_A1) <span class="sc">|&gt;</span> </span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 重み付け推定</span></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">CFmean =</span> <span class="fu">weighted.mean</span>(Y, ipw), <span class="at">.by =</span> <span class="fu">c</span>(A0, A1)) <span class="sc">|&gt;</span> </span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(A0, A1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 各時点の処置を予測するモデル</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>model_A0 <span class="ot">&lt;-</span> <span class="fu">glm</span>(A0 <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> data_ind, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>model_A1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(A1 <span class="sc">~</span> A0 <span class="sc">*</span> L1, <span class="at">data =</span> data_ind, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Stabilized Weightsの分子を予測するモデル</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>model_A1_without_L1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(A1 <span class="sc">~</span> A0, <span class="at">data =</span> data_ind, <span class="at">family =</span> <span class="st">'binomial'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>ipwによる各treatment strategyにおけるcounterfactual mean</p>
+<p>予測値を算出</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>res_ipw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 3
-     A0    A1 CFmean
-  &lt;int&gt; &lt;int&gt;  &lt;dbl&gt;
-1     0     0 -0.208
-2     0     1 -0.207
-3     1     0 -0.166
-4     1     1 -0.189</code></pre>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ipw_data1 <span class="ot">&lt;-</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  data_ind <span class="sc">|&gt;</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 各モデルの予測値を算出</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred_A0 =</span> <span class="fu">predict</span>(model_A0, <span class="at">type =</span> <span class="st">'response'</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred_A1 =</span> <span class="fu">predict</span>(model_A1, <span class="at">type =</span> <span class="st">'response'</span>),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred_A1_without_L1 =</span> <span class="fu">predict</span>(model_A1_without_L1, <span class="at">type =</span> <span class="st">'response'</span>),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>ipw_data1 <span class="sc">|&gt;</span> </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">|&gt;</span> </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">A0</th>
+<th style="text-align: right;">L1</th>
+<th style="text-align: right;">A1</th>
+<th style="text-align: right;">Y</th>
+<th style="text-align: right;">pred_A0</th>
+<th style="text-align: right;">pred_A1</th>
+<th style="text-align: right;">pred_A1_without_L1</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">2400</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">2400</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">9600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">4800</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">3200</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">6400</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-<p>counterfactual meanの差分</p>
+<p>各処置に対するウェイトを作成</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cross_join</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  res_ipw <span class="sc">|&gt;</span> </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">A0_A1 =</span> <span class="fu">str_c</span>(A0, <span class="st">','</span>, A1)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(A0_A1, CFmean),</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  res_ipw <span class="sc">|&gt;</span> </span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">A0_A1 =</span> <span class="fu">str_c</span>(A0, <span class="st">','</span>, A1)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(A0_A1, CFmean)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(A0_A1.x <span class="sc">!=</span> A0_A1.y) <span class="sc">|&gt;</span> </span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ATE =</span> CFmean.y <span class="sc">-</span> CFmean.x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 12 × 5
-   A0_A1.x CFmean.x A0_A1.y CFmean.y       ATE
-   &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;
- 1 0,0       -0.208 0,1       -0.207  0.000654
- 2 0,0       -0.208 1,0       -0.166  0.0419  
- 3 0,0       -0.208 1,1       -0.189  0.0190  
- 4 0,1       -0.207 0,0       -0.208 -0.000654
- 5 0,1       -0.207 1,0       -0.166  0.0412  
- 6 0,1       -0.207 1,1       -0.189  0.0184  
- 7 1,0       -0.166 0,0       -0.208 -0.0419  
- 8 1,0       -0.166 0,1       -0.207 -0.0412  
- 9 1,0       -0.166 1,1       -0.189 -0.0229  
-10 1,1       -0.189 0,0       -0.208 -0.0190  
-11 1,1       -0.189 0,1       -0.207 -0.0184  
-12 1,1       -0.189 1,0       -0.166  0.0229  </code></pre>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ipw_data2 <span class="ot">&lt;-</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  ipw_data1 <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># A0に対するウェイト</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">ipw_A0 =</span> <span class="fu">case_when</span>(</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>      A0 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> pred_A0,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      A0 <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> pred_A0)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># A0に対するSW</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">sw_A0 =</span> <span class="fu">case_when</span>(</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>      A0 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> pred_A0 <span class="sc">/</span> pred_A0,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>      A0 <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> (<span class="dv">1</span> <span class="sc">-</span> pred_A0) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> pred_A0)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># A1に対するウェイト</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">ipw_A1 =</span> <span class="fu">case_when</span>(</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>      A1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> pred_A1,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>      A1 <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> pred_A1)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># A1に対するSW</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">sw_A1 =</span> <span class="fu">case_when</span>(</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>      A1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> pred_A1_without_L1 <span class="sc">/</span> pred_A1,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>      A1 <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> (<span class="dv">1</span> <span class="sc">-</span> pred_A1_without_L1) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> pred_A1)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>ipw_data2 <span class="sc">|&gt;</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">|&gt;</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">A0</th>
+<th style="text-align: right;">L1</th>
+<th style="text-align: right;">A1</th>
+<th style="text-align: right;">Y</th>
+<th style="text-align: right;">pred_A0</th>
+<th style="text-align: right;">pred_A1</th>
+<th style="text-align: right;">pred_A1_without_L1</th>
+<th style="text-align: right;">ipw_A0</th>
+<th style="text-align: right;">sw_A0</th>
+<th style="text-align: right;">ipw_A1</th>
+<th style="text-align: right;">sw_A1</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.667</td>
+<td style="text-align: right;">0.500</td>
+<td style="text-align: right;">2400</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.500</td>
+<td style="text-align: right;">1.750</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.000</td>
+<td style="text-align: right;">1.500</td>
+<td style="text-align: right;">2400</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.250</td>
+<td style="text-align: right;">0.875</td>
+<td style="text-align: right;">9600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.667</td>
+<td style="text-align: right;">0.667</td>
+<td style="text-align: right;">4800</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.500</td>
+<td style="text-align: right;">1.500</td>
+<td style="text-align: right;">3200</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.000</td>
+<td style="text-align: right;">2.000</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.250</td>
+<td style="text-align: right;">0.750</td>
+<td style="text-align: right;">6400</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
-<section id="longitudinal-tmle" class="level2">
-<h2 class="anchored" data-anchor-id="longitudinal-tmle">Longitudinal TMLE</h2>
+<section id="ip-weightの作成" class="level3">
+<h3 class="anchored" data-anchor-id="ip-weightの作成">IP weightの作成</h3>
+<p>各時点のウェイトを掛け合わせる。たしかにSWのほうがウェイトが狭い範囲にまとまっていることがわかる。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ipw_data3 <span class="ot">&lt;-</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  ipw_data2 <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># A0に対するウェイトとA1に対するウェイトをかけ算</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">ipw =</span> ipw_A0 <span class="sc">*</span> ipw_A1,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sw =</span> sw_A0 <span class="sc">*</span> sw_A1</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  ) </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>ipw_data3 <span class="sc">|&gt;</span> </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">|&gt;</span> </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 20%">
+<col style="width: 7%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 6%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">A0</th>
+<th style="text-align: right;">L1</th>
+<th style="text-align: right;">A1</th>
+<th style="text-align: right;">Y</th>
+<th style="text-align: right;">pred_A0</th>
+<th style="text-align: right;">pred_A1</th>
+<th style="text-align: right;">pred_A1_without_L1</th>
+<th style="text-align: right;">ipw_A0</th>
+<th style="text-align: right;">sw_A0</th>
+<th style="text-align: right;">ipw_A1</th>
+<th style="text-align: right;">sw_A1</th>
+<th style="text-align: right;">ipw</th>
+<th style="text-align: right;">sw</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.667</td>
+<td style="text-align: right;">0.500</td>
+<td style="text-align: right;">3.333</td>
+<td style="text-align: right;">0.500</td>
+<td style="text-align: right;">2400</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.500</td>
+<td style="text-align: right;">1.750</td>
+<td style="text-align: right;">5.000</td>
+<td style="text-align: right;">1.750</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.000</td>
+<td style="text-align: right;">1.500</td>
+<td style="text-align: right;">10.000</td>
+<td style="text-align: right;">1.500</td>
+<td style="text-align: right;">2400</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.250</td>
+<td style="text-align: right;">0.875</td>
+<td style="text-align: right;">2.500</td>
+<td style="text-align: right;">0.875</td>
+<td style="text-align: right;">9600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.667</td>
+<td style="text-align: right;">0.667</td>
+<td style="text-align: right;">3.333</td>
+<td style="text-align: right;">0.667</td>
+<td style="text-align: right;">4800</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.500</td>
+<td style="text-align: right;">1.500</td>
+<td style="text-align: right;">5.000</td>
+<td style="text-align: right;">1.500</td>
+<td style="text-align: right;">3200</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.000</td>
+<td style="text-align: right;">2.000</td>
+<td style="text-align: right;">10.000</td>
+<td style="text-align: right;">2.000</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.250</td>
+<td style="text-align: right;">0.750</td>
+<td style="text-align: right;">2.500</td>
+<td style="text-align: right;">0.750</td>
+<td style="text-align: right;">6400</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="counterfactual-meanの推定" class="level3">
+<h3 class="anchored" data-anchor-id="counterfactual-meanの推定">Counterfactual meanの推定</h3>
+<p>すべてのパターンで同じ値なので、差分をとれば0になる</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>res_ipw <span class="ot">&lt;-</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  ipw_data3 <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 重み付け推定</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">CFmean_ipw =</span> <span class="fu">weighted.mean</span>(Y, ipw), </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">CFmean_sw =</span> <span class="fu">weighted.mean</span>(Y, sw), </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(A0, A1),</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(A0, A1)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>res_ipw <span class="sc">|&gt;</span> </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">A0</th>
+<th style="text-align: right;">A1</th>
+<th style="text-align: right;">CFmean_ipw</th>
+<th style="text-align: right;">CFmean_sw</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">60</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">60</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">60</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">60</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="marginal-structural-modelの推定" class="level3">
+<h3 class="anchored" data-anchor-id="marginal-structural-modelの推定">Marginal structural modelの推定</h3>
+<p>以下のようなmarginal structural modelを考えてみる</p>
+<p><span class="math display">\[
+\mathrm{E}[Y^{A_0,A_1}] = \beta_0 + \beta_1 (A_0 + A_1)
+\]</span></p>
+<p>当然ながら<span class="math inline">\(\beta_1 = 0\)</span>となる</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>estimatr<span class="sc">::</span><span class="fu">lm_robust</span>(Y <span class="sc">~</span> <span class="fu">I</span>(A0 <span class="sc">+</span> A1), <span class="at">data =</span> ipw_data3, <span class="at">weight =</span> ipw) <span class="sc">|&gt;</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 9%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 7%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+<th style="text-align: right;">conf.low</th>
+<th style="text-align: right;">conf.high</th>
+<th style="text-align: right;">df</th>
+<th style="text-align: left;">outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">0.154</td>
+<td style="text-align: right;">389.52</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">59.698</td>
+<td style="text-align: right;">60.302</td>
+<td style="text-align: right;">31998</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">I(A0 + A1)</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.122</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">-0.240</td>
+<td style="text-align: right;">0.240</td>
+<td style="text-align: right;">31998</td>
+<td style="text-align: left;">Y</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>estimatr<span class="sc">::</span><span class="fu">lm_robust</span>(Y <span class="sc">~</span> <span class="fu">I</span>(A0 <span class="sc">+</span> A1), <span class="at">data =</span> ipw_data3, <span class="at">weights =</span> sw) <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 9%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 7%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+<th style="text-align: right;">conf.low</th>
+<th style="text-align: right;">conf.high</th>
+<th style="text-align: right;">df</th>
+<th style="text-align: left;">outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">0.162</td>
+<td style="text-align: right;">369.84</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">59.682</td>
+<td style="text-align: right;">60.318</td>
+<td style="text-align: right;">31998</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">I(A0 + A1)</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.127</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">-0.250</td>
+<td style="text-align: right;">0.250</td>
+<td style="text-align: right;">31998</td>
+<td style="text-align: left;">Y</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="g-formula" class="level2">
+<h2 class="anchored" data-anchor-id="g-formula">G-formula</h2>
+<p>Sequential exchangeabilityが成立しているとき、以下の式が成り立つ</p>
+<p><span class="math display">\[
+\mathrm{E}[Y^{\bar{A}_k}] = \sum_\bar{l}\mathrm{E}[Y | \bar{A}_k = \bar{a}_k, \bar{L}_k = \bar{l}_k]\prod_{k = 0}^K f(l_k | \bar{a}_{k-1},\bar{l}_{k-1})
+\]</span></p>
+<p>一般式はイカツイが、2時点かつ<span class="math inline">\(L_0\)</span>がない今回の条件だと以下のようになる</p>
+<p><span class="math display">\[
+\mathrm{E}[Y^{A_0,A_1}] = \sum_{l_1} \mathrm{E}[Y | A_0 = a_0,A_1 = a_1,L_1 = l_1]f(l_1 | a_0)
+\]</span></p>
+<section id="アウトカムと共変量の予測モデルを推定" class="level3">
+<h3 class="anchored" data-anchor-id="アウトカムと共変量の予測モデルを推定">アウトカムと共変量の予測モデルを推定</h3>
 <ul>
-<li><code>ltmle</code>による実装</li>
+<li><span class="math inline">\(\mathrm{E}[Y | A_0 = a_0,A_1 = a_1,L_1 = l_1]\)</span>と<span class="math inline">\(f(l_1 | a_0)\)</span>のモデルを推定</li>
+<li>1時点の時と比較すると、共変量の予測モデルが必要になる点が新しい</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>res_tmle <span class="ot">&lt;-</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  ltmle<span class="sc">::</span><span class="fu">ltmle</span>(</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># データセットの列の順番が大切</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data_obs <span class="sc">|&gt;</span> <span class="fu">select</span>(A0, L1, A1, Y), </span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Anodes =</span> <span class="fu">c</span>(<span class="st">'A0'</span>, <span class="st">'A1'</span>), </span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Lnodes =</span> <span class="st">'L1'</span>,</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Ynodes =</span> <span class="st">'Y'</span>,</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">abar =</span> <span class="fu">list</span>(<span class="at">treatment =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="at">control =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)), </span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">SL.library =</span> <span class="fu">c</span>(<span class="st">'SL.glm'</span>, <span class="st">'SL.gam'</span>, <span class="st">'SL.randomForest'</span>)</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res_tmle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Estimator:  tmle 
-Call:
-ltmle::ltmle(data = select(data_obs, A0, L1, A1, Y), Anodes = c("A0", 
-    "A1"), Lnodes = "L1", Ynodes = "Y", abar = list(treatment = c(1, 
-    1), control = c(0, 0)), SL.library = c("SL.glm", "SL.gam", 
-    "SL.randomForest"))
-
-Treatment Estimate:
-   Parameter Estimate:  -0.17554 
-    Estimated Std Err:  0.033541 
-              p-value:  &lt;2e-16 
-    95% Conf Interval: (-0.24128, -0.1098) 
-
-Control Estimate:
-   Parameter Estimate:  -0.20361 
-    Estimated Std Err:  0.019777 
-              p-value:  &lt;2e-16 
-    95% Conf Interval: (-0.24237, -0.16485) 
-
-Additive Treatment Effect:
-   Parameter Estimate:  0.028069 
-    Estimated Std Err:  0.038937 
-              p-value:  0.47099 
-    95% Conf Interval: (-0.048247, 0.10438) </code></pre>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># アウトカムモデル</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>model_Y <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A0<span class="sc">*</span>A1<span class="sc">*</span>L1, <span class="at">data =</span> data_ind)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># L1の予測モデル</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>model_L1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(L1 <span class="sc">~</span> A0, <span class="at">data =</span> data_ind)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="共変量の予測値を推定" class="level3">
+<h3 class="anchored" data-anchor-id="共変量の予測値を推定">共変量の予測値を推定</h3>
+<p>ひとまず、<span class="math inline">\(A_0 = A_1 = 0\)</span>のときのpotential outcome<span class="math inline">\(\mathrm{E}[Y^{0,0}]\)</span>を推定することを考える</p>
+<p>まずサンプル全員の処置の値を<span class="math inline">\(A_0 = A_1 = 0\)</span>で置き換える</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>gform_data1 <span class="ot">&lt;-</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  data_ind <span class="sc">|&gt;</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 名前を変えておく</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">A0_obs =</span> A0, <span class="at">A1_obs =</span> A1, <span class="at">L1_obs =</span> L1, <span class="at">Y_obs =</span> Y) <span class="sc">|&gt;</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 処置の値を変更</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">A0 =</span> <span class="dv">0</span>, <span class="at">A1 =</span> <span class="dv">0</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>gform_data1 <span class="sc">|&gt;</span> </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">|&gt;</span> </span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">A0_obs</th>
+<th style="text-align: right;">L1_obs</th>
+<th style="text-align: right;">A1_obs</th>
+<th style="text-align: right;">Y_obs</th>
+<th style="text-align: right;">A0</th>
+<th style="text-align: right;">A1</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2400</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2400</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">9600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4800</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3200</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6400</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>次に、<span class="math inline">\(A_0 = 0\)</span>の状況での<span class="math inline">\(L_1\)</span>の値を予測する。これが<span class="math inline">\(f(l_1 | 0)\)</span></p>
+<p><span class="math inline">\(L^{A_0 = 0}\)</span>の値をシミュレートしているとも考えられる</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>gform_data2 <span class="ot">&lt;-</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  gform_data1 <span class="sc">|&gt;</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 全員がA0 = 0のときの共変量L1の値をシミュレート</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">L1 =</span> <span class="fu">predict</span>(model_L1, <span class="at">newdata =</span> gform_data1))</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>gform_data2 <span class="sc">|&gt;</span> </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">|&gt;</span> </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">A0_obs</th>
+<th style="text-align: right;">L1_obs</th>
+<th style="text-align: right;">A1_obs</th>
+<th style="text-align: right;">Y_obs</th>
+<th style="text-align: right;">A0</th>
+<th style="text-align: right;">A1</th>
+<th style="text-align: right;">L1</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">2400</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">2400</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">9600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">4800</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">3200</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">6400</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
-<section id="他のパッケージ" class="level2">
-<h2 class="anchored" data-anchor-id="他のパッケージ">他のパッケージ</h2>
-<p><code>ltmle</code>はメジャー（？）だが、あんまり汎用性が高いと言えず、開発も盛んなようには見えない。ほかにlongitudinal TMLEを実装しているパッケージとして<a href="https://github.com/nt-williams/lmtp"><code>lmtp</code></a>や<a href="https://github.com/osofr/stremr"><code>stremr</code></a>がある。<code>lmtp</code>はCRANにも登録してあり、試してみる価値あり。<code>stremr</code>はさまざまなアプローチの統合を目指す非常に意欲的なパッケージだが、開発は止まっている？っぽい。</p>
-
-
-
+<section id="アウトカムの予測値を推定" class="level3">
+<h3 class="anchored" data-anchor-id="アウトカムの予測値を推定">アウトカムの予測値を推定</h3>
+<p>さらに、シミュレートした<span class="math inline">\(L_1\)</span>と、<span class="math inline">\(A_0 = A_1 = 0\)</span>のもとでの<span class="math inline">\(Y\)</span>の値を予測する。これが<span class="math inline">\(\mathrm{E}[Y | A_0 = 0,A_1 = 0,L_1 = l_1]\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>gform_data3 <span class="ot">&lt;-</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  gform_data2 <span class="sc">|&gt;</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Y =</span> <span class="fu">predict</span>(model_Y, <span class="at">newdata =</span> gform_data2))</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>gform_data3 <span class="sc">|&gt;</span> </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">|&gt;</span> </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">A0_obs</th>
+<th style="text-align: right;">L1_obs</th>
+<th style="text-align: right;">A1_obs</th>
+<th style="text-align: right;">Y_obs</th>
+<th style="text-align: right;">A0</th>
+<th style="text-align: right;">A1</th>
+<th style="text-align: right;">L1</th>
+<th style="text-align: right;">Y</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">2400</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">2400</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">9600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">4800</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">3200</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">6400</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </section>
+<section id="サンプル全体で平均する" class="level3">
+<h3 class="anchored" data-anchor-id="サンプル全体で平均する">サンプル全体で平均する</h3>
+<p>以下のように変形できるので、アウトカムの予測値をサンプル全体で平均すればよい</p>
+<p><span class="math display">\[
+\sum_{l_1} \mathrm{E}[Y | A_0 = a_0,A_1 = a_1,L_1 = l_1]f(l_1 | a_0) = \mathrm{E}[\mathrm{E}[Y | A_0 = a_0, A_1 = a_1, L_1]]
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>gform_data3 <span class="sc">|&gt;</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">CFmean =</span> <span class="fu">mean</span>(Y), <span class="at">.by =</span> <span class="fu">c</span>(A0, A1)) <span class="sc">|&gt;</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">A0</th>
+<th style="text-align: right;">A1</th>
+<th style="text-align: right;">CFmean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">60</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="すべてのパターンを推定" class="level3">
+<h3 class="anchored" data-anchor-id="すべてのパターンを推定">すべてのパターンを推定</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 処置のパターンごとにデータを4つ作成</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  data_ind <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">A0 =</span> <span class="dv">0</span>, <span class="at">A1 =</span> <span class="dv">0</span>),</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  data_ind <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">A0 =</span> <span class="dv">0</span>, <span class="at">A1 =</span> <span class="dv">1</span>),</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  data_ind <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">A0 =</span> <span class="dv">1</span>, <span class="at">A1 =</span> <span class="dv">0</span>),</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  data_ind <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">A0 =</span> <span class="dv">1</span>, <span class="at">A1 =</span> <span class="dv">1</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 各パターンにおいてL1の値を予測</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    \(data) data <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">L1 =</span> <span class="fu">predict</span>(model_L1, <span class="at">newdata =</span> data))</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 予測したL1の値とトリートメントを用いて、Potential Outcomeを予測</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    \(data) data <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">Y_pred =</span> <span class="fu">predict</span>(model_Y, <span class="at">newdata =</span> data))</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">CFmean =</span> <span class="fu">mean</span>(Y_pred),</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(A0, A1)</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">A0</th>
+<th style="text-align: right;">A1</th>
+<th style="text-align: right;">CFmean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">60</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">60</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">60</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">60</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>共変量が増えるとそれだけシミュレートする変数が増えるので大変そう…</p>
+</section>
+</section>
+<section id="疑問点残された課題" class="level2">
+<h2 class="anchored" data-anchor-id="疑問点残された課題">疑問点＆残された課題</h2>
+<ul>
+<li>Marginal structural modelのパラメータはg-formulaでは推定できないのか？
+<ul>
+<li>L-TMLEの推定ができるパッケージではMSMのパラメータも推定できる</li>
+</ul></li>
+<li>G-formulaとRegression with residualsの関係が気になった
+<ul>
+<li>どちらも共変量のモデリングを行うが、g-fomulaは予測値を用いるのに対して、RWRは残差の方を用いる</li>
+</ul></li>
+<li>本当は今回の課題でTMLEまで実装したかった
+<ul>
+<li>理解が追いつかず断念</li>
+</ul></li>
+</ul>
+
+
+
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-Hernan2020" class="csl-entry" role="listitem">
-Hernán, Miguel A., and James M. Robins. 2020. <em>Causal <span>Inference</span>: <span>What If</span></em>. Boca Raton: Chapman &amp; Hall/CRC. <a href="https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/">https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/</a>.
+<div id="ref-Hernan2024" class="csl-entry" role="listitem">
+Hernán, Miguel A., and James M. Robins. 2024. <em>Causal <span>Inference</span>: <span>What If</span></em>. Boca Raton: Chapman &amp; Hall/CRC. <a href="https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/">https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/</a>.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -761,8 +1831,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -878,7 +1946,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

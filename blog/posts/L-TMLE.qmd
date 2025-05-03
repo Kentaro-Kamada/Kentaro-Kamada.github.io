@@ -6,7 +6,7 @@ categories: [Causal Inference]
 ---
 
 
-@Hernan2024 のPart3では、複数時点での処置の因果推論について議論されている。ここでは、IPW、g-formulaを用いた因果効果の推定を実際にやってみる。
+@Hernan2020 のPart3では、複数時点での処置の因果推論について議論されている。ここでは、IPW、g-formulaを用いた因果効果の推定を実際にやってみる。
 
 ## 下準備
 
@@ -31,7 +31,7 @@ set.seed(95)
 
 ### データの作成
 
-以下のDAGを考える[@Hernan2024, Figure 20.3]
+以下のDAGを考える[@Hernan2020, Figure 20.3]
 
 ![](../images/L-TMLE-DAG.svg)
 
@@ -49,7 +49,7 @@ Treatmentは$A_0$と$A_1$であるが、ここから$Y$へのpathはないので
 \mathrm{E}[Y^{0, 1} - Y^{1, 1}] &= 0
 \end{align}
 
-上記のDAGに合うように作成されたデータが以下である[@Hernan2024, Table 20.1]
+上記のDAGに合うように作成されたデータが以下である[@Hernan2020, Table 20.1]
 
 
 ```{r}

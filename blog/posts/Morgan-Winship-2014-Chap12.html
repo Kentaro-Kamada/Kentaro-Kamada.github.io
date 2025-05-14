@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kentaro Kamada">
-<meta name="dcterms.date" content="2024-03-10">
+<meta name="dcterms.date" content="2023-01-29">
 
-<title>BLASの変更によるRの高速化 – Kentaro Kamada</title>
+<title>Chap12 Distributional Assumptions, Set Identification, and Sensitivity Analysis – Kentaro Kamada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,42 +22,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
 }
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
 }
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
 }
-</style>
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -105,6 +90,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -173,9 +187,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">BLASの変更によるRの高速化</h1>
+      <h1 class="title">Chap12 Distributional Assumptions, Set Identification, and Sensitivity Analysis</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">R</div>
+                <div class="quarto-category">Causal Inference</div>
               </div>
                   </div>
   </div>
@@ -193,10 +207,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">March 10, 2024</p>
+        <p class="date">January 29, 2023</p>
       </div>
     </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">May 14, 2025</p>
+      </div>
+    </div>
       
     </div>
     
@@ -209,10 +229,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#参考" id="toc-参考" class="nav-link active" data-scroll-target="#参考">参考</a></li>
-  <li><a href="#概要" id="toc-概要" class="nav-link" data-scroll-target="#概要">概要</a></li>
-  <li><a href="#blasとは" id="toc-blasとは" class="nav-link" data-scroll-target="#blasとは">BLASとは</a></li>
-  <li><a href="#blasの変更" id="toc-blasの変更" class="nav-link" data-scroll-target="#blasの変更">BLASの変更</a></li>
+  <li><a href="#文献" id="toc-文献" class="nav-link active" data-scroll-target="#文献">文献</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a>
+  <ul class="collapse">
+  <li><a href="#つのアプローチ" id="toc-つのアプローチ" class="nav-link" data-scroll-target="#つのアプローチ">3つのアプローチ</a></li>
+  </ul></li>
+  <li><a href="#distributional-assumptions-and-latent-variable-selection-bias-models" id="toc-distributional-assumptions-and-latent-variable-selection-bias-models" class="nav-link" data-scroll-target="#distributional-assumptions-and-latent-variable-selection-bias-models">Distributional Assumptions and Latent Variable Selection-Bias Models</a>
+  <ul class="collapse">
+  <li><a href="#heckmanのラムダ法" id="toc-heckmanのラムダ法" class="nav-link" data-scroll-target="#heckmanのラムダ法">Heckmanのラムダ法</a></li>
+  </ul></li>
+  <li><a href="#set-identification-with-minimal-assumptions" id="toc-set-identification-with-minimal-assumptions" class="nav-link" data-scroll-target="#set-identification-with-minimal-assumptions">Set Identification with Minimal Assumptions</a>
+  <ul class="collapse">
+  <li><a href="#no-assumptions-bounds" id="toc-no-assumptions-bounds" class="nav-link" data-scroll-target="#no-assumptions-bounds">No-Assumptions Bounds</a></li>
+  <li><a href="#bounds-under-additional-weak-assumptions" id="toc-bounds-under-additional-weak-assumptions" class="nav-link" data-scroll-target="#bounds-under-additional-weak-assumptions">Bounds Under Additional Weak Assumptions</a></li>
+  </ul></li>
+  <li><a href="#sensitivity-analysis" id="toc-sensitivity-analysis" class="nav-link" data-scroll-target="#sensitivity-analysis">Sensitivity Analysis</a></li>
+  <li><a href="#set-identificationとsensitivity-analysis" id="toc-set-identificationとsensitivity-analysis" class="nav-link" data-scroll-target="#set-identificationとsensitivity-analysis">Set IdentificationとSensitivity Analysis</a></li>
+  <li><a href="#疑問点など" id="toc-疑問点など" class="nav-link" data-scroll-target="#疑問点など">疑問点など</a></li>
   </ul>
 </nav>
     </div>
@@ -223,75 +256,256 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="参考" class="level2">
-<h2 class="anchored" data-anchor-id="参考">参考</h2>
+<section id="文献" class="level2">
+<h2 class="anchored" data-anchor-id="文献">文献</h2>
+<p>Morgan, Stephen L. &amp; Christopher Winship, 2014, <em>Counterfactuals and Causal Inference: Methods and Principles for Social Research</em>, 2nd ed., Cambridge: Cambridge University Press.</p>
+</section>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>これまでの章：因果効果を一つの値に識別する（Point-Identify）ためのさまざまな戦略を議論</p>
+<p>因果効果が識別できるかどうか怪しいとき</p>
 <ul>
-<li><a href="https://www.inwt-statistics.com/blog/basic-linear-algebra-subprograms-in-r">Do GPU-based Basic Linear Algebra Subprograms (BLAS) improve the performance of standard modeling techniques in R?</a></li>
-<li><a href="https://mpopov.com/blog/2021/10/10/even-faster-matrix-math-in-r-on-macos-with-m1/">Even faster matrix math in R on macOS with M1</a></li>
-<li><a href="https://www.nttpc.co.jp/gpu/article/benchmark05.html">NVBLASを使って「R」の並列演算処理を高速化</a></li>
+<li>バックドアを閉じる変数群を正確に特定できない</li>
+<li>適切な操作変数の不在</li>
+<li>フロントドアの特定も難しい</li>
+</ul>
+<section id="つのアプローチ" class="level3">
+<h3 class="anchored" data-anchor-id="つのアプローチ">3つのアプローチ</h3>
+<ol type="1">
+<li>観察できない変数の分布に仮定を置く</li>
+</ol>
+<ul>
+<li>仮定した分布が正しければ因果効果のPoint-Identification達成</li>
+<li>実際には仮定が正しいことが保証されることはほとんどない</li>
+</ul>
+<ol start="2" type="1">
+<li>Set Identification</li>
+</ol>
+<ul>
+<li>弱い仮定を追加していくことによって、Causal Parameterについて何が言えるか？
+<ul>
+<li><span class="math inline">\(\leftrightarrow\)</span> 識別のための強い（Untestableな）仮定を置く</li>
+</ul></li>
+<li>成立しそうな弱い仮定を追加していくことにより、Causal Parameterが取りうる範囲を絞り込んでいく</li>
+</ul>
+<ol start="3" type="1">
+<li>Sensitivity Analysis</li>
+</ol>
+<ul>
+<li>識別仮定に違反しているとき、推定値がどれだけ変動するか</li>
 </ul>
 </section>
-<section id="概要" class="level2">
-<h2 class="anchored" data-anchor-id="概要">概要</h2>
-<p>R言語の計算速度はそれほど速くはないが、いくつか工夫することで高速化が可能。</p>
-<ul>
-<li>ベクトル演算の駆使</li>
-<li>並列化（paralell, future, furrrなど）</li>
-<li>BLAS (Basic Linear Algebra Subprograms) の変更</li>
-</ul>
-<p>今回はBLASの変更による高速化について。</p>
 </section>
-<section id="blasとは" class="level2">
-<h2 class="anchored" data-anchor-id="blasとは">BLASとは</h2>
-<p>BLASは、行列演算を高速に行うためのライブラリ。たとえば分散や共分散を計算するときは、行列の掛け算をする必要がある。機械学習やニューラルネットワークでは行列の掛け算が多用されるため、BLASの高速化は全体としての計算速度の向上に大きく貢献する。</p>
-<p>BLASはオープンソースのものもあるが、各CPU、GPUメーカーがそれぞれのチップに適したライブラリを提供している。</p>
+<section id="distributional-assumptions-and-latent-variable-selection-bias-models" class="level2">
+<h2 class="anchored" data-anchor-id="distributional-assumptions-and-latent-variable-selection-bias-models">Distributional Assumptions and Latent Variable Selection-Bias Models</h2>
+<p>観察できない変数があったとしても、その分布を正しく特定できればPoint Identificationが達成できる</p>
+<section id="heckmanのラムダ法" class="level3">
+<h3 class="anchored" data-anchor-id="heckmanのラムダ法">Heckmanのラムダ法</h3>
+<p><span class="math inline">\(D\)</span>が<span class="math inline">\(Y\)</span>に与える影響を回帰分析によって推定するときに、セレクションバイアスを補正する</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+D = 1 \; {\rm if} \; \tilde{D} \geq 0 \\
+D = 0 \; {\rm if} \; \tilde{D} &lt; 0 \\
+\end{eqnarray}
+\]</span></p>
+<p>として、以下の傾向スコアのようなものを考える</p>
+<p><span class="math display">\[
+\tilde{D} = Z\phi + U
+\]</span></p>
+<p><strong><span class="math inline">\(U\)</span>を直接観察できなくても<span class="math inline">\(U\)</span>の分布に仮定をおけば条件付き期待値<span class="math inline">\(E[U | Z\phi, D]\)</span>は求められる</strong></p>
+<p><span class="math inline">\(U\)</span>に正規分布を仮定すると<span class="math inline">\(U\)</span>の条件付き期待値は以下の式で表される</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+E[U | Z\phi, D = 1] = \frac{f(Z\phi)}{F(Z\phi)} \\
+E[U | Z\phi, D = 0] = \frac{-f(Z\phi)}{1 - F(Z\phi)}
+\end{eqnarray}
+\]</span> 一本めの式は、ヘックマンのサンプルセレクションモデルにおける逆ミルズ比（<span class="math inline">\(\lambda\)</span>）？</p>
+<p>これを用いて新たな説明変数（補正項）を作成し、<span class="math inline">\(D\)</span>や他の統制変数とともに回帰式に投入して推定を行う</p>
+<p><span class="math display">\[
+D \times (\frac{f(Z\phi)}{F(Z\phi)}) \;\; {\rm and} \;\; (1 - D) \times \frac{-f(Z\phi)}{1 - F(Z\phi)}
+\]</span></p>
 <ul>
-<li>RについてるBLAS
+<li><strong>ラムダ法の問題点：分布の仮定に強く依存する</strong></li>
+<li>対応策：Semiparametricな方法
 <ul>
-<li>RにデフォルトでついてくるBLAS</li>
+<li>操作変数を用いる方法</li>
+<li>潜在変数を用いる方法</li>
 </ul></li>
-<li>OpenBLAS
-<ul>
-<li>オープンソースのBLASで、homebrewでインストール可能</li>
-<li>pythonのnumpyで使われているらしい</li>
-</ul></li>
-<li>ATLAS
-<ul>
-<li>こちらもオープンソース</li>
-</ul></li>
-<li>MKL
-<ul>
-<li>Intelが提供するBLAS</li>
-<li>Macだと使えない</li>
-</ul></li>
-<li>NVBLAS
-<ul>
-<li>NVIDIAが提供するBLAS</li>
-<li>GPUを使用するのでめちゃくちゃ速いらしい</li>
-<li>NVIDIAのGPUじゃないと使えない…</li>
-</ul></li>
-<li><strong>Accelerate</strong>
-<ul>
-<li>Appleが提供</li>
-<li>今回使用するやつ</li>
-</ul></li>
+<li>なかなか上手くいかないらしい</li>
 </ul>
 </section>
-<section id="blasの変更" class="level2">
-<h2 class="anchored" data-anchor-id="blasの変更">BLASの変更</h2>
-<p>以下、homebrewでRをインストールしていることを前提とする。</p>
-<p>terminalで以下のコマンドを実行する。</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Library/Frameworks/R.framework/Resources/lib</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-sf</span> libRblas.veclib.dylib libRblas.dylib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>意味としては、Rは<code>libRblas.dylib</code>をBLASとして認識するので、<code>libRblas.veclib.dylib</code>を<code>libRblas.dylib</code>にリンクすることで、<code>libRblas.veclib.dylib</code>をBLASとして使うようにする。</p>
-<p>もどすときは<code>libRblas.veclib.dylib</code>の代わりに、<code>libRblas.0.dylib</code>（デフォルトのBLAS）をリンクすればよい。</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Library/Frameworks/R.framework/Resources/lib</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-sf</span> libRblas.0.dylib libRblas.dylib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="set-identification-with-minimal-assumptions" class="level2">
+<h2 class="anchored" data-anchor-id="set-identification-with-minimal-assumptions">Set Identification with Minimal Assumptions</h2>
+<p>Manskiの”Set Identification”（または”Partial Identification”（部分識別）, “Analysis of Bounds”）</p>
+<ul>
+<li>確からしい（Defendableな）弱い仮定を置くことで、平均因果効果について何が言えるか？</li>
+<li>仮定の組み合わせにより、因果効果が取りうる範囲を絞っていくアプローチ</li>
+<li>extremeな因果効果の主張を、確かな仮定のもとでリジェクトしていくことができる</li>
+</ul>
+<section id="no-assumptions-bounds" class="level3">
+<h3 class="anchored" data-anchor-id="no-assumptions-bounds">No-Assumptions Bounds</h3>
+<p>手元のデータの<span class="math inline">\(Y\)</span>と<span class="math inline">\(D\)</span>から、<strong>追加の仮定なし</strong>でATEの範囲をある程度絞り込むことができる</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+E[Y^1 | D = 1] = a, E[Y^0 | D = 1] = b \\
+E[Y^1 | D = 0] = c, E[Y^0 | D = 0] = d \\
+\end{eqnarray}
+\]</span></p>
+<p>とする。</p>
+<ul>
+<li><span class="math inline">\(a\)</span>と<span class="math inline">\(d\)</span>はデータから観察できることとする（consistency）</li>
+<li><span class="math inline">\(b\)</span>と<span class="math inline">\(c\)</span>はデータからはどうやっても観察できない値</li>
+</ul>
+<p>上記から、ATEは以下のように書ける</p>
+<p><span class="math display">\[
+{\rm ATE} = \pi(a - b) + (1 - \pi)(c - d)
+\]</span></p>
+<p><span class="math inline">\(b\)</span>と<span class="math inline">\(c\)</span>に理論的に想定するPotential Outcomeの最大値・最小値を代入する</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+{\rm max(ATE)} = \pi(a - {\rm min}(Y^D)) + (1 - \pi)({\rm max}(Y^D) - d) \\
+{\rm min(ATE)} = \pi(a - {\rm max}(Y^D)) + (1 - \pi)({\rm min}(Y^D) - d) \\
+\end{eqnarray}
+\]</span></p>
+<p>ただし、観察されない値である<span class="math inline">\(E[Y^1 | D = 0]\)</span>と<span class="math inline">\(E[Y^0 | D = 1]\)</span>が<span class="math inline">\(-\infty\)</span>から<span class="math inline">\(\infty\)</span>をとる場合は絞り込み不能</p>
+<ul>
+<li>Potential Outcomeの定義の時点で理論的に範囲を絞る必要がある</li>
+<li>e.g.&nbsp;人間の身長（身長は0cm以下にはならないし、300cmを超える人間は観察されていない）</li>
+</ul>
+</section>
+<section id="bounds-under-additional-weak-assumptions" class="level3">
+<h3 class="anchored" data-anchor-id="bounds-under-additional-weak-assumptions">Bounds Under Additional Weak Assumptions</h3>
+<p>No-Assumptions Boundsで絞り込んだATEを出発点とし、確からしい仮定を置くことによって範囲をさらに絞っていく</p>
+<section id="monotone-treatment-response" class="level4">
+<h4 class="anchored" data-anchor-id="monotone-treatment-response">Monotone Treatment Response</h4>
+<p>「個人レベルの因果効果がすべて正の値をとる」（<span class="math inline">\(y^1 \geq y^0\)</span>）という仮定</p>
+<p><span class="math inline">\(a \geq b\)</span>、<span class="math inline">\(c \geq d\)</span>となるので、<span class="math inline">\(b\)</span>の最大値は<span class="math inline">\(a\)</span>、<span class="math inline">\(c\)</span>の最小値は<span class="math inline">\(d\)</span></p>
+<p><span class="math display">\[
+{\rm min(ATE)} = \pi(a - a) + (1 - \pi)(d - d) = 0
+\]</span></p>
+<p>ATEの下限は0になる</p>
+</section>
+<section id="monotone-treatment-selection" class="level4">
+<h4 class="anchored" data-anchor-id="monotone-treatment-selection">Monotone Treatment Selection</h4>
+<p>Positive Selectionを仮定：処置を受けた人の方がそれぞれのPotential Outcomeが高い</p>
+<p>仮定より</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+E[Y^1 | D = 1] \geq E[Y^1 | D = 0] \iff a \geq c \\
+E[Y^0 | D = 1] \geq E[Y^0 | D = 0] \iff b \geq d
+\end{eqnarray}
+\]</span></p>
+<p>なので</p>
+<p><span class="math display">\[
+{\rm max(ATE)} = \pi(a - d) + (1 - \pi)(a - d) = a - d = E[Y | D = 1] - E[Y | D = 0]
+\]</span></p>
+<p>ATEの上限は、処置群と統制群の平均値差になる</p>
+</section>
+<section id="monotone-instrumental-variables" class="level4">
+<h4 class="anchored" data-anchor-id="monotone-instrumental-variables">Monotone Instrumental Variables</h4>
+<p>通常の操作変数の仮定はPoint Identificationを達成できる</p>
+<ul>
+<li>操作変数<span class="math inline">\(Z\)</span>はPotential Outcomeに直接影響しないという仮定（あってる？）</li>
+</ul>
+<p><span class="math display">\[
+\begin{eqnarray}
+E[Y^1 | X, Z = z'] = E[Y^1 | X, Z = z''] \\
+E[Y^0 | X, Z = z'] = E[Y^0 | X, Z = z''] \\
+\end{eqnarray}
+\]</span></p>
+<p>上記を緩めた仮定はSet Identificationで活用できる</p>
+<ul>
+<li>IVがPotential Outcomeに直接影響するが、単調増加するという仮定</li>
+</ul>
+<p><span class="math display">\[
+\begin{eqnarray}
+E[Y^1 | X, Z = z''] \geq E[Y^1 | X, Z = z'] \\
+E[Y^0 | X, Z = z''] \geq E[Y^0 | X, Z = z'] \\
+{\rm when} \; z'' \geq z'
+\end{eqnarray}
+\]</span></p>
+<p>仕組みが少々理解できず…（IVの章を先に読んでおくべきだった）</p>
+</section>
+</section>
+</section>
+<section id="sensitivity-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="sensitivity-analysis">Sensitivity Analysis</h2>
+<p>処置のIgnorabilityの仮定について、違反している時に推定値や解釈がどれだけ歪むかを検討</p>
+<p><strong>感度分析の手順</strong></p>
+<p><span class="math inline">\(C\)</span>は観察されている共変量、<span class="math inline">\(U\)</span>は観察されていない共変量とし、以下のDAGを考える</p>
+<ol type="1">
+<li>Ignorabilityが成り立っていると仮定して、<span class="math inline">\(C\)</span>を統制した上での<span class="math inline">\(D\)</span>の<span class="math inline">\(Y\)</span>に対する推定値を暫定的な因果効果とする</li>
+<li><span class="math inline">\(U\)</span>から<span class="math inline">\(D\)</span>に対する効果と<span class="math inline">\(U\)</span>から<span class="math inline">\(Y\)</span>に対する効果の組み合わせを用意する</li>
+<li>分析的な方法（？）やシミュレーションにより、<span class="math inline">\(U\)</span>の効果の組み合わせにより、暫定的な推定値がどれだけ歪むかを計算する</li>
+<li>暫定的な推定値が決定的に変化するような<span class="math inline">\(U\)</span>の効果の組み合わせを特定する</li>
+<li><span class="math inline">\(U\)</span>の効果の組み合わせをもたらすような要因が実際にあるかどうかを理論的に考察する</li>
+</ol>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Morgan-Winship-2014-Chap12_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="set-identificationとsensitivity-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="set-identificationとsensitivity-analysis">Set IdentificationとSensitivity Analysis</h2>
+<p>どっちが望ましいのか？使い分けは？</p>
+<ul>
+<li><p>Point Identificationのための仮定への違反が軽微な場合：Sensitivity Analysis</p></li>
+<li><p>Manskiの感度分析批判</p>
+<ul>
+<li>Ignorabilityは仮定として強すぎる</li>
+<li>経済学者として：outcomeがセレクションにおいて重要な役割を持つ（positive selectionしかり）</li>
+</ul></li>
+</ul>
+<p>ただし、Set IdentificationとSensitivity Analysisを統合するアプローチも現れつつある。</p>
+</section>
+<section id="疑問点など" class="level2">
+<h2 class="anchored" data-anchor-id="疑問点など">疑問点など</h2>
+<ul>
+<li>Set Identificationが生きそうな場面はどのような場面？
+<ul>
+<li>現状はSensitivity Analysisはよく推奨されているイメージがあるが、Set Identificationはあまり見ない</li>
+<li>APC分析への応用例<span class="citation" data-cites="Fosse2019 Fosse2019a">(<a href="#ref-Fosse2019" role="doc-biblioref">Fosse and Winship 2019a</a>, <a href="#ref-Fosse2019a" role="doc-biblioref">2019b</a>)</span>
+<ul>
+<li>Point Identificationがそれほど重要でない：因果効果の点推定よりもAPCの相対的重要性が知りたい</li>
+<li>Partial Identificationに基づく2D-APCグラフの作成を提案</li>
+</ul></li>
+</ul></li>
+<li>感度分析の方法について<span class="math inline">\(U \rightarrow D\)</span>と<span class="math inline">\(U \rightarrow Y\)</span>の効果の組み合わせを用意するのはわかるが、そこからどう分析やシミュレーションに繋げるのかがわからなかった
+<ul>
+<li><span class="math inline">\(U\)</span>にあたる変数をどうやって作成するのか？（そもそも作成しないのか？）</li>
+<li>関数系はどうするのか？線形？</li>
+</ul></li>
+<li>Set Identificationについて、サンプリングによるばらつきをどう評価するか？
+<ul>
+<li>文章を読んだ限りでは漸近一致性が根拠</li>
+<li>「ATEの取りうる範囲」の信頼区間？
+<ul>
+<li>境界値（Bound）の信頼区間を算出するアプローチ<span class="citation" data-cites="Masten2024">(<a href="#ref-Masten2024" role="doc-biblioref">Masten, Poirier, and Zhang 2024</a>)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+
 
 
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-Fosse2019" class="csl-entry" role="listitem">
+Fosse, Ethan, and Christopher Winship. 2019a. <span>“Analyzing <span>Age-Period-Cohort Data</span>: <span>A Review</span> and <span>Critique</span>.”</span> <em>Annual Review of Sociology</em> 45 (1): 467–92. <a href="https://doi.org/10.1146/annurev-soc-073018-022616">https://doi.org/10.1146/annurev-soc-073018-022616</a>.
+</div>
+<div id="ref-Fosse2019a" class="csl-entry" role="listitem">
+———. 2019b. <span>“Bounding <span>Analyses</span> of <span>Age-Period-Cohort Effects</span>.”</span> <em>Demography</em> 56 (5): 1975–2004. <a href="https://doi.org/10.1007/s13524-019-00801-6">https://doi.org/10.1007/s13524-019-00801-6</a>.
+</div>
+<div id="ref-Masten2024" class="csl-entry" role="listitem">
+Masten, Matthew A., Alexandre Poirier, and Linqi Zhang. 2024. <span>“Assessing <span>Sensitivity</span> to <span>Unconfoundedness</span>: <span>Estimation</span> and <span>Inference</span>.”</span> <em>Journal of Business &amp; Economic Statistics</em> 42 (1): 1–13. <a href="https://doi.org/10.1080/07350015.2023.2183212">https://doi.org/10.1080/07350015.2023.2183212</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

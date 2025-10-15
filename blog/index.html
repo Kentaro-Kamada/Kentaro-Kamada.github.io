@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.31">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -34,14 +34,15 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-75d7e103a1ccf8792fe8d88d8cc53775.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-4bc2b4e356910e472f7d50d601e09124.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -114,7 +115,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -140,6 +141,8 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    </a>
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Kentaro Kamada</span>
     </a>
@@ -229,7 +232,7 @@ window.Quarto = {
 
 <div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-categories="Ug==" data-listing-date-sort="1732492800000" data-listing-file-modified-sort="1747186739371" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="395">
+<div class="g-col-1" data-index="0" data-categories="Ug==" data-listing-date-sort="1732492800000" data-listing-file-modified-sort="1760498376835" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="395">
 <a href="../blog/posts/Categorize-Numerical-Variables.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -249,14 +252,14 @@ Rで連続変数のカテゴリ化
 <li>いま1から100までの連続変数があるとする</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu">library</span>(tidyverse)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"></span>
 <span id="cb1-3">data <span class="ot">&lt;-</span> </span>
 <span id="cb1-4">  <span class="fu">tibble</span>(</span>
 <span id="cb1-5">    <span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span></span>
 <span id="cb1-6">  )</span>
 <span id="cb1-7"></span>
-<span id="cb1-8">data <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">100</span>)</span></code></pre></div>
+<span id="cb1-8">data <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">100</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 100 × 1
         x
@@ -276,7 +279,7 @@ Nov 25, 2024
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="1" data-categories="T3RoZXJz" data-listing-date-sort="1730419200000" data-listing-file-modified-sort="1747186739371" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="743">
+<div class="g-col-1" data-index="1" data-categories="T3RoZXJz" data-listing-date-sort="1730419200000" data-listing-file-modified-sort="1760498376835" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="743">
 <a href="../blog/posts/Manual-Superlearner.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/Manual-Superlearner_files/figure-html/unnamed-chunk-3-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -303,7 +306,7 @@ Nov 1, 2024
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="2" data-categories="T3RoZXJz" data-listing-date-sort="1730419200000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="275">
+<div class="g-col-1" data-index="2" data-categories="T3RoZXJz" data-listing-date-sort="1730419200000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="275">
 <a href="../blog/posts/学校外教育参加率.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/学校外教育参加率_files/figure-html/unnamed-chunk-6-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -330,7 +333,7 @@ Nov 1, 2024
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="3" data-categories="U3RhdGlzdGljcw==" data-listing-date-sort="1726876800000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="178">
+<div class="g-col-1" data-index="3" data-categories="U3RhdGlzdGljcw==" data-listing-date-sort="1726876800000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="178">
 <a href="../blog/posts/信頼区間を理解したい.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/信頼区間を理解したい_files/figure-html/unnamed-chunk-4-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -357,7 +360,7 @@ Sep 21, 2024
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="4" data-categories="U3RhdGlzdGljcw==" data-listing-date-sort="1726876800000" data-listing-file-modified-sort="1747186739371" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2209">
+<div class="g-col-1" data-index="4" data-categories="U3RhdGlzdGljcw==" data-listing-date-sort="1726876800000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2209">
 <a href="../blog/posts/Standard_Errors_in_PIAAC.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -386,7 +389,7 @@ Sep 21, 2024
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="5" data-categories="Q2F1c2FsJTIwSW5mZXJlbmNl" data-listing-date-sort="1724025600000" data-listing-file-modified-sort="1747186739371" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="350">
+<div class="g-col-1" data-index="5" data-categories="Q2F1c2FsJTIwSW5mZXJlbmNl" data-listing-date-sort="1724025600000" data-listing-file-modified-sort="1760498376835" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="350">
 <a href="../blog/posts/Borusyak-2024.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -413,7 +416,7 @@ Aug 19, 2024
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="6" data-categories="T3RoZXJz" data-listing-date-sort="1723680000000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="335">
+<div class="g-col-1" data-index="6" data-categories="T3RoZXJz" data-listing-date-sort="1723680000000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="335">
 <a href="../blog/posts/複利計算.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/複利計算_files/figure-html/unnamed-chunk-2-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -445,7 +448,7 @@ Aug 15, 2024
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="7" data-categories="T3RoZXJz" data-listing-date-sort="1717545600000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="155">
+<div class="g-col-1" data-index="7" data-categories="T3RoZXJz" data-listing-date-sort="1717545600000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="155">
 <a href="../blog/posts/multi_answer.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -472,7 +475,7 @@ Jun 5, 2024
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="8" data-categories="Ug==" data-listing-date-sort="1714435200000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="17">
+<div class="g-col-1" data-index="8" data-categories="Ug==" data-listing-date-sort="1714435200000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="17">
 <a href="../blog/posts/r_installation_with_rig.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -499,7 +502,7 @@ Apr 30, 2024
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="9" data-categories="Ug==" data-listing-date-sort="1710028800000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="89">
+<div class="g-col-1" data-index="9" data-categories="Ug==" data-listing-date-sort="1710028800000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="89">
 <a href="../blog/posts/how_to_change_BLAS.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -526,7 +529,7 @@ Mar 10, 2024
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="10" data-categories="UiUyMFRpcHM=" data-listing-date-sort="1708646400000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="347">
+<div class="g-col-1" data-index="10" data-categories="UiUyMFRpcHM=" data-listing-date-sort="1708646400000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="347">
 <a href="../blog/posts/tensorflow_with_Rstudio.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -553,181 +556,7 @@ Feb 23, 2024
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="11" data-categories="Q2F1c2FsJTIwSW5mZXJlbmNl" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1747186739371" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1025">
-<a href="../blog/posts/TMLE.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)
-</h5>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Q2F1c2FsJTIwSW5mZXJlbmNl'); return false;">Causal Inference</div>
-
-</div>
-<div class="card-text listing-description delink">
-参考ページ：https://www.khstats.com/blog/tmle/tutorial-pt2
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Kentaro Kamada
-</div>
-<div class="listing-date">
-Feb 22, 2024
-</div>
-</div>
-</div>
-</div></a>
-</div>
-<div class="g-col-1" data-index="12" data-categories="T3RoZXJz" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="226">
-<a href="../blog/posts/rlang学習.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-rlang学習
-</h5>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('T3RoZXJz'); return false;">Others</div>
-
-</div>
-<div class="card-text listing-description delink">
-Advanced R
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Kentaro Kamada
-</div>
-<div class="listing-date">
-Feb 22, 2024
-</div>
-</div>
-</div>
-</div></a>
-</div>
-<div class="g-col-1" data-index="13" data-categories="T3RoZXJz" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1747186739371" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="299">
-<a href="../blog/posts/Multilevel.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img src="posts/Multilevel_files/figure-html/unnamed-chunk-7-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-マルチレベルモデルは点推定値に影響を及ぼすか？
-</h5>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('T3RoZXJz'); return false;">Others</div>
-
-</div>
-<div class="card-text listing-description delink">
-「マルチレベルモデルでやんなきゃ係数にバイアスが…」←ホント？
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Kentaro Kamada
-</div>
-<div class="listing-date">
-Feb 22, 2024
-</div>
-</div>
-</div>
-</div></a>
-</div>
-<div class="g-col-1" data-index="14" data-categories="Q2F1c2FsJTIwSW5mZXJlbmNl" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1747186739371" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1280">
-<a href="../blog/posts/Sudharsanan_Bijlsma_2021.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Sudharsanan &amp; Bijlsma (2021)
-</h5>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Q2F1c2FsJTIwSW5mZXJlbmNl'); return false;">Causal Inference</div>
-
-</div>
-<div class="card-text listing-description delink">
-Sudharsanan, Nikkil &amp; Maarten J. Bijlsma, 2021, “Educational Note: Causal Decomposition of Population Health Differences Using Monte Carlo Integration and the G-Formula,” <em>Int…</em>
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Kentaro Kamada
-</div>
-<div class="listing-date">
-Feb 22, 2024
-</div>
-</div>
-</div>
-</div></a>
-</div>
-<div class="g-col-1" data-index="15" data-categories="T3RoZXJz" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="214">
-<a href="../blog/posts/度数から対数尤度を計算.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-観測度数・期待度数から対数尤度を計算する方法
-</h5>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('T3RoZXJz'); return false;">Others</div>
-
-</div>
-<div class="card-text listing-description delink">
-尤度関数を<span class="math inline">\(L\)</span>とすると
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Kentaro Kamada
-</div>
-<div class="listing-date">
-Feb 22, 2024
-</div>
-</div>
-</div>
-</div></a>
-</div>
-<div class="g-col-1" data-index="16" data-categories="Q2F1c2FsJTIwSW5mZXJlbmNl" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1747186739371" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1382">
-<a href="../blog/posts/Causal_Decomposition.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img src="posts/Causal_Decomposition_files/figure-html/unnamed-chunk-5-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Causal Decomposition Analysis
-</h5>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Q2F1c2FsJTIwSW5mZXJlbmNl'); return false;">Causal Inference</div>
-
-</div>
-<div class="card-text listing-description delink">
-
-
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><span class="fu">library</span>(cfdecomp)</span>
-<span id="cb1-3"><span class="fu">library</span>(gapclosing)</span>
-<span id="cb1-4"><span class="fu">library</span>(causal.decomp)</span>
-<span id="cb1-5"></span>
-<span id="cb1-6"></span>
-<span id="cb1-7">d <span class="ot">&lt;-</span> </span>
-<span id="cb1-8">  sMIDUS <span class="sc">|&gt;</span> </span>
-<span id="cb1-9">  <span class="fu">transmute</span>(<span class="at">Y =</span> health <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>(),  <span class="co"># outcome</span></span>
-<span id="cb1-10">            <span class="at">T =</span> edu <span class="sc">…</span><span class="fu"></span><span class="co"></span></span><span id="cb1-11"><span class="at"></span><span class="sc"></span><span class="fu"></span><span class="dv"></span><span class="sc"></span><span class="dv"></span><span class="sc"></span><span class="dv"></span><span class="co"></span></span><span id="cb1-12"><span class="dv"></span><span class="sc"></span><span class="dv"></span><span class="sc"></span><span class="dv"></span></span><span id="cb1-13"><span class="at"></span><span class="cn"></span><span class="sc"></span><span class="fu"></span></span><span id="cb1-14"><span class="at"></span><span class="sc"></span><span class="fu"></span><span class="at"></span><span class="fu"></span><span class="st"></span><span class="st"></span><span class="st"></span><span class="st"></span><span class="co"></span></span><span id="cb1-15"><span class="at"></span><span class="sc"></span><span class="fu"></span></span><span id="cb1-16"><span class="at"></span><span class="sc"></span><span class="fu"></span></span><span id="cb1-17"><span class="at"></span><span class="sc"></span><span class="fu"></span></span><span id="cb1-18"><span class="at"></span><span class="sc"></span><span class="fu"></span></span><span id="cb1-19"><span class="at"></span><span class="sc"></span><span class="fu"></span></span><span id="cb1-20"><span class="at"></span><span class="sc"></span><span class="fu"></span><span class="sc"></span></span><span id="cb1-21"><span class="fu"></span><span class="fu"></span><span class="sc"></span><span class="sc"></span><span class="fu"></span><span class="at"></span><span class="cn"></span><span class="sc"></span></span><span id="cb1-22"><span class="fu"></span></span></code></pre></div></div>
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Kentaro Kamada
-</div>
-<div class="listing-date">
-Feb 22, 2024
-</div>
-</div>
-</div>
-</div></a>
-</div>
-<div class="g-col-1" data-index="17" data-categories="Q2F1c2FsJTIwSW5mZXJlbmNl" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1747186739371" data-listing-date-modified-sort="1747180800000" data-listing-reading-time-sort="6" data-listing-word-count-sort="1016">
+<div class="g-col-1" data-index="11" data-categories="Q2F1c2FsJTIwSW5mZXJlbmNl" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1760498376835" data-listing-date-modified-sort="1760486400000" data-listing-reading-time-sort="6" data-listing-word-count-sort="1016">
 <a href="../blog/posts/L-TMLE.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="images/L-TMLE-DAG.svg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -754,7 +583,181 @@ Feb 22, 2024
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="18" data-categories="Q2F1c2FsJTIwSW5mZXJlbmNl" data-listing-date-sort="1674950400000" data-listing-file-modified-sort="1747186739371" data-listing-date-modified-sort="1747180800000" data-listing-reading-time-sort="3" data-listing-word-count-sort="566">
+<div class="g-col-1" data-index="12" data-categories="T3RoZXJz" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="226">
+<a href="../blog/posts/rlang学習.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+rlang学習
+</h5>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('T3RoZXJz'); return false;">Others</div>
+
+</div>
+<div class="card-text listing-description delink">
+Advanced R
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Kentaro Kamada
+</div>
+<div class="listing-date">
+Feb 22, 2024
+</div>
+</div>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="13" data-categories="Q2F1c2FsJTIwSW5mZXJlbmNl" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1760498376835" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1382">
+<a href="../blog/posts/Causal_Decomposition.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top"><img src="posts/Causal_Decomposition_files/figure-html/unnamed-chunk-5-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Causal Decomposition Analysis
+</h5>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Q2F1c2FsJTIwSW5mZXJlbmNl'); return false;">Causal Inference</div>
+
+</div>
+<div class="card-text listing-description delink">
+
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><span class="fu">library</span>(cfdecomp)</span>
+<span id="cb1-3"><span class="fu">library</span>(gapclosing)</span>
+<span id="cb1-4"><span class="fu">library</span>(causal.decomp)</span>
+<span id="cb1-5"></span>
+<span id="cb1-6"></span>
+<span id="cb1-7">d <span class="ot">&lt;-</span> </span>
+<span id="cb1-8">  sMIDUS <span class="sc">|&gt;</span> </span>
+<span id="cb1-9">  <span class="fu">transmute</span>(<span class="at">Y =</span> health <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>(),  <span class="co"># outcome</span></span>
+<span id="cb1-10">            <span class="at">T =</span> edu <span class="sc">…</span><span class="fu"></span><span class="co"></span></span><span id="cb1-11"><span class="at"></span><span class="sc"></span><span class="fu"></span><span class="dv"></span><span class="sc"></span><span class="dv"></span><span class="sc"></span><span class="dv"></span><span class="co"></span></span><span id="cb1-12"><span class="dv"></span><span class="sc"></span><span class="dv"></span><span class="sc"></span><span class="dv"></span></span><span id="cb1-13"><span class="at"></span><span class="cn"></span><span class="sc"></span><span class="fu"></span></span><span id="cb1-14"><span class="at"></span><span class="sc"></span><span class="fu"></span><span class="at"></span><span class="fu"></span><span class="st"></span><span class="st"></span><span class="st"></span><span class="st"></span><span class="co"></span></span><span id="cb1-15"><span class="at"></span><span class="sc"></span><span class="fu"></span></span><span id="cb1-16"><span class="at"></span><span class="sc"></span><span class="fu"></span></span><span id="cb1-17"><span class="at"></span><span class="sc"></span><span class="fu"></span></span><span id="cb1-18"><span class="at"></span><span class="sc"></span><span class="fu"></span></span><span id="cb1-19"><span class="at"></span><span class="sc"></span><span class="fu"></span></span><span id="cb1-20"><span class="at"></span><span class="sc"></span><span class="fu"></span><span class="sc"></span></span><span id="cb1-21"><span class="fu"></span><span class="fu"></span><span class="sc"></span><span class="sc"></span><span class="fu"></span><span class="at"></span><span class="cn"></span><span class="sc"></span></span><span id="cb1-22"><span class="fu"></span></span></code></pre></div></div></div>
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Kentaro Kamada
+</div>
+<div class="listing-date">
+Feb 22, 2024
+</div>
+</div>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="14" data-categories="T3RoZXJz" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="299">
+<a href="../blog/posts/Multilevel.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top"><img src="posts/Multilevel_files/figure-html/unnamed-chunk-7-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+マルチレベルモデルは点推定値に影響を及ぼすか？
+</h5>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('T3RoZXJz'); return false;">Others</div>
+
+</div>
+<div class="card-text listing-description delink">
+「マルチレベルモデルでやんなきゃ係数にバイアスが…」←ホント？
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Kentaro Kamada
+</div>
+<div class="listing-date">
+Feb 22, 2024
+</div>
+</div>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="15" data-categories="Q2F1c2FsJTIwSW5mZXJlbmNl" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1025">
+<a href="../blog/posts/TMLE.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Targeted Maximum Likelihood Estimation / Targeted Minimum Loss-based Estimation (TMLE)
+</h5>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Q2F1c2FsJTIwSW5mZXJlbmNl'); return false;">Causal Inference</div>
+
+</div>
+<div class="card-text listing-description delink">
+参考ページ：https://www.khstats.com/blog/tmle/tutorial-pt2
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Kentaro Kamada
+</div>
+<div class="listing-date">
+Feb 22, 2024
+</div>
+</div>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="16" data-categories="Q2F1c2FsJTIwSW5mZXJlbmNl" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1280">
+<a href="../blog/posts/Sudharsanan_Bijlsma_2021.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Sudharsanan &amp; Bijlsma (2021)
+</h5>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Q2F1c2FsJTIwSW5mZXJlbmNl'); return false;">Causal Inference</div>
+
+</div>
+<div class="card-text listing-description delink">
+Sudharsanan, Nikkil &amp; Maarten J. Bijlsma, 2021, “Educational Note: Causal Decomposition of Population Health Differences Using Monte Carlo Integration and the G-Formula,” <em>Int…</em>
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Kentaro Kamada
+</div>
+<div class="listing-date">
+Feb 22, 2024
+</div>
+</div>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="17" data-categories="T3RoZXJz" data-listing-date-sort="1708560000000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="214">
+<a href="../blog/posts/度数から対数尤度を計算.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+観測度数・期待度数から対数尤度を計算する方法
+</h5>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('T3RoZXJz'); return false;">Others</div>
+
+</div>
+<div class="card-text listing-description delink">
+尤度関数を<span class="math inline">\(L\)</span>とすると
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Kentaro Kamada
+</div>
+<div class="listing-date">
+Feb 22, 2024
+</div>
+</div>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="18" data-categories="Q2F1c2FsJTIwSW5mZXJlbmNl" data-listing-date-sort="1674950400000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="1760486400000" data-listing-reading-time-sort="3" data-listing-word-count-sort="566">
 <a href="../blog/posts/Morgan-Winship-2014-Chap12.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img data-src="posts/Morgan-Winship-2014-Chap12_files/figure-html/unnamed-chunk-1-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -781,7 +784,7 @@ Jan 29, 2023
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="19" data-categories="T3RoZXJz" data-listing-date-sort="1656115200000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="392">
+<div class="g-col-1" data-index="19" data-categories="T3RoZXJz" data-listing-date-sort="1656115200000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="392">
 <a href="../blog/posts/学生生活実態調査の文字コード.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -808,7 +811,7 @@ Jun 25, 2022
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="20" data-categories="U2V0dXA=" data-listing-date-sort="1644796800000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="68">
+<div class="g-col-1" data-index="20" data-categories="U2V0dXA=" data-listing-date-sort="1644796800000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="68">
 <a href="../blog/posts/新しいパソコンを買ったらやること.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -835,7 +838,7 @@ Feb 14, 2022
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="21" data-categories="U2V0dXAlMkNab3Rlcm8=" data-listing-date-sort="1622851200000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="264">
+<div class="g-col-1" data-index="21" data-categories="U2V0dXAlMkNab3Rlcm8=" data-listing-date-sort="1622851200000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="264">
 <a href="../blog/posts/Zoteroの設定備忘録.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -866,7 +869,7 @@ Jun 5, 2021
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="22" data-categories="U3RhdGlzdGljcyUyQ1I=" data-listing-date-sort="1619654400000" data-listing-file-modified-sort="1747186739371" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="77">
+<div class="g-col-1" data-index="22" data-categories="U3RhdGlzdGljcyUyQ1I=" data-listing-date-sort="1619654400000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="77">
 <a href="../blog/posts/Rでロジットモデル.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -895,7 +898,7 @@ Apr 29, 2021
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="23" data-categories="Ug==" data-listing-date-sort="1603584000000" data-listing-file-modified-sort="1747186739372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="286">
+<div class="g-col-1" data-index="23" data-categories="Ug==" data-listing-date-sort="1603584000000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="286">
 <a href="../blog/posts/移動平均のかゆいところに.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -922,7 +925,7 @@ Oct 25, 2020
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="24" data-categories="UiUyQ1B5dGhvbg==" data-listing-date-sort="1596153600000" data-listing-file-modified-sort="1747186739371" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="771">
+<div class="g-col-1" data-index="24" data-categories="UiUyQ1B5dGhvbg==" data-listing-date-sort="1596153600000" data-listing-file-modified-sort="1760498376836" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="771">
 <a href="../blog/posts/RとPython書き比べ（ユークリッドの互除法）.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -1008,13 +1011,14 @@ Jul 31, 2020
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

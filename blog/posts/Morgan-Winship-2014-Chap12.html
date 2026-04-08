@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.9.36">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,6 +11,9 @@
 
 <title>Chap12 Distributional Assumptions, Set Identification, and Sensitivity Analysis – Kentaro Kamada</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -26,7 +29,6 @@ ul.task-list li input[type="checkbox"] {
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -54,15 +56,14 @@ div.csl-indent {
 <meta name="quarto:offset" content="../../">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-4bc2b4e356910e472f7d50d601e09124.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-2e61006cba2e3a17b9d2638c5017c76a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -92,7 +93,7 @@ div.csl-indent {
 }</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -131,8 +132,6 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
-    </a>
     <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Kentaro Kamada</span>
     </a>
@@ -217,7 +216,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">October 15, 2025</p>
+        <p class="date-modified">April 8, 2026</p>
       </div>
     </div>
       
@@ -489,7 +488,7 @@ E[Y^0 | X, Z = z''] \geq E[Y^0 | X, Z = z'] \\
 <li>文章を読んだ限りでは漸近一致性が根拠</li>
 <li>「ATEの取りうる範囲」の信頼区間？
 <ul>
-<li>境界値（Bound）の信頼区間を算出するアプローチ<span class="citation" data-cites="Masten2024">(<a href="#ref-Masten2024" role="doc-biblioref">Masten, Poirier, and Zhang 2024</a>)</span></li>
+<li>境界値（Bound）の信頼区間を算出するアプローチ<span class="citation" data-cites="Masten2024">(<a href="#ref-Masten2024" role="doc-biblioref">Masten et al. 2024</a>)</span></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -498,12 +497,12 @@ E[Y^0 | X, Z = z''] \geq E[Y^0 | X, Z = z'] \\
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-Fosse2019" class="csl-entry" role="listitem">
 Fosse, Ethan, and Christopher Winship. 2019a. <span>“Analyzing <span>Age-Period-Cohort Data</span>: <span>A Review</span> and <span>Critique</span>.”</span> <em>Annual Review of Sociology</em> 45 (1): 467–92. <a href="https://doi.org/10.1146/annurev-soc-073018-022616">https://doi.org/10.1146/annurev-soc-073018-022616</a>.
 </div>
 <div id="ref-Fosse2019a" class="csl-entry" role="listitem">
-———. 2019b. <span>“Bounding <span>Analyses</span> of <span>Age-Period-Cohort Effects</span>.”</span> <em>Demography</em> 56 (5): 1975–2004. <a href="https://doi.org/10.1007/s13524-019-00801-6">https://doi.org/10.1007/s13524-019-00801-6</a>.
+Fosse, Ethan, and Christopher Winship. 2019b. <span>“Bounding <span>Analyses</span> of <span>Age-Period-Cohort Effects</span>.”</span> <em>Demography</em> 56 (5): 1975–2004. <a href="https://doi.org/10.1007/s13524-019-00801-6">https://doi.org/10.1007/s13524-019-00801-6</a>.
 </div>
 <div id="ref-Masten2024" class="csl-entry" role="listitem">
 Masten, Matthew A., Alexandre Poirier, and Linqi Zhang. 2024. <span>“Assessing <span>Sensitivity</span> to <span>Unconfoundedness</span>: <span>Estimation</span> and <span>Inference</span>.”</span> <em>Journal of Business &amp; Economic Statistics</em> 42 (1): 1–13. <a href="https://doi.org/10.1080/07350015.2023.2183212">https://doi.org/10.1080/07350015.2023.2183212</a>.

@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kentaro Kamada">
-<meta name="dcterms.date" content="2022-02-14">
+<meta name="dcterms.date" content="2026-07-04">
 
-<title>新しいパソコンを買ったらやること – Kentaro Kamada</title>
+<title>QuartoからStataを使う – Kentaro Kamada</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -63,7 +63,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -107,6 +107,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 <link rel="stylesheet" href="../../styles.css">
@@ -176,9 +179,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">新しいパソコンを買ったらやること</h1>
+      <h1 class="title">QuartoからStataを使う</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">Setup</div>
+                <div class="quarto-category">R</div>
               </div>
                   </div>
   </div>
@@ -196,7 +199,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">February 14, 2022</p>
+        <p class="date">July 4, 2026</p>
       </div>
     </div>
     
@@ -212,15 +215,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#新しいパソコンの初期設定" id="toc-新しいパソコンの初期設定" class="nav-link active" data-scroll-target="#新しいパソコンの初期設定">新しいパソコンの初期設定</a>
+  <li><a href="#参考にしたページ" id="toc-参考にしたページ" class="nav-link active" data-scroll-target="#参考にしたページ">参考にしたページ</a></li>
+  <li><a href="#環境構築" id="toc-環境構築" class="nav-link" data-scroll-target="#環境構築">環境構築</a></li>
+  <li><a href="#初期設定" id="toc-初期設定" class="nav-link" data-scroll-target="#初期設定">初期設定</a></li>
+  <li><a href="#実際に使ってみる" id="toc-実際に使ってみる" class="nav-link" data-scroll-target="#実際に使ってみる">実際に使ってみる</a>
   <ul class="collapse">
-  <li><a href="#google-chromeのインストール" id="toc-google-chromeのインストール" class="nav-link" data-scroll-target="#google-chromeのインストール">Google Chromeのインストール</a></li>
-  <li><a href="#office関連のインストール" id="toc-office関連のインストール" class="nav-link" data-scroll-target="#office関連のインストール">Office関連のインストール</a></li>
-  <li><a href="#homebrewのインストールmac" id="toc-homebrewのインストールmac" class="nav-link" data-scroll-target="#homebrewのインストールmac">Homebrewのインストール（Mac）</a></li>
-  <li><a href="#r関連のインストール" id="toc-r関連のインストール" class="nav-link" data-scroll-target="#r関連のインストール">R関連のインストール</a></li>
-  <li><a href="#gitのインストール" id="toc-gitのインストール" class="nav-link" data-scroll-target="#gitのインストール">gitのインストール</a></li>
-  <li><a href="#rmarkdown関連のインストール" id="toc-rmarkdown関連のインストール" class="nav-link" data-scroll-target="#rmarkdown関連のインストール">Rmarkdown関連のインストール</a></li>
-  <li><a href="#zoteroのインストール" id="toc-zoteroのインストール" class="nav-link" data-scroll-target="#zoteroのインストール">Zoteroのインストール</a></li>
+  <li><a href="#データの読み込み" id="toc-データの読み込み" class="nav-link" data-scroll-target="#データの読み込み">データの読み込み</a></li>
+  <li><a href="#変数一覧を表示" id="toc-変数一覧を表示" class="nav-link" data-scroll-target="#変数一覧を表示">変数一覧を表示</a></li>
+  <li><a href="#グラフを書いてみる" id="toc-グラフを書いてみる" class="nav-link" data-scroll-target="#グラフを書いてみる">グラフを書いてみる</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -232,88 +234,141 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="新しいパソコンの初期設定" class="level1">
-<h1>新しいパソコンの初期設定</h1>
-<section id="google-chromeのインストール" class="level2">
-<h2 class="anchored" data-anchor-id="google-chromeのインストール">Google Chromeのインストール</h2>
-</section>
-<section id="office関連のインストール" class="level2">
-<h2 class="anchored" data-anchor-id="office関連のインストール">Office関連のインストール</h2>
+<p>仕事でStataを使う必要があったのでメモ</p>
+<section id="参考にしたページ" class="level2">
+<h2 class="anchored" data-anchor-id="参考にしたページ">参考にしたページ</h2>
 <ul>
-<li>Office365のインストール</li>
-<li>Onedriveのインストール</li>
-</ul>
-<p>特に問題なくできた</p>
-</section>
-<section id="homebrewのインストールmac" class="level2">
-<h2 class="anchored" data-anchor-id="homebrewのインストールmac">Homebrewのインストール（Mac）</h2>
-<ul>
-<li>定番のパッケージマネージャー</li>
-</ul>
-<p>[https://brew.sh/index_ja:embed:cite]</p>
-</section>
-<section id="r関連のインストール" class="level2">
-<h2 class="anchored" data-anchor-id="r関連のインストール">R関連のインストール</h2>
-<ul>
-<li>R本体のインストール</li>
-</ul>
-<p>rigというツールを使う。<a href="../../blog/posts/r_installation_with_rig.html">参考</a></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> tap r-lib/rig</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install <span class="at">--cask</span> rig </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">rig</span> add 4.3.3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>Rstudioのインストール</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install <span class="at">--cask</span> rstudio</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>自作したRstudioテーマを持ってくる（あとでgithubにでも置いておく）</li>
-<li>エディタで使用するフォントを選択
-<ul>
-<li>myricaを使いたかったが，なぜかMacだとうまくいっていない（調査中）</li>
-</ul></li>
-<li>Rtools（Windows）or Xcode（Mac）のインストール
-<ul>
-<li>github産のパッケージのビルドなどに必要</li>
-</ul></li>
-<li>（Macのみ）Xquartzのインストール
-<ul>
-<li>詳しくはわからないが，入れないとRmarkdownがちゃんと動かなかった</li>
-</ul></li>
+<li>Stataをモダンな環境で使う <a href="https://zenn.dev/nicetak/articles/stata-modern-2025" class="uri">https://zenn.dev/nicetak/articles/stata-modern-2025</a></li>
+<li>nbstata <a href="https://hugetim.github.io/nbstata/" class="uri">https://hugetim.github.io/nbstata/</a></li>
 </ul>
 </section>
-<section id="gitのインストール" class="level2">
-<h2 class="anchored" data-anchor-id="gitのインストール">gitのインストール</h2>
+<section id="環境構築" class="level2">
+<h2 class="anchored" data-anchor-id="環境構築">環境構築</h2>
 <ul>
-<li>（winのみ）gitをインストール
+<li>pythonを使うので、事前にvenvなどで仮想環境をつくっておく</li>
+<li>以下のコマンドで必要なパッケージとカーネルをインストールする
 <ul>
-<li>macだとgit自体がすでにインストールされていた</li>
+<li>公式サイトを見ると<code>pip install nbstata</code>だけになっているが、自分の環境では他のも必要だった</li>
 </ul></li>
-<li>ssh keyの作成→githubへ登録</li>
-<li>git clone で適宜必要なプロジェクトをダウンロード</li>
 </ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install nbstata pyyaml nbformat nbclient</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> nbstata.install</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="rmarkdown関連のインストール" class="level2">
-<h2 class="anchored" data-anchor-id="rmarkdown関連のインストール">Rmarkdown関連のインストール</h2>
+<section id="初期設定" class="level2">
+<h2 class="anchored" data-anchor-id="初期設定">初期設定</h2>
 <ul>
-<li>tinytexのインストール</li>
-<li><code>tinytex::install_tinytex()</code>でtex本体をインストール</li>
-<li><code>latex_engine: lualatex</code>の文章を作成し，エラーを見ながら適宜<code>tinytex::tlmgr_install()</code>で足りないパッケージを追加
+<li>jupyterのマジックコマンドのような形で、いくつか初期設定が可能</li>
+<li>ここではグラフの画像形式をsvgにしておく</li>
+<li>詳しくは
 <ul>
-<li>（Mac）haranoajiで引っかかった</li>
+<li><a href="https://hugetim.github.io/nbstata/user_guide.html#configuration-optional" class="uri">https://hugetim.github.io/nbstata/user_guide.html#configuration-optional</a></li>
+<li><a href="https://hugetim.github.io/nbstata/user_guide.html#set-set" class="uri">https://hugetim.github.io/nbstata/user_guide.html#set-set</a></li>
 </ul></li>
 </ul>
+<div id="7cee2a36" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>%<span class="kw">set</span> graph_format = svg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<style>div.jp-Notebook .datagrid-container {min-height: 448px; }</style>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>graph_format was png, is now svg</code></pre>
+</div>
+</div>
 </section>
-<section id="zoteroのインストール" class="level2">
-<h2 class="anchored" data-anchor-id="zoteroのインストール">Zoteroのインストール</h2>
+<section id="実際に使ってみる" class="level2">
+<h2 class="anchored" data-anchor-id="実際に使ってみる">実際に使ってみる</h2>
+<section id="データの読み込み" class="level3">
+<h3 class="anchored" data-anchor-id="データの読み込み">データの読み込み</h3>
+<div id="54aa9146" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sysuse</span> census, <span class="kw">clear</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(1980 Census data by state)</code></pre>
+</div>
+</div>
+</section>
+<section id="変数一覧を表示" class="level3">
+<h3 class="anchored" data-anchor-id="変数一覧を表示">変数一覧を表示</h3>
+<div id="90724784" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">describe</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Contains data from /Applications/Stata/ado/base/c/census.dta
+ Observations:            50                  1980 Census data by state
+    Variables:            13                  6 Apr 2024 15:43
+-------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------
+state           str14   %-14s                 State
+state2          str2    %-2s                  Two-letter state abbreviation
+region          int     %-8.0g     cenreg     Census region
+pop             long    %12.0gc               Population
+poplt5          long    %12.0gc               Pop, &lt; 5 year
+pop5_17         long    %12.0gc               Pop, 5 to 17 years
+pop18p          long    %12.0gc               Pop, 18 and older
+pop65p          long    %12.0gc               Pop, 65 and older
+popurban        long    %12.0gc               Urban population
+medage          float   %9.2f                 Median age
+death           long    %12.0gc               Number of deaths
+marriage        long    %12.0gc               Number of marriages
+divorce         long    %12.0gc               Number of divorces
+-------------------------------------------------------------------------------
+Sorted by: </code></pre>
+</div>
+</div>
 <ul>
-<li>同期の開始
-<ul>
-<li>「環境設定」の「同期」からユーザー名，パスワードを打ち込んで同期を開始</li>
-<li>「詳細」→「ファイルとフォルダ」から，基本ディレクトリを正しく設定する→pdfファイルと文献情報が紐づいた形で設定が引き継がれる</li>
-</ul></li>
+<li>チャンクオプションは<code>*| echo: false</code>のような形（コードブロックが非表示になる）</li>
 </ul>
-<p>あとは以下を参考に設定する</p>
-<p>[https://sickle-sword.hatenablog.com/entry/2021/06/05/160818?_ga=2.261856205.1735845236.1644808541-16137706.1644808541:embed:cite]</p>
+<div id="cccc50d3" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Contains data from /Applications/Stata/ado/base/c/census.dta
+ Observations:            50                  1980 Census data by state
+    Variables:            13                  6 Apr 2024 15:43
+-------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------
+state           str14   %-14s                 State
+state2          str2    %-2s                  Two-letter state abbreviation
+region          int     %-8.0g     cenreg     Census region
+pop             long    %12.0gc               Population
+poplt5          long    %12.0gc               Pop, &lt; 5 year
+pop5_17         long    %12.0gc               Pop, 5 to 17 years
+pop18p          long    %12.0gc               Pop, 18 and older
+pop65p          long    %12.0gc               Pop, 65 and older
+popurban        long    %12.0gc               Urban population
+medage          float   %9.2f                 Median age
+death           long    %12.0gc               Number of deaths
+marriage        long    %12.0gc               Number of marriages
+divorce         long    %12.0gc               Number of divorces
+-------------------------------------------------------------------------------
+Sorted by: </code></pre>
+</div>
+</div>
+</section>
+<section id="グラフを書いてみる" class="level3">
+<h3 class="anchored" data-anchor-id="グラフを書いてみる">グラフを書いてみる</h3>
+<ul>
+<li>都市人口率と高齢化率を計算</li>
+</ul>
+<div id="28eb3818" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> pop65_prop = pop65p / pop</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> popurban_prop = popurban / pop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>散布図を表示</li>
+</ul>
+<div id="e81f94cb" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">scatter</span> pop65_prop popurban_prop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto-with-stata_files/figure-html/cell-7-output-1.svg" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 </section>

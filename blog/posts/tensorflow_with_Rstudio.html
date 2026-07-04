@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.36">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -76,10 +76,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-2e61006cba2e3a17b9d2638c5017c76a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-703c9532075cde06ab04a16b69a0e953.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -386,7 +386,7 @@ Note
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(sys.version)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>3.11.12 (main, Apr  8 2025, 14:15:29) [Clang 16.0.0 (clang-1600.0.26.6)]</code></pre>
+<pre><code>3.11.15 (main, Mar  3 2026, 00:52:57) [Clang 21.0.0 (clang-2100.0.123.102)]</code></pre>
 </div>
 </div>
 <ul>
@@ -579,26 +579,26 @@ Note
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Epoch 1/10
-1467/1467 - 8s - loss: 1.3177 - accuracy: 0.6413 - 8s/epoch - 6ms/step
+1467/1467 - 5s - loss: 1.3214 - accuracy: 0.6396 - 5s/epoch - 3ms/step
 Epoch 2/10
-1467/1467 - 6s - loss: 0.9427 - accuracy: 0.7486 - 6s/epoch - 4ms/step
+1467/1467 - 3s - loss: 0.9349 - accuracy: 0.7510 - 3s/epoch - 2ms/step
 Epoch 3/10
-1467/1467 - 6s - loss: 0.8788 - accuracy: 0.7642 - 6s/epoch - 4ms/step
+1467/1467 - 3s - loss: 0.8726 - accuracy: 0.7659 - 3s/epoch - 2ms/step
 Epoch 4/10
-1467/1467 - 6s - loss: 0.8475 - accuracy: 0.7729 - 6s/epoch - 4ms/step
+1467/1467 - 3s - loss: 0.8422 - accuracy: 0.7740 - 3s/epoch - 2ms/step
 Epoch 5/10
-1467/1467 - 6s - loss: 0.8340 - accuracy: 0.7759 - 6s/epoch - 4ms/step
+1467/1467 - 3s - loss: 0.8271 - accuracy: 0.7775 - 3s/epoch - 2ms/step
 Epoch 6/10
-1467/1467 - 6s - loss: 0.8259 - accuracy: 0.7777 - 6s/epoch - 4ms/step
+1467/1467 - 3s - loss: 0.8199 - accuracy: 0.7804 - 3s/epoch - 2ms/step
 Epoch 7/10
-1467/1467 - 6s - loss: 0.8233 - accuracy: 0.7786 - 6s/epoch - 4ms/step
+1467/1467 - 3s - loss: 0.8185 - accuracy: 0.7802 - 3s/epoch - 2ms/step
 Epoch 8/10
-1467/1467 - 6s - loss: 0.8240 - accuracy: 0.7773 - 6s/epoch - 4ms/step
+1467/1467 - 3s - loss: 0.8166 - accuracy: 0.7795 - 3s/epoch - 2ms/step
 Epoch 9/10
-1467/1467 - 6s - loss: 0.8218 - accuracy: 0.7789 - 6s/epoch - 4ms/step
+1467/1467 - 3s - loss: 0.8178 - accuracy: 0.7798 - 3s/epoch - 2ms/step
 Epoch 10/10
-1467/1467 - 6s - loss: 0.8242 - accuracy: 0.7779 - 6s/epoch - 4ms/step
-&lt;keras.src.callbacks.History object at 0x177fd5910&gt;</code></pre>
+1467/1467 - 3s - loss: 0.8182 - accuracy: 0.7799 - 3s/epoch - 2ms/step
+&lt;keras.src.callbacks.History object at 0x355029c90&gt;</code></pre>
 </div>
 </div>
 </section>
@@ -616,8 +616,8 @@ Epoch 10/10
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>model.evaluate(r.test_x, r.test_y, verbose<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>163/163 - 1s - loss: 0.8293 - accuracy: 0.7688 - 513ms/epoch - 3ms/step
-[0.8292935490608215, 0.7687883377075195]</code></pre>
+<pre><code>163/163 - 0s - loss: 0.8855 - accuracy: 0.7686 - 310ms/epoch - 2ms/step
+[0.8854699730873108, 0.7685966491699219]</code></pre>
 </div>
 </div>
 

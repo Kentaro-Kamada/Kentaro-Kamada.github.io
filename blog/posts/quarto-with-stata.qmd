@@ -1,0 +1,78 @@
+---
+title: "QuartoからStataを使う"
+date: 2026-07-04
+categories: [R]
+---
+
+仕事でStataを使う必要があったのでメモ
+
+## 参考にしたページ
+
+- Stataをモダンな環境で使う <https://zenn.dev/nicetak/articles/stata-modern-2025>
+- nbstata <https://hugetim.github.io/nbstata/>
+
+## 環境構築
+
+- pythonを使うので、事前にvenvなどで仮想環境をつくっておく
+- 以下のコマンドで必要なパッケージとカーネルをインストールする
+  - 公式サイトを見ると`pip install nbstata`だけになっているが、自分の環境では他のも必要だった
+
+```bash
+pip install nbstata pyyaml nbformat nbclient
+python -m nbstata.install
+```
+
+## 初期設定
+
+- jupyterのマジックコマンドのような形で、いくつか初期設定が可能
+- ここではグラフの画像形式をsvgにしておく
+- 詳しくは
+  - <https://hugetim.github.io/nbstata/user_guide.html#configuration-optional>
+  - <https://hugetim.github.io/nbstata/user_guide.html#set-set>
+
+```{stata}
+%set graph_format = svg
+```
+
+## 実際に使ってみる
+
+### データの読み込み
+
+```{stata}
+sysuse census, clear
+```
+
+### 変数一覧を表示
+
+```{stata}
+describe
+```
+
+- チャンクオプションは`*| echo: false`のような形（コードブロックが非表示になる）
+
+```{stata}
+*| echo: false
+describe
+```
+
+### グラフを書いてみる
+
+- 都市人口率と高齢化率を計算
+
+```{stata}
+gen pop65_prop = pop65p / pop
+gen popurban_prop = popurban / pop
+```
+
+- 散布図を表示
+
+```{stata}
+scatter pop65_prop popurban_prop
+```
+
+
+
+
+
+
+

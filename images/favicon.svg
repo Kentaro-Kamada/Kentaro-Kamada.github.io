@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+    width="256" height="256"
+    viewBox="24 16 272 272">
+  <title>温泉とPCのロゴ・透明背景版</title>
+  <desc>
+    明るいブルーのPCと楕円、アプリコット色の湯気。
+    太線、タッチパッドなし、背景は透明。
+  </desc>
+
+  <!-- ノートPCの画面 -->
+  <rect x="64" y="48" width="192" height="164"
+        rx="16"
+        fill="none"
+        stroke="#A9C7DA"
+        stroke-width="18"/>
+
+  <!-- 温泉マーク -->
+  <g transform="translate(160 138) scale(0.8) translate(-160 -138)">
+
+    <!-- 湯気 -->
+    <g fill="#F2AD78"
+       stroke="#F2AD78"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round">
+
+      <!-- 左 -->
+      <path
+        transform="translate(-4 0) translate(134 0) scale(1.4 1) translate(-134 0)"
+        d="
+          M140 94
+          C131 110 132 122 138 136
+          C143 147 145 156 138 164
+          C136 167 133 167 131 164
+          C130 162 131 160 132 159
+          C136 154 133 146 129 137
+          C123 122 124 108 137 94
+          Q139 92 140 94 Z"/>
+
+      <!-- 中央 -->
+      <path
+        transform="translate(158 0) scale(1.4 1) translate(-158 0)"
+        d="
+          M164 80
+          C155 100 156 115 162 130
+          C169 145 170 157 162 169
+          C160 172 157 172 155 169
+          C154 167 155 165 156 164
+          C162 155 159 145 153 132
+          C146 115 148 97 161 80
+          Q163 78 164 80 Z"/>
+
+      <!-- 右 -->
+      <path
+        transform="translate(4 0) translate(182 0) scale(1.4 1) translate(-182 0)"
+        d="
+          M188 94
+          C179 110 180 122 186 136
+          C191 147 193 156 186 164
+          C184 167 181 167 179 164
+          C178 162 179 160 180 159
+          C184 154 181 146 177 137
+          C171 122 172 108 185 94
+          Q187 92 188 94 Z"/>
+    </g>
+
+    <!-- 楕円 -->
+    <path d="
+      M118.3 152.2
+      C100 156.5 87 163 87 171
+      C87 186.5 119.7 199 160 199
+      C200.3 199 233 186.5 233 171
+      C233 163.5 223 157.5 208 153.5
+
+      C205.5 152.9 204.5 156.2 207 157
+      C216 161 221 166.2 221 171
+      C221 179.8 193.7 187 160 187
+      C126.3 187 99 179.8 99 171
+      C99 165.7 106.5 160.5 119.7 155.8
+
+      C122.2 155.1 120.8 151.6 118.3 152.2
+      Z"
+      fill="#A9C7DA"
+      stroke="#A9C7DA"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"/>
+  </g>
+
+  <!-- ノートPCの本体 -->
+  <path d="
+    M64 212 L40 234
+    Q37 240 46 240
+    H274
+    Q283 240 280 234
+    L256 212"
+    fill="none"
+    stroke="#A9C7DA"
+    stroke-width="18"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+</svg>

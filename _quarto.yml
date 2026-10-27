@@ -6,7 +6,9 @@ project:
 
 website:
   title: "Kentaro Kamada"
+  favicon: images/favicon.svg
   navbar:
+    logo: images/favicon.svg
     left:
       - href: index.qmd
         text: "Home"
@@ -27,9 +29,6 @@ website:
             target: _blank
       - href: blog/index.qmd
         text: "Blog"
-    tools:
-      - icon: github
-        href: https://github.com/Kentaro-Kamada/Kentaro-Kamada.github.io
 
 format:
   html:

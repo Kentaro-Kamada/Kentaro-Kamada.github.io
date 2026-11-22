@@ -4,8 +4,6 @@ title: "Research"
 
 ## Peer-Reviewed Papers
 
------
-
 有田伸・石田賢示・田中慶子・鎌田健太郎，2026，「パネル調査における紙からウェブへの調査モード転換の課題と対応策」『社会と調査』37: 59-64．
 
 -----
@@ -24,6 +22,12 @@ title: "Research"
 
 
 ## Books
+
+鎌田健太郎，2026，「4章 統計グラフ」三輪哲・田中茜・苫米地なつ帆編『社会調査データ解析の実践——Stataによる展開』実教出版，44-59．  
+[{{<bi window>}} homepage](https://www.jikkyo.co.jp/book/detail/26500033/){.btn .btn-outline-primary .btn-sm}
+[{{<bi amazon>}} amazon](https://www.amazon.co.jp/dp/4407367334){.btn .btn-outline-primary .btn-sm}
+
+-----
 
 鎌田健太郎，2025，「父親の在宅勤務は学習状況の格差を拡大するか——小中学生と保護者に対するパネル調査から」中村高康・苅谷剛彦編『コロナ禍と日本の教育——行政・学校・家庭生活の社会学的分析』東京大学出版会，211-25．  
 [{{<bi window>}} homepage](https://www.utp.or.jp/book/b10124128.html){.btn .btn-outline-primary .btn-sm}

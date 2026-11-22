@@ -1,6 +1,7 @@
 ---
 title: 手動でSuperlearner
 date: 2024-11-01
+date-modified: 2026-11-22
 categories: [Others]
 ---
 
@@ -18,6 +19,9 @@ library(future)
 library(earth)
 
 theme_set(theme_bw(base_family = 'Noto Sans JP'))
+
+# Javaの設定
+options(java.parameters = c("-Xmx20g"))
 
 # 並列化
 plan(multisession(workers = 5))

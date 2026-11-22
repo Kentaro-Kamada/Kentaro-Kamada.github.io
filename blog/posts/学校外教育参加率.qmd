@@ -1,6 +1,7 @@
 ---
 title: 学校外教育の参加率
 date: 2024-11-01
+date-modified: 2026-11-22
 categories: [Others]
 ---
 
@@ -13,18 +14,17 @@ categories: [Others]
 
 ```{r}
 library(tidyverse)
-library(estatapi)
+library(jpstat)
 ```
 
 ## 準備
 
 - あらかじめE-Stat APIの申請を行い、アプリケーションIDを取得しておく必要がある
-- `.Renviron`や`.Rprofile`あたりで、環境変数`ESTAT_APPID`にアプリケーションIDを設定しておくと便利
-
+- ~~`.Renviron`や`.Rprofile`あたりで、環境変数`ESTAT_APPID`にアプリケーションIDを設定しておくと便利~~
+- 平文で書くのはセキュリティ上好ましくないので、`keyring`パッケージを使ってパスワードマネージャーから引っ張ってくる
 
 ```{r}
-# E-Stat APIのアプリケーションIDを環境変数から取得
-appid <- Sys.getenv('ESTAT_APPID')
+Sys.setenv(ESTAT_API_KEY = keyring::key_get('estat_api_key'))
 ```
 
 
@@ -40,9 +40,9 @@ appid <- Sys.getenv('ESTAT_APPID')
 #| eval: false
 
 # 以下のコードでメタデータが取得できる
-estat_getMetaInfo(appid, '0003368820')
-estat_getMetaInfo(appid, '0003368821')
-estat_getMetaInfo(appid, '0003368822')
+estat('0003368820')
+estat('0003368821')
+estat('0003368822')
 ```
 
 ## データ取得
@@ -51,32 +51,38 @@ estat_getMetaInfo(appid, '0003368822')
 
 ```{r}
 
-elementary <- 
-  estat_getStatsData(
-    appid, 
-    '0003368820',
-    cdTab = '110', 
-    cdCat01 = '160,170,180,190,200,210', 
-    cdCat02 = '320'
-  )
+elementary <-
+  estat('0003368820') |> 
+  activate(tab) |> 
+  filter(code == '110') |> 
+  activate(cat01) |>
+  filter(code %in% c('160', '170', '180', '190', '200', '210')) |>
+  activate(cat02) |>
+  filter(code == '320') |> 
+  collect()
+  
 
 jhigh <- 
-  estat_getStatsData(
-    appid, 
-    '0003368821',
-    cdTab = '110', 
-    cdCat01 = '160,170,180', 
-    cdCat02 = '320'
-  )
+  estat('0003368821') |> 
+  activate(tab) |> 
+  filter(code == '110') |> 
+  activate(cat01) |>
+  filter(code %in% c('160', '170', '180')) |>
+  activate(cat02) |>
+  filter(code == '320') |> 
+  collect()
+
 
 high <- 
-  estat_getStatsData(
-    appid, 
-    '0003368822',
-    cdTab = '110', 
-    cdCat01 = '160,170,180', 
-    cdCat02 = '320'
-  )
+  estat('0003368822') |>
+  activate(tab) |>
+  filter(code == '110') |>
+  activate(cat01) |>
+  filter(code %in% c('160', '170', '180')) |>
+  activate(cat02) |>
+  filter(code == '320') |>
+  collect()
+  
 
 ```
 
@@ -84,19 +90,20 @@ high <-
 
 ```{r}
 
-df <- 
+df <-
   bind_rows(
     小学校 = elementary,
     中学校 = jhigh,
     高校 = high,
     .id = '学校段階'
   ) |> 
-  select(学校段階, 学年 = `学年(年齢)・所在市町村人口規模(学科)`, 公私立 = 公私立区分, 年度 = `時間軸（年度次）`, 塾利用率 = value) |> 
+  select(学校段階, 学年 = cat01_name, 公私立 = cat03_name, 年度 = time_name, 塾利用率 = n) |> 
   mutate(
     年度 = parse_number(年度),
     学校段階 = fct_relevel(学校段階, '小学校', '中学校', '高校'),
     公私立 = fct_relevel(公私立, '公立', '私立'),
-    学年 = fct_relevel(学年, '第1学年', '第2学年', '第3学年', '第4学年', '第5学年', '第6学年')
+    学年 = fct_relevel(学年, '第1学年', '第2学年', '第3学年', '第4学年', '第5学年', '第6学年'),
+    塾利用率 = parse_double(塾利用率)
   )
 
 ```
